@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { appStore } from "@nucleum/stores/app.store";
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import type { IRecordId } from "@nucleum/schema/legacy/data.type";
   import { determineResourceType } from "@nucleum/datafn/resource.utils";
   import { Resource } from "@nucleum/datafn/resource.enum";
@@ -22,7 +23,7 @@
 
   function handleClick(event: MouseEvent) {
     const id: IRecordId = data.id;
-    appStore.resourceClickHandler(event, id);
+    navigation.resourceClickHandler(event, id);
   }
 
   function handleKeyDown(event: KeyboardEvent) {

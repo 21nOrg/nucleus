@@ -1,173 +1,57 @@
-# WARP.md
+# Repository guide
 
-This file provides guidance to WARP (warp.dev) when working with code in this repository.
+`AGENTS.md` is the governing agent policy. Read it before changes. The current architecture is documented in [client boundaries](docs/architecture/client-boundaries.md) and [type ownership](docs/architecture/type-ownership.md).
 
-## project overview
+## Organization
 
-Nucleus is an open source library powering productivity tools built at 21n.org. It includes three main products:
+- `schema/`: cross-layer product/resource definitions, wire contracts, and legacy serialization contracts.
+- `client/datafn/`: client storage, queries, sync, and DataFn resource adapters.
+- `client/runtime/`: UI-independent auth/account transport, connectivity, logging, native messaging, audio, and inference.
+- `client/features/`: shared capabilities such as memory, focus, calendar, collections, and spaces.
+- `client/products/`: product-specific composition, configuration, and integrations.
+- `client/config/`: client product identity, navigation metadata, and command identifiers.
+- `client/application/`: commands, account/subscription workflows, settings, and mixed-resource presentation.
+- `client/layout/`: app shells, URL/history navigation, tabs, sidebar, and menu customization.
+- `client/stores/`: shared reactive state, persistence preferences, file handling, and permanent composition contracts.
+- `client/elements/`, `client/components/`, `client/actions/`: reusable controls, presentation, and generic DOM behavior.
+- `client/persistence/`: persistence helpers and legacy backup/recovery boundaries.
+- `services/account/`: AuthFn/DataFn account service, database mappings, lookup integrations, and Node/Worker deployments.
+- `shared/`: cross-layer utilities and remaining legacy database objects.
+- `apps/`, `extensions/`: deployable product and extension bundles; `apps/e2e-playwright` owns browser verification.
 
-- **Memotron** - Knowledge management and note-taking tool
-- **Pointron** - Focus and time management tool  
-- **Nucleus** - Super app combining the above tools
+There is no global `client/types` or `shared/types` package. Import contracts from their domain owner. The unused `@nucleum/cx` workspace is retired.
 
-The codebase uses a monorepo architecture with Turbo for build orchestration, SvelteKit for frontend, and Node.js for backend.
+## Composition rules
 
-## architecture
+App state does not implement navigation or command execution. Layout navigation changes URL/history; the application command runner executes product commands. Application and extension shells install command, overlay, resource, renderer, shortcut, and recents hosts through `client/application/composition/resource-hosts.ts` before mounting consumers.
 
-### monorepo structure
+Use direct imports after moves, without compatibility wrappers. Shared runtime code must not transitively load capability or application implementations. Features use declared public entries when consuming another capability. Source aliases do not enforce package exports, so run the architecture checker.
 
-- `client/` - Frontend code and product-specific implementations
-  - `client/products/` - Individual product apps (nucleus, memotron, pointron, gathery)
-  - `client/components/` - Shared UI components
-  - `client/elements/` - Basic UI elements
-  - `client/stores/` - Svelte stores
-  - `client/utils/` - Utility functions
-- `packages/` - Shared libraries (components, elements, types, utils, stores, actions, static)
-- `server/` - Backend API and database logic
-- `shared/` - Code shared between client and server (types, utils, database objects)
-- `deployment/` - Deployment configurations
-- `tests/` - Test files
+## Commands
 
-### key concepts
+Run commands from the repository root using npm workspaces and Turbo:
 
-- **Product Configuration**: Each product (Nucleus, Memotron, Pointron) has its own configuration in `client/products/product.config.ts` defining app menus, settings, resources, and features
-- **Resource System**: Products work with different resource types (nodes, relations, goals, tasks, events, collections, combinations)
-- **Turbo Workspace**: Uses Turbo for build orchestration and task running across the monorepo
-- **SvelteKit**: Frontend built with SvelteKit and TailwindCSS
-- **Database**: Uses SurrealDB and local storage solutions (Dexie, LocalForage)
-
-## common development commands
-
-### development
-
-```bash
-# Start all apps in development mode
-npm run dev
-
-# Start specific product apps
+```sh
+npm ci --legacy-peer-deps
 npm run dev:nucleus
 npm run dev:memotron
 npm run dev:pointron
-npm run dev:gathery
-```
-
-### building
-
-```bash
-# Build all packages and apps
-npm run build
-
-# Build only packages
-npm run build:packages
-
-# Build only product apps
-npm run build:products
-
-# Build specific product
-npm run build:nucleus
-```
-
-### testing and linting
-
-```bash
-# Run all tests
+npm run check:architecture
+node tools/check/type-ownership.mjs
+npm run check:apps
+npm --workspace @21n/account-service run typecheck
 npm run test
-
-# Run linting
 npm run lint
-
-# Clean build artifacts
-npm run clean
-
-# Test workspace setup
-node test-setup.js
+npm run build:nucleus
+npm run build:memotron-share
 ```
 
-### single product development
+Use the Caddy HTTPS hosts and account-service health checks in `AGENTS.md` for local browser work. Run one product server and browser worker at a time when practical. Do not treat compiler success as browser, cloud, native-device, or deployment proof.
 
-When working on a specific product, navigate to its directory and run commands directly:
+## Database changes
 
-```bash
-cd client/products/nucleus
+Regenerate DataFn mappings with the account-service scripts. Generate and commit a forward migration for physical schema changes; never edit an applied migration. Deployment executes the checked-in migration journal. A successful local `datafn:push:local` does not prove that deployment migrations are complete.
 
-# Development with different ports/modes
-npm run dev          # Port 5050
-npm run debug        # Host 0.0.0.0:5050
-npm run debug-pre    # Pre environment mode
-npm run debug-live   # Live environment mode
+## Review and delivery
 
-# Building for different environments
-npm run build        # Production build
-npm run build-pre    # Pre environment
-npm run build-live   # Live environment
-
-# Testing
-npm run test
-npm run test:watch
-npm run typecheck
-```
-
-## code generation and editing rules
-
-### no inline comments
-- No inline comments should be added whenever new code is generated or code is edited by the agent
-- Keep code clean and comment-free when making changes
-- Let the code speak for itself without additional commentary
-
-### pull request review fixing protocol
-
-When asked to fix pull request review comments by providing a PR number:
-
-#### step 1: initial data fetch
-- **MUST** fetch the PR using GitHub CLI first
-- Use commands like `gh pr view <number> --json reviews,comments`
-- Extract all available review data through the CLI
-
-#### step 2: comprehensive data collection
-- If the CLI data is not clear enough or incomplete
-- **MUST** use a headless browser (Playwright/Puppeteer) to fetch the entire PR data
-- Create scripts in a temporary directory (e.g., `/tmp/pr_review/`) 
-- **DO NOT** pollute the project directory with scraping tools
-- Extract all review comments, inline comments, and actionable items
-
-#### step 3: critical issue analysis
-- **DO NOT** miss any kind of critical issues when asked to fix the PR
-- Identify all actionable comments from all review sources:
-  - Sourcery AI
-  - CodeRabbit AI
-  - Typo-app
-  - Cubic AI
-  - Human reviewers
-  - Any other automated review tools
-
-#### step 4: systematic issue resolution
-- Create a comprehensive todo list of all issues found
-- Fix each issue systematically
-- Verify that ALL actionable items have been addressed
-- Do not skip or ignore any reported problems
-
-#### best practices
-- Always work in temporary directories for tooling
-- Clean up after scraping operations
-- Be thorough and methodical in issue identification
-- Double-check that no critical issues are missed
-- Provide clear summary of what was fixed
-
-
-# Conduct Instructions
-
-These instructions are for Warp AI when working in this project.
-
-When the request mentions features, changes, or specifications:
-- Use `conduct-feature` command to create new features
-- Use `conduct-change` command to create new changes
-- Read `.warp/commands/conduct/feature.md` for feature creation guidance
-- Read `.warp/commands/conduct/change.md` for change creation guidance
-
-The Warp commands handle:
-- Creating proper directory structure
-- Generating spec templates
-- Updating track.json
-- Managing versions
-
-Keep this file so 'conduct init' can refresh the instructions.
+Preserve unrelated checkout changes. Review product configuration and callers before editing. Follow the existing-test and user-facing behavior approval rules in `AGENTS.md`. Keep code free of inline comments and document exported APIs with JSDoc. PR descriptions must identify changed behavior, relevant verification, and unverified environments.

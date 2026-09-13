@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { resolveTaskSubTypesForSwitcher } from "./task.utils";
   import { Resource } from "@nucleum/datafn/resource.enum";
   import { ResourceAccessPoint } from "@nucleum/datafn/resource.type";
@@ -12,10 +15,7 @@
   } from "@nucleum/features/focus/tasks/task.type";
   import { isValidArray } from "@21n/shared-utils/obj.utils";
   import TaskRecords from "@nucleum/features/focus/tasks/TaskRecords.svelte";
-  import {
-    IResourceFilterDateGrouping,
-    type IRecordId
-  } from "@nucleum/schema/legacy/data.type";
+  import { type IRecordId } from "@nucleum/schema/legacy/data.type";
   import InlineSearchBar from "@21n/elements/InlineSearchBar.svelte";
   import { InputStyle } from "@21n/elements/input/input.type";
   import { page } from "$app/stores";
@@ -46,7 +46,7 @@
     resourceAction
   } from "@nucleum/datafn/resource.utils";
   import { ButtonVariant, ButtonStyle } from "@21n/elements/button/button.type";
-  import EmptyStatusView from "@21n/elements/feedback/EmptyStatusView.svelte";
+
   import { generateMiniRandomId } from "@21n/shared-utils/crypto.utils";
   import { bulkEditStore } from "@nucleum/stores/resources/bulkedit.store";
   import view from "@nucleum/stores/view.store";
@@ -56,7 +56,7 @@
   import OptionSelector from "@21n/elements/select/OptionSelector.svelte";
   import { resolveTaskDueDateFilters } from "@nucleum/features/focus/tasks/task.utils";
   import { OptionSelectorStyle } from "@21n/elements/select/select.type";
-  import { LoadingAnimationType } from "@21n/elements/feedback/feedback.type";
+
   import { intersection } from "@nucleum/actions/intersection.action";
   import { resolveUnixTimestamp } from "@21n/shared-utils/time.utils";
   import { AppSearchParam } from "@nucleum/stores/appStore.type";
@@ -550,7 +550,7 @@
 >
   <LibrarySubTypeSwitcher
     options={resolveTaskSubTypesForSwitcher()}
-    onSearchParamsChange={(params) => appStore.toggleSearchParam(params)}
+    onSearchParamsChange={(params) => navigation.toggleSearchParam(params)}
     resource={Resource.task}
     accessPoint={resolveAccessPoint()}
     {selectedSubType}
@@ -573,7 +573,7 @@
         size={Size.md}
         isPreventMinWidth={true}
         onclick={() => {
-          appStore.runAction(PointronAction.CREATE_TASK_INLINE, {
+          requireCommandHost().runAction(PointronAction.CREATE_TASK_INLINE, {
             componentParams: {
               date:
                 selectedSubType === TaskSubTypeForSwitcher.BY_DATE ||
@@ -713,7 +713,7 @@
       isRefreshing={displayedIsRefreshing}
       {searchQuery}
       onCreate={() => {
-        appStore.runAction(PointronAction.CREATE_TASK_INLINE, {
+        requireCommandHost().runAction(PointronAction.CREATE_TASK_INLINE, {
           componentParams: {
             date:
               selectedSubType === TaskSubTypeForSwitcher.BY_DATE ||

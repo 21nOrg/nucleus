@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import type {
     INode,
     INodeLinkThumb,
@@ -12,7 +14,7 @@
   import { resolveNodeLabelString } from "@nucleum/features/memory/node/node.utils";
   import EmptyStatusView from "@21n/elements/feedback/EmptyStatusView.svelte";
   import { Size } from "@21n/elements/size.enum";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import ScrollViewBottomSpacer from "@21n/layout/scrollView/ScrollViewBottomSpacer.svelte";
   import { linkTagLabelMapper } from "@nucleum/features/memory/linking/link.utils";
   import type { ILinkTag } from "@nucleum/datafn/link.type";
@@ -89,7 +91,7 @@
   }
 
   function handleNodeClick(nodeId: string, event: MouseEvent) {
-    appStore.resourceClickHandlerForGraph(nodeId, event, {
+    navigation.resourceClickHandlerForGraph(nodeId, event, {
       replaceId: node.id
     });
   }

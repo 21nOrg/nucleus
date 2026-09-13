@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import type { Snippet } from "svelte";
   import type { MouseEventHandler } from "svelte/elements";
   import { AccessMode } from "@nucleum/datafn/resource.type";
@@ -6,7 +8,7 @@
   import { bg, cn } from "@21n/utils/ui.utils";
   import Icon from "@21n/elements/Icon.svelte";
   import view from "@nucleum/stores/view.store";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import modalEvent from "@nucleum/stores/overlays/modal.store";
   import { haptic } from "@nucleum/client/runtime/embed/embed.utils";
 
@@ -61,9 +63,9 @@
       return;
     }
     if ($view.isConstrainedWidth && !path) {
-      appStore.goBack();
+      navigation.goBack();
     } else {
-      appStore.closeResource({ accessMode });
+      navigation.closeResource({ accessMode });
     }
     if (path) modalEvent.hide(path, "BackButton.svelte");
     onclick?.(buttonEvent);

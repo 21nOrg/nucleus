@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { untrack } from "svelte";
   import type { IRecordId } from "@nucleum/schema/legacy/data.type";
   import {
@@ -19,7 +21,10 @@
   import { ButtonStyle, ButtonVariant } from "@21n/elements/button/button.type";
   import { appStore } from "@nucleum/stores/app.store";
   import InlineFeedbackText from "@nucleum/extensions/clipper/InlineFeedbackText.svelte";
-  import { AlertType, type IInlineStatus } from "@nucleum/stores/notifications/notification.type";
+  import {
+    AlertType,
+    type IInlineStatus
+  } from "@nucleum/stores/notifications/notification.type";
   import TaskThumbnailObjectiveLabel from "@nucleum/features/focus/tasks/TaskThumbnailGoalLabel.svelte";
   import { resolveUnixTimestamp } from "@21n/shared-utils/time.utils";
   import TextSearchInput from "@21n/elements/input/TextSearchInput.svelte";
@@ -182,11 +187,13 @@
   }
 
   function objectiveSearchCallback(query: string) {
-    return datafn.objective.query({
-      select: ["*", "parent.*"],
-      search: query ? { query, fields: ["label"] } : undefined,
-      limit: 30
-    }).then((result) => result.data);
+    return datafn.objective
+      .query({
+        select: ["*", "parent.*"],
+        search: query ? { query, fields: ["label"] } : undefined,
+        limit: 30
+      })
+      .then((result) => result.data);
   }
 
   async function onObjectiveSelect(e: CustomEvent<{ item: IObjectiveThumb }>) {
@@ -238,9 +245,9 @@
   function onClose() {
     if (accessPoint === ResourceAccessPoint.OBJECTIVE) {
       if (accessPointId)
-        appStore.toggleSearchParamRecordSpecific(accessPointId, ["task"]);
+        navigation.toggleSearchParamRecordSpecific(accessPointId, ["task"]);
     } else {
-      appStore.closeResource({
+      navigation.closeResource({
         accessMode: accessMode
       });
     }
@@ -339,7 +346,7 @@
         {#if isCurrentlyFocusing}
           <button
             onclick={() => {
-              appStore.gotoPath(PointronAction.FOCUS);
+              navigation.gotoPath(PointronAction.FOCUS);
             }}
             class="flex items-center gap-1 text-b3 text-aps1"
           >
@@ -374,7 +381,7 @@
                 id: id.toString(),
                 context: accessPoint
               });
-              appStore.closeResource({
+              navigation.closeResource({
                 accessMode: accessMode
               });
             }}

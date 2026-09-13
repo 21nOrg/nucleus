@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import PageError from "@nucleum/application/error/PageError.svelte";
   import { appStore } from "@nucleum/stores/app.store";
   import { Product } from "@nucleum/client/config/product.type";
@@ -19,7 +21,7 @@
           icon: "sparkle",
           variant: ButtonVariant.PRIMARY,
           callback: async () => {
-            appStore.runAction(Action.USER_PLAN);
+            requireCommandHost().runAction(Action.USER_PLAN);
           }
         }
       ];

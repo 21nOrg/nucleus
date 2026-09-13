@@ -1,8 +1,10 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Button from "@21n/elements/button/Button.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Size } from "@21n/elements/size.enum";
   let {
     item,
@@ -15,7 +17,7 @@
     isShowLabel?: boolean;
     onClick?: (event: MouseEvent) => void;
   } = $props();
-  let component = appStore.resolveAction(item);
+  let component = requireCommandHost().resolveAction(item);
 </script>
 
 <div class="flex items-center gap-1">

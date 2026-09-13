@@ -1,10 +1,13 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import type { Snippet } from "svelte";
   import Button from "@21n/elements/button/Button.svelte";
   import Divider from "@21n/elements/Divider.svelte";
   import ComponentResolver from "@21n/layout/paint/ComponentResolver.svelte";
   import account from "@nucleum/stores/account.store";
-  import { appStore, currentTime } from "@nucleum/stores/app.store";
+  import { currentTime } from "@nucleum/stores/app.store";
   import { userPreferences } from "@nucleum/stores/preferences/user-preferences.store";
   import { uiState } from "@nucleum/stores/uiState/uiState.store";
   import view from "@nucleum/stores/view.store";
@@ -26,7 +29,7 @@
   import { onMount } from "svelte";
   import { tabs } from "@21n/layout/topNav/tabs/tabs.store";
   import type { IRecordId } from "@nucleum/schema/legacy/data.type";
-  import { UIState, UIStateScope } from "@nucleum/stores/uiState/uiState.type";
+  import { UIStateScope } from "@nucleum/stores/uiState/uiState.type";
   let { children }: { children?: Snippet } = $props();
   let isInFocusMode = false;
   let pinnedItems = $state<IRecordId[]>(tabs.get() ?? []);
@@ -56,7 +59,7 @@
       {activeTab}
       onHome={(value) => {
         isCmdHome = value;
-        if (isCmdHome) appStore.toggleSearchParam([AccessMode.TAB]);
+        if (isCmdHome) navigation.toggleSearchParam([AccessMode.TAB]);
       }}
     />
   </div>
@@ -75,7 +78,7 @@
         <button
           class="flex flex-col gap-1 items-start"
           onclick={() => {
-            appStore.runAction(Action.SETTINGS);
+            requireCommandHost().runAction(Action.SETTINGS);
           }}
         >
           <div class="text-xl text-fgs2 userdata">

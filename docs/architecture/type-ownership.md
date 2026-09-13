@@ -10,6 +10,12 @@ Schema owns cross-layer account, subscription, and legacy persistence wire contr
 
 The global client/types and shared/types packages are retired, without replacement catch-all packages or compatibility exports. Splits use direct imports to the actual owner. Billing presentation fields remain in application/subscription; wire enums and billing data belong to schema/account. Store interfaces are separated from legacy mutation/filter wire contracts. Markdown validation and responsive text truncation leave shared utilities for their frontend owners.
 
+## Current ownership follow-up
+
+Product menu contracts now live in `client/layout/navigation/app-menu.type.ts`. The inventory retains original paths as baseline provenance and updates destinations for current ownership. The unused `@nucleum/cx` workspace and active aliases are removed; historical manifest snapshots are retained as evidence. `@nucleum/client` is a registered private source workspace and is not an independently publishable build.
+
+The following migration checklist and audit evidence describe the TIDY-478 baseline. Current application, navigation, account, file, and command ownership is described in `client-boundaries.md`.
+
 ## Execution checklist
 
 - [x] Inventory first-party declarations, imports, packages, aliases, and generated modules.
@@ -24,7 +30,7 @@ The inventory records every discovered module, its declarations and consumers, o
 
 ## Audit evidence and retained contracts
 
-[type-ownership-inventory.json](type-ownership-inventory.json) records all 383 baseline type modules (1,168 declarations), their consumers and explicit dispositions, all 41 package manifests including nested deployment packages, and 462 exported constants. The baseline is commit `32154c37`; destinations reflect this migration. Embedded types remain beside their implementation. Packages without type declarations were audited for exports and dependencies too. Source aliases are build-time paths; `@nucleum/client` is an existing source alias, not a publishable workspace.
+[type-ownership-inventory.json](type-ownership-inventory.json) records all 383 baseline type modules (1,168 declarations), their consumers and explicit dispositions, all 41 package manifests including nested deployment packages, and 462 exported constants. The baseline is commit `32154c37`; destinations reflect this migration. Embedded types remain beside their implementation. Packages without type declarations were audited for exports and dependencies too. Source aliases are build-time paths; `@nucleum/client` is a private source workspace, not an independently publishable package.
 
 - `schema/account` owns profile and subscription wire data. `EmailParts` has one definition. `IPlan` is an application presentation model. The Apple verification response now has one source in the payment provider.
 - `schema/legacy` owns the existing Surreal mutation, query, sync, resource-action and store-data encodings. The store-data enum is shared with query generation; Svelte observable interfaces remain in DataFn. Legacy contracts are not derived from modern database rows because their date unions and projected fields differ.

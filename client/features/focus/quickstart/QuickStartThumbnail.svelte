@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import {
     activeSession,
     currentFocusItem
@@ -17,7 +19,7 @@
   import type { IObjectiveThumb } from "@nucleum/features/focus/goals/goal.type";
   import { hoverable } from "@nucleum/actions/hover.action";
   import { isSameResource } from "@nucleum/datafn/resource.utils";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { AccessMode } from "@nucleum/datafn/resource.type";
   import context from "@nucleum/stores/context.store";
   import { datafn } from "@nucleum/datafn/datafn.store";
@@ -68,7 +70,7 @@
 
   async function toggleSession(e: MouseEvent) {
     if (isInEditMode || e.altKey) {
-      appStore.openResource(item.id, AccessMode.POP);
+      navigation.openResource(item.id, AccessMode.POP);
       return;
     }
     if (isActive) {
@@ -99,7 +101,7 @@
 
   function onTitleClick(e: MouseEvent) {
     if (!$context.isEmbed) {
-      appStore.openResource(item.id, AccessMode.POP);
+      navigation.openResource(item.id, AccessMode.POP);
       e.stopPropagation();
     }
   }

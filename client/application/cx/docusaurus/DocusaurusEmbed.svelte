@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import Button from "@21n/elements/button/Button.svelte";
   import { appStore } from "@nucleum/stores/app.store";
   import { ButtonStyle, ButtonVariant } from "@21n/elements/button/button.type";
@@ -29,7 +31,7 @@
       type={ButtonVariant.PRIMARY}
       style={ButtonStyle.OUTLINED}
       onclick={() => {
-        appStore.openLink(url);
+        navigation.openLink(url);
       }}
     />
   </div>

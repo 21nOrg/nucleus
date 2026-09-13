@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { onMount } from "svelte";
   import Icon from "@21n/elements/Icon.svelte";
   import EmptyStatusView from "@21n/elements/feedback/EmptyStatusView.svelte";
@@ -12,7 +14,7 @@
   import DatePicker from "@21n/elements/datetime/DatePicker.svelte";
   import LogThumbnailItem from "@nucleum/features/focus/logs/LogThumbnailItem.svelte";
   import DaySummaryPart from "@nucleum/features/focus/logs/daySummary/DaySummaryPart.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import ScrollView from "@21n/layout/scrollView/ScrollView.svelte";
   import type {
     DaySummary,
@@ -130,7 +132,7 @@
             isLast={index === sessions.length - 1}
             onclick={() => {
               if (context === "journal") {
-                appStore.openResource(session.id, AccessMode.POP);
+                navigation.openResource(session.id, AccessMode.POP);
                 return;
               }
               selectedId = session.id;

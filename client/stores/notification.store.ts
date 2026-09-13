@@ -1,80 +1,21 @@
-import { get, writable } from "svelte/store";
+import { appEvents } from "@nucleum/stores/events/app-events.store";
+
+import { writable } from "svelte/store";
 import {
   AlertType,
   type ConfirmationNotification,
-  type ScheduledNotification,
   type Toast,
   type InlineToast
 } from "@nucleum/stores/notifications/notification.type";
-import { postMessageToParent } from "@nucleum/client/runtime/embed/embed.utils";
-import { EmbedMessage } from "@nucleum/client/runtime/embed/embedMessage.enum";
+
 import { GlobalEvent } from "@nucleum/stores/notifications/event.enum";
-import type { IEvent } from "@21n/elements/input/event.type";
-import type { Event } from "@nucleum/stores/notifications/event.enum";
-import { ObservableStore } from "@nucleum/stores/client.store";
+
 import { logger } from "@nucleum/client/runtime/logging/logger";
 import { generateSimpleRandomId } from "@21n/shared-utils/crypto.utils";
 import { ErrorMessage } from "@nucleum/stores/notifications/error.enum";
 import { dispatchCustomEvent } from "@21n/utils/browser.utils";
 
 export const toastDefaultDuration = 3500;
-class AppEventStore extends ObservableStore<IEvent> {
-  constructor() {
-    super("appEvents");
-    this.reset();
-  }
-  reset() {
-    this.set({ event: GlobalEvent.NONE, value: false });
-  }
-  publish(m: Event, value: any = undefined) {
-    this.update((n: IEvent) => {
-      return { event: m, value };
-    });
-    this.reset();
-    if (typeof window !== "undefined") {
-      dispatchCustomEvent(GlobalEvent.EVENT, {
-        event: m,
-        value
-      });
-    }
-  }
-
-  nav(path: string) {
-    this.publish(GlobalEvent.NAV, { path });
-  }
-}
-
-export const appEvents = new AppEventStore();
-
-export const scheduledNotifications = initScheduledNotificationStore();
-
-function initScheduledNotificationStore() {
-  const { subscribe, set, update } = writable<ScheduledNotification[]>([]);
-  return {
-    subscribe,
-    set: (m: ScheduledNotification[]) => {
-      set(m);
-    },
-    reset: () => {
-      update(() => {
-        return [];
-      });
-      postMessageToParent(EmbedMessage.CLEAR_NOTIFICATIONS);
-    },
-    notify: (event: ScheduledNotification[]) => {
-      update((n: ScheduledNotification[]) => {
-        return event;
-      });
-    },
-    push: (event: ScheduledNotification) => {
-      update((n: ScheduledNotification[]) => {
-        n.push(event);
-        return n;
-      });
-    }
-  };
-}
-
 export const toasts = initToastStore();
 
 function initToastStore() {
@@ -96,18 +37,13 @@ function initToastStore() {
       return n;
     });
     if (isAlreadyPresent || event.type === AlertType.PROGRESS) return;
-    // if (get(view).isPortrait) {
-    //   appStore.runAction(Action.MOBILE_TOAST, {
-    //     componentParams: { id: event.id }
-    //   });
-    // } else {
+
     timer = setTimeout(() => {
       update((n: Toast[]) => {
         n.shift();
         return n;
       });
     }, toastDefaultDuration);
-    // }
   };
   const setProgress = (progress: number) => {
     update((n: Toast[]) => {

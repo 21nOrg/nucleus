@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Button from "@21n/elements/button/Button.svelte";
   import PanelSwitcher from "@21n/elements/switcher/PanelSwitcher.svelte";
   import Text from "@21n/elements/text/Text.svelte";
@@ -140,7 +142,7 @@
                 icon="pencil-square"
                 style={ButtonStyle.OUTLINED}
                 onclick={() =>
-                  appStore.runAction(
+                  requireCommandHost().runAction(
                     PointronAction.ANALYTICS_VIEWS_PAGE_EDIT_MOBILE
                   )}
               >

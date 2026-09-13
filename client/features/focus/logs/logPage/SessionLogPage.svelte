@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Markdown from "@nucleum/features/memory/markdown/Markdown.svelte";
   import EmptyStatusView from "@21n/elements/feedback/EmptyStatusView.svelte";
   import { Size } from "@21n/elements/size.enum";
@@ -16,7 +19,7 @@
   import { ButtonStyle, ButtonVariant } from "@21n/elements/button/button.type";
   import { PointronAction } from "@nucleum/client/config/focus-action.enum";
   import FocusItem from "@nucleum/features/focus/elements/focusitem/FocusItem.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { userPreferences } from "@nucleum/stores/preferences/user-preferences.store";
   import {
     formatDatetime,
@@ -96,7 +99,7 @@
             icon="cross"
             style={ButtonStyle.OUTLINED}
             tooltip="Close"
-            onclick={() => appStore.closeResource({ accessMode })}
+            onclick={() => navigation.closeResource({ accessMode })}
           />
         {/if}
       </div>
@@ -189,7 +192,7 @@
         icon: "trash",
         variant: ButtonVariant.DANGER,
         callback: async () => {
-          appStore.runAction(PointronAction.DELETE_SESSION, {
+          requireCommandHost().runAction(PointronAction.DELETE_SESSION, {
             componentParams: { id }
           });
         }
@@ -197,7 +200,7 @@
       secondaryAction={{
         label: "Close",
         icon: "cross",
-        callback: async () => appStore.closeResource({ accessMode })
+        callback: async () => navigation.closeResource({ accessMode })
       }}
     />
   </div>

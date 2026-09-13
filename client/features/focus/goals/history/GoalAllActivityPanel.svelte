@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { get } from "svelte/store";
   import type { DatafnChangelogEntry } from "@datafn/client";
   import { isValidArrayWithData } from "@21n/shared-utils/obj.utils";
@@ -13,7 +15,7 @@
   } from "@nucleum/features/focus/logs/log.type";
   import { isSameResource } from "@nucleum/datafn/resource.utils";
   import { formatSeconds } from "@21n/utils/time.utils";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { AccessMode } from "@nucleum/datafn/resource.type";
   import { cn } from "@21n/utils/ui.utils";
   import { datafn, datafnRuntime } from "@nucleum/datafn/datafn.store";
@@ -151,7 +153,10 @@
     }
   }
 
-  function isObjectiveMutation(entry: DatafnChangelogEntry, objectiveId: string) {
+  function isObjectiveMutation(
+    entry: DatafnChangelogEntry,
+    objectiveId: string
+  ) {
     const mutation = entry.mutation;
     if (mutation.resource !== Resource.objective) return false;
     const mutationIds = Array.isArray(mutation.id)
@@ -208,7 +213,7 @@
           })}
           onclick={() => {
             if (accessLog.type === "focus" && accessLog.session?.id) {
-              appStore.openResource(accessLog.session.id, AccessMode.POP, {
+              navigation.openResource(accessLog.session.id, AccessMode.POP, {
                 origin: objectiveId
               });
             }

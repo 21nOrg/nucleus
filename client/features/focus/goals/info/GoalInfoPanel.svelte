@@ -1,8 +1,10 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { type IActiveObjectiveStore } from "@nucleum/features/focus/goals/goal.store";
   import ObjectiveCollectionsRow from "@nucleum/features/focus/goals/GoalCollectionsRow.svelte";
   import Markdown from "@nucleum/features/memory/markdown/Markdown.svelte";
-  import ObjectiveTitleRow from "@nucleum/features/focus/goals/info/GoalTitleRow.svelte";
+
   import ObjectiveStatusSwitcher from "@nucleum/features/focus/goals/status/GoalStatusSwitcher.svelte";
   import {
     ObjectiveStatus,
@@ -17,8 +19,7 @@
   } from "@nucleum/features/focus/session.store";
   import { isEmptyMd } from "@nucleum/features/memory/markdown/markdown.utils";
   import ObjectiveInfoEditControl from "@nucleum/features/focus/goals/info/GoalInfoEditControl.svelte";
-  import Icon from "@21n/elements/Icon.svelte";
-  import { Size } from "@21n/elements/size.enum";
+
   import { formatDatetime } from "@21n/utils/time.utils";
   import { userPreferences } from "@nucleum/stores/preferences/user-preferences.store";
   import PropertiesPane from "@nucleum/features/collections/properties/PropertiesPane.svelte";
@@ -29,8 +30,11 @@
   import FocusPlayerTimeText from "@nucleum/features/focus/player/FocusPlayerTimeText.svelte";
   import InlineInfoBanner from "@21n/elements/text/InlineInfoBanner.svelte";
   import InlineFeedbackText from "@nucleum/extensions/clipper/InlineFeedbackText.svelte";
-  import { AlertType, type IInlineStatus } from "@nucleum/stores/notifications/notification.type";
-  import { appStore } from "@nucleum/stores/app.store";
+  import {
+    AlertType,
+    type IInlineStatus
+  } from "@nucleum/stores/notifications/notification.type";
+
   import { PointronAction } from "@nucleum/client/config/focus-action.enum";
 
   let {
@@ -119,7 +123,7 @@
     <button
       class="flex items-center w-full justify-between gap-4 border border-brs3 p-3 rounded-md hover:bg-bgs2"
       onclick={() => {
-        appStore.runAction(PointronAction.FOCUS);
+        requireCommandHost().runAction(PointronAction.FOCUS);
       }}
     >
       <FocusPlayerTimeText context={SessionUIContext.OBJECTIVE_PAGE} />
@@ -129,7 +133,10 @@
   {#if !$objective.isInEditMode}
     <div class="flex flex-col gap-1">
       <span class="text-b2 text-fgs3">Status</span>
-      <ObjectiveStatusSwitcher status={$objective.status} onChange={handleStatusChange} />
+      <ObjectiveStatusSwitcher
+        status={$objective.status}
+        onChange={handleStatusChange}
+      />
     </div>
     {#if $objective.status === ObjectiveStatus.COMPLETED}
       <InlineInfoBanner

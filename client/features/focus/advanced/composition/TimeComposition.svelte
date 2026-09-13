@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { activeSession } from "@nucleum/features/focus/session.store";
   import Slider from "@nucleum/features/focus/advanced/slider/Slider.svelte";
   import Button from "@21n/elements/button/Button.svelte";
@@ -19,12 +21,9 @@
   } from "@nucleum/features/focus/sessionComposition.type";
   import Icon from "@21n/elements/Icon.svelte";
   import ComposeTotalsText from "@nucleum/features/focus/advanced/composition/ComposeTotalsText.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { userPreferences } from "@nucleum/stores/preferences/user-preferences.store";
-  import {
-    UIState,
-    UIStateScope
-  } from "@nucleum/stores/uiState/uiState.type";
+  import { UIState, UIStateScope } from "@nucleum/stores/uiState/uiState.type";
   import { uiState } from "@nucleum/stores/uiState/uiState.store";
   import { deepCopy } from "@21n/shared-utils/obj.utils";
   import { logger } from "@nucleum/client/runtime/logging/logger";
@@ -50,9 +49,7 @@
     selectedDynamicDuration = Number(event.detail.value);
     activeSession.onSliderDurationChange(selectedDynamicDuration);
   }
-  async function onCompositionChanges(
-    event?: CustomEvent<SessionComposition>
-  ) {
+  async function onCompositionChanges(event?: CustomEvent<SessionComposition>) {
     compositionDraft = event?.detail ?? compositionDraft;
     advancedCompositionDraft.set(deepCopy(compositionDraft));
     logger.log({
@@ -104,10 +101,7 @@
 >
   {#if !isSliderVariant}
     <div class="flex flex-col items-center w-full gap-4 dp:gap-8">
-      <ComposeTotalsText
-        composition={visibleComposition}
-        {parentBgIndex}
-      />
+      <ComposeTotalsText composition={visibleComposition} {parentBgIndex} />
     </div>
     {#if visibleComposition.type === SessionCompositionType.END_TIME_FIXED}
       <div
@@ -166,7 +160,9 @@
                 size={Size.xs}
                 parentBgIndex={2}
                 onclick={() => {
-                  appStore.runAction(PointronAction.COMPOSE_TIME_MODAL);
+                  requireCommandHost().runAction(
+                    PointronAction.COMPOSE_TIME_MODAL
+                  );
                 }}
               />
             </div>

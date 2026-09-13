@@ -1,16 +1,21 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { retrieveUrlData } from "@nucleum/features/memory/capture/url-data";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { userPreferences } from "@nucleum/stores/preferences/user-preferences.store";
   import { formatDatetime } from "@21n/utils/time.utils";
   import { getContext, onMount } from "svelte";
   import { resolveContentPreview } from "@nucleum/features/memory/node/node.utils";
-  import { socialPostNodeTypeList, socialProfileWithImageUnavailable } from "@nucleum/features/memory/node/node.type";
-import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
+  import {
+    socialPostNodeTypeList,
+    socialProfileWithImageUnavailable
+  } from "@nucleum/features/memory/node/node.type";
+  import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import type { INode } from "@nucleum/features/memory/node/node.type";
-  import InlineInfoBanner from "@21n/elements/text/InlineInfoBanner.svelte";
+
   import { ResourceAccessPoint } from "@nucleum/datafn/resource.type";
-  import { InfoTextType } from "@21n/elements/text/info.type";
+
   import { parse } from "@21n/shared-utils/json.utils";
   import Button from "@21n/elements/button/Button.svelte";
   import { ButtonStyle } from "@21n/elements/button/button.type";
@@ -180,7 +185,7 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
     onclick={(event) => {
       event.stopPropagation();
       if (node.url) {
-        appStore.openLink(node.url);
+        navigation.openLink(node.url);
       }
     }}
   >

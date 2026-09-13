@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { AccessMode } from "@nucleum/datafn/resource.type";
   import Icon from "@21n/elements/Icon.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Action } from "@nucleum/client/config/action.enum";
   import { AppSearchParam } from "@nucleum/stores/appStore.type";
   import { TimeFormat } from "@21n/utils/time.type";
@@ -23,7 +25,7 @@
 <button
   class="flex flex-col items-center h-48 w-48 rounded-xl bg-bgs2 hover:bg-bgs3-striped overflow-hidden flex-1 min-w-48"
   onclick={() => {
-    appStore.openResource(Action.CALENDAR_DAY, AccessMode.POP, {
+    navigation.openResource(Action.CALENDAR_DAY, AccessMode.POP, {
       searchParams: { [AppSearchParam.DATE]: date.toISOString() }
     });
   }}

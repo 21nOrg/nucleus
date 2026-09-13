@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import EmptyStatusView from "@21n/elements/feedback/EmptyStatusView.svelte";
   import Text from "@21n/elements/text/Text.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Size } from "@21n/elements/size.enum";
   import { TextStyle } from "@21n/elements/text/text.enum";
   import { isValidArrayWithData } from "@21n/shared-utils/obj.utils";
@@ -25,7 +27,7 @@
       subText="Set targets to see them here"
       actionText="Set targets"
       onclick={() => {
-        appStore.gotoPath("/cp/targets");
+        navigation.gotoPath("/cp/targets");
       }}
     />
   {/if}

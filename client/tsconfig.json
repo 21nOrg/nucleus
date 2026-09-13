@@ -385,26 +385,6 @@
       "@21n/icons-v2/*": [
         "./iconsV2/*"
       ],
-      "@nucleum/cx": [
-        "./cx/index.ts",
-        "./cx/index.tsx",
-        "./cx/index.js",
-        "./cx/index.mjs",
-        "./cx/index.cjs",
-        "./cx/index.svelte",
-        "./cx/index.d.ts",
-        "./cx/src/index.ts",
-        "./cx/src/index.tsx",
-        "./cx/src/index.js",
-        "./cx/src/index.mjs",
-        "./cx/src/index.cjs",
-        "./cx/src/index.svelte",
-        "./cx/src/index.d.ts",
-        "./cx"
-      ],
-      "@nucleum/cx/*": [
-        "./cx/*"
-      ],
       "@nucleum/client": [
         "./index.ts",
         "./index.tsx",

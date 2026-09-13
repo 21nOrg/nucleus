@@ -1,3 +1,6 @@
+import { navigation } from "@21n/layout/navigation/navigation";
+import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+import { sidebarState } from "@21n/layout/leftPanel/sidebar-state";
 import {
   type IAction,
   type IActionFnParams,
@@ -12,7 +15,7 @@ import ToastModalPortrait from "@21n/elements/feedback/ToastModalPortrait.svelte
 import CommandBar from "@nucleum/application/commandBar/CommandBar.svelte";
 import { Size } from "@21n/elements/size.enum";
 import { Orientation, Placement } from "@21n/elements/direction.enum";
-import { appStore, intercomId, isInEditMode } from "@nucleum/stores/app.store";
+import { intercomId, isInEditMode } from "@nucleum/stores/app.store";
 import Help from "@nucleum/application/help/Help.svelte";
 import ExtensionLoginStatusPage from "@nucleum/application/settings/ExtensionLoginStatusPage.svelte";
 import DebugPage from "@21n/layout/layers/debug/DebugPage.svelte";
@@ -21,18 +24,20 @@ import { Action } from "@nucleum/client/config/action.enum";
 import Bootstrap from "@nucleum/application/settings/account/Bootstrap.svelte";
 import Calendar from "@nucleum/features/calendar/Calendar.svelte";
 import { GlobalEvent } from "@nucleum/stores/notifications/event.enum";
-import { uiState } from "@nucleum/stores/uiState/uiState.store";
+
 import BookACall from "@nucleum/application/cx/BookACall.svelte";
 import MdShortcuts from "@nucleum/features/memory/markdown/shortcuts/MdShortcuts.svelte";
 import CoverPicker from "@21n/elements/coverPicker/CoverPicker.svelte";
 import SignalDBViewer from "@nucleum/application/debug/SignalDBViewer.svelte";
 import CalendarSettings from "@nucleum/features/calendar/settings/CalendarSettings.svelte";
 import { Embed } from "@nucleum/client/runtime/context.type";
-import { AccessMode, type IMultiSelectStore } from "@nucleum/datafn/resource.type";
+import {
+  AccessMode,
+  type IMultiSelectStore
+} from "@nucleum/datafn/resource.type";
 import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
 import {
   determineResourceType,
-  resolveResourceIcon,
   resourceAction
 } from "@nucleum/datafn/resource.utils";
 import { Resource } from "@nucleum/datafn/resource.enum";
@@ -169,9 +174,9 @@ export const globalActions: IAction[] = [
         params?.context?.embed === Embed.HANDSET ||
         params?.context?.embed === Embed.TABLET
       ) {
-        appStore.runAction(Action.DOCS + "mobile");
+        requireCommandHost().runAction(Action.DOCS + "mobile");
       } else {
-        appStore.runAction(Action.DOCS + "docusaurus");
+        requireCommandHost().runAction(Action.DOCS + "docusaurus");
       }
     }
   },
@@ -353,7 +358,7 @@ export const globalActions: IAction[] = [
     },
     icon: "lock",
     type: ActionType.LINK,
-    // contentType: ContentType.SPACE_DOC,
+
     modalParams: {
       title: "Privacy policy",
       layout: {
@@ -459,7 +464,7 @@ export const globalActions: IAction[] = [
     type: ActionType.FUNCTION,
     label: "Toggle sidebar",
     fn: async () => {
-      uiState.toggleSidebar();
+      sidebarState.toggleSidebar();
     }
   },
   {
@@ -559,7 +564,7 @@ export const globalActions: IAction[] = [
     isMeta: true,
     type: ActionType.FUNCTION,
     fn: async () => {
-      appStore.goBack();
+      navigation.goBack();
     }
   },
   {
@@ -568,7 +573,7 @@ export const globalActions: IAction[] = [
     isMeta: true,
     type: ActionType.FUNCTION,
     fn: async () => {
-      appStore.goForward();
+      navigation.goForward();
     }
   },
   {
@@ -819,7 +824,7 @@ export const globalActions: IAction[] = [
           icon: "sparkle",
           variant: ButtonVariant.PRIMARY,
           callback: async () => {
-            appStore.runAction(Action.USER_PLAN);
+            requireCommandHost().runAction(Action.USER_PLAN);
           }
         },
         secondaryAction: {
@@ -970,7 +975,7 @@ export const globalActions: IAction[] = [
     action: Action.GLOBAL_SEARCH_MODAL,
     component: ResourceSearchModal,
     label: "Search",
-    // type: ActionType.MODAL,
+
     type: ActionType.RESOURCE,
     accessMode: AccessMode.POP,
     preCondition: () => {
@@ -1096,12 +1101,15 @@ export const globalActions: IAction[] = [
     type: ActionType.FUNCTION,
     fn: async (params?: IActionFnParams) => {
       const resource = params?.componentParams?.resource;
-      appStore.runAction(resourceAction(resource, ResourceActionType.BROWSE), {
-        searchParams: {
-          [AppSearchParam.RETURN_TO]:
-            params?.componentParams?.[AppSearchParam.RETURN_TO] ?? "home"
+      requireCommandHost().runAction(
+        resourceAction(resource, ResourceActionType.BROWSE),
+        {
+          searchParams: {
+            [AppSearchParam.RETURN_TO]:
+              params?.componentParams?.[AppSearchParam.RETURN_TO] ?? "home"
+          }
         }
-      });
+      );
     }
   },
   {

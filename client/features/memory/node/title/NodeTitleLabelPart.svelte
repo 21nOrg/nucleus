@@ -1,15 +1,21 @@
 <script lang="ts">
-  import { headingNodeTypes, type INode, type INodeThumb } from "@nucleum/features/memory/node/node.type";
-import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
+  import { navigation } from "@21n/layout/navigation/navigation";
+
+  import {
+    headingNodeTypes,
+    type INode,
+    type INodeThumb
+  } from "@nucleum/features/memory/node/node.type";
+  import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import { renderMdAsHtml } from "@21n/elements/markdown/markdown.utils";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { cn } from "@21n/utils/ui.utils";
   import {
     AccessMode,
     ResourceAccessPoint
   } from "@nucleum/datafn/resource.type";
   import NodeAvatar from "@nucleum/features/memory/node/avatar/NodeAvatar.svelte";
-  import { Size } from "@21n/elements/size.enum";
+
   import { resolveNodeLabel } from "@nucleum/features/memory/node/node.utils";
   import NodeTitleBreadcrumbs from "@nucleum/features/memory/node/title/NodeTitleBreadcrumbs.svelte";
   import { isValidString } from "@21n/shared-utils/text.utils";
@@ -63,7 +69,7 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
       accessPoint === ResourceAccessPoint.SEARCH_RESULT
     )
       return;
-    appStore.resourceClickHandler(e, labelObject.parent.id, {
+    navigation.resourceClickHandler(e, labelObject.parent.id, {
       replaceId: accessPoint === ResourceAccessPoint.SELF ? item.id : undefined,
       defaultTo: AccessMode.POP
     });

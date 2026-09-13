@@ -1,6 +1,8 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import "@nucleum/application/composition/resource-hosts";
   import type { Snippet } from "svelte";
   import { onMount, onDestroy, setContext } from "svelte";
@@ -14,7 +16,10 @@
     OperatingSystem,
     type IAppContext
   } from "@nucleum/client/runtime/context.type";
-  import { pingParent, postDataToParent } from "@nucleum/client/runtime/embed/embed.utils";
+  import {
+    pingParent,
+    postDataToParent
+  } from "@nucleum/client/runtime/embed/embed.utils";
   import account from "@nucleum/stores/account.store";
   import { appStore, currentTime } from "@nucleum/stores/app.store";
   import { toasts } from "@nucleum/stores/notification.store";
@@ -25,7 +30,10 @@
   import { AlertType } from "@nucleum/stores/notifications/notification.type";
   import { logger } from "@nucleum/client/runtime/logging/logger";
   import { LogType } from "@nucleum/client/runtime/logging/log.type";
-  import { clientStorage, getDapId } from "@nucleum/persistence/persistence.utils";
+  import {
+    clientStorage,
+    getDapId
+  } from "@nucleum/persistence/persistence.utils";
   import { ClientStorageKey } from "@nucleum/persistence/persistence.type";
   import { cn } from "@21n/utils/ui.utils";
   import appearance from "@nucleum/stores/appearance.store";
@@ -38,7 +46,10 @@
   import { updateNucleumDatafnConnectivity } from "@nucleum/datafn/datafn.store";
   import { parse } from "@21n/shared-utils/json.utils";
   import { productData } from "@nucleum/products/product.resolver";
-  import { product, resolveProductConfig } from "@nucleum/products/product.config";
+  import {
+    product,
+    resolveProductConfig
+  } from "@nucleum/products/product.config";
   import view from "@nucleum/stores/view.store";
   import { initDevLogCapture } from "@nucleum/application/debug/devLogCapture";
 
@@ -82,7 +93,7 @@
     await setLaunchContext();
     initActions();
     runCurrentTime();
-    appStore.setCurrentPath(window.location.pathname);
+    navigation.setCurrentPath(window.location.pathname);
     initializeServiceWorker();
     await checkForEnvironmentChange();
     function runCurrentTime() {
@@ -450,7 +461,7 @@
   }
 
   function handleToggleSearchParam(event: any) {
-    appStore.toggleSearchParam(event.detail);
+    navigation.toggleSearchParam(event.detail);
   }
 
   async function updateOnlineStatus() {
@@ -494,7 +505,7 @@
     view.refresh(window.innerWidth, window.innerHeight);
     const hasOrientationChanged = updateOrientationClasses();
     if (hasOrientationChanged) {
-      appStore.gotoPath("/");
+      navigation.gotoPath("/");
     }
   };
 
@@ -502,7 +513,7 @@
     setTimeout(() => {
       view.refresh(window.innerWidth, window.innerHeight);
       updateOrientationClasses();
-      appStore.gotoPath("/");
+      navigation.gotoPath("/");
     }, 100);
   };
 
@@ -520,7 +531,7 @@
       handleToggleSearchParam
     );
     window.onpopstate = () => {
-      appStore.setCurrentPath(document.location.pathname);
+      navigation.setCurrentPath(document.location.pathname);
     };
     window.addEventListener("online", updateOnlineStatus);
     window.addEventListener("offline", updateOnlineStatus);
@@ -600,7 +611,7 @@
   function handlePlaceholderClick(event: Event) {
     const target = event.target as HTMLElement | null;
     if (target?.tagName === "PLACEHOLDER" && target.dataset?.href) {
-      appStore.openLink(target.dataset.href);
+      navigation.openLink(target.dataset.href);
     }
   }
   onDestroy(() => {

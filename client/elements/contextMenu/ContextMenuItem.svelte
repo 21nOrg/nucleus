@@ -1,10 +1,15 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { cn } from "@21n/utils/ui.utils";
   import { Size } from "@21n/elements/size.enum";
-  import { ContextMenuType, type IContextMenuItem } from "@21n/elements/contextMenu/context-menu.type";
+  import {
+    ContextMenuType,
+    type IContextMenuItem
+  } from "@21n/elements/contextMenu/context-menu.type";
   import ContextMenuItemBase from "@21n/elements/contextMenu/ContextMenuItemBase.svelte";
   import ContextMenuItemWithSecondary from "@21n/elements/contextMenu/ContextMenuItemWithSecondary.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import ContextMenuToggleItem from "@21n/elements/contextMenu/ContextMenuToggleItem.svelte";
   let {
     item,
@@ -72,7 +77,7 @@
         return;
       }
       if (item.callback) item.callback();
-      else if (item.action) appStore.runAction(item.action);
+      else if (item.action) requireCommandHost().runAction(item.action);
       emitSelect();
       e.stopPropagation();
     }}

@@ -1,10 +1,12 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-  import { appStore } from "@nucleum/stores/app.store";
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { isTextElement } from "@21n/utils/browser.utils";
   import { keyboardShortcuts } from "@nucleum/stores/keyboard/shortcuts.store";
-  import { appEvents } from "@nucleum/stores/notification.store";
+  import { appEvents } from "@nucleum/stores/events/app-events.store";
   import { GlobalEvent } from "@nucleum/stores/notifications/event.enum";
   import { KeyboardKey } from "@21n/elements/keyboard/keyboard.type";
   import { logger } from "@nucleum/client/runtime/logging/logger";
@@ -60,11 +62,11 @@
       interactionMode === InteractionMode.AGENT &&
       shortcut.action === Action.CMD
     ) {
-      appStore.toggleSearchParam([AccessMode.TAB]);
+      navigation.toggleSearchParam([AccessMode.TAB]);
       event.preventDefault();
       return;
     }
-    appStore.runAction(shortcut.action);
+    requireCommandHost().runAction(shortcut.action);
     event.stopPropagation();
     event.preventDefault();
   };

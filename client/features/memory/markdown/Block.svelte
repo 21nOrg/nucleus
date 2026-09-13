@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import {
     BlockAction,
     type IBlock,
@@ -11,8 +13,18 @@
   import BlockContent from "@nucleum/features/memory/markdown/content/BlockContent.svelte";
   import LeftControls from "@nucleum/features/memory/markdown/contextMenu/LeftControls.svelte";
   import type { MdStoreType } from "@nucleum/features/memory/markdown/markdown.store";
-  import { embedNodeTypeList, headingNodeTypes, mediaNodeTypeList, type StructuralNodeType, structuralNodeTypes, simpleTextNodeTypeList, webNodeTypeList, nonSimpleTextNodeTypeList, listNodeTypes } from "@nucleum/features/memory/node/node.type";
-import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
+  import {
+    embedNodeTypeList,
+    headingNodeTypes,
+    mediaNodeTypeList,
+    type StructuralNodeType,
+    structuralNodeTypes,
+    simpleTextNodeTypeList,
+    webNodeTypeList,
+    nonSimpleTextNodeTypeList,
+    listNodeTypes
+  } from "@nucleum/features/memory/node/node.type";
+  import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import { cn } from "@21n/utils/ui.utils";
   import { setContext } from "svelte";
   import { logger } from "@nucleum/client/runtime/logging/logger";
@@ -27,9 +39,16 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import view from "@nucleum/stores/view.store";
   import type { IRecordId } from "@nucleum/schema/legacy/data.type";
   import { isSameResource } from "@nucleum/datafn/resource.utils";
-  import { resolveDefaultBodyForBlock, textToMdBlocks } from "@nucleum/features/memory/markdown/markdown.utils";
-import { resolvePlainOffsetForMdEnd, resolvePlainText, splitMarkdownAtPlainOffset } from "@21n/elements/markdown/markdown.utils";
-  import { isValidString, truncateString } from "@21n/shared-utils/text.utils";
+  import {
+    resolveDefaultBodyForBlock,
+    textToMdBlocks
+  } from "@nucleum/features/memory/markdown/markdown.utils";
+  import {
+    resolvePlainOffsetForMdEnd,
+    resolvePlainText,
+    splitMarkdownAtPlainOffset
+  } from "@21n/elements/markdown/markdown.utils";
+  import { isValidString } from "@21n/shared-utils/text.utils";
   import Icon from "@21n/elements/Icon.svelte";
   import { fileDrop } from "@nucleum/actions/fileDrop.action";
   import { MAX_FILE_SIZE_MB } from "@nucleum/stores/files/file.constants";
@@ -42,12 +61,11 @@ import { resolvePlainOffsetForMdEnd, resolvePlainText, splitMarkdownAtPlainOffse
   } from "@nucleum/features/memory/capture/capture.utils";
   import Button from "@21n/elements/button/Button.svelte";
   import { Size } from "@21n/elements/size.enum";
-  import { isValidUrl } from "@21n/shared-utils/utils";
+
   import account from "@nucleum/stores/account.store";
-  import { UserDataMode } from "@nucleum/client/runtime/account/account.type";
-  import { Persistence } from "@nucleum/persistence/persistence";
+
   import { wait } from "@21n/shared-utils/wait";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import type { IMultiFileCaptureData } from "@nucleum/features/memory/capture/capture.type";
   import { AlertType } from "@nucleum/stores/notifications/notification.type";
   import FocusRing from "@nucleum/features/memory/markdown/contextMenu/FocusRing.svelte";
@@ -55,13 +73,13 @@ import { resolvePlainOffsetForMdEnd, resolvePlainText, splitMarkdownAtPlainOffse
   import { Placement } from "@21n/elements/direction.enum";
   import { observeAttributes } from "@nucleum/actions/observe.action";
   import context from "@nucleum/stores/context.store";
-  import MarkdownkeyboardToolbar from "@nucleum/features/memory/markdown/toolbar/MarkdownkeyboardToolbar.svelte";
+
   import { rightswipe } from "@nucleum/actions/gestures.action";
   import {
     ActiveCaptureStore,
     type IActiveCaptureStore
   } from "@nucleum/features/memory/capture/capture.store";
-  import Check from "@21n/icons/Check.svelte";
+
   import { Context } from "@nucleum/stores/appStore.type";
   import { datafn } from "@nucleum/datafn/datafn.store";
 
@@ -83,8 +101,7 @@ import { resolvePlainOffsetForMdEnd, resolvePlainText, splitMarkdownAtPlainOffse
     isRearrangeBlockInSelectionMode?: boolean;
     isInSelectionMode?: boolean;
     onNodularize?:
-      | ((event: CustomEvent<{ id: IRecordId }>) => void)
-      | undefined;
+      ((event: CustomEvent<{ id: IRecordId }>) => void) | undefined;
     onPopoverVisibility?: ((event: CustomEvent<any>) => void) | undefined;
     onSelect?: ((event: CustomEvent<void>) => void) | undefined;
   } = $props();
@@ -286,7 +303,7 @@ import { resolvePlainOffsetForMdEnd, resolvePlainText, splitMarkdownAtPlainOffse
     });
     const node = result.data?.[0];
     if (!node || !node.url) return;
-    appStore.openLink(node.url);
+    navigation.openLink(node.url);
   }
 
   function handleBackspaceWithContent() {

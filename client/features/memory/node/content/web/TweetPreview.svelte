@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { retrieveUrlData } from "@nucleum/features/memory/capture/url-data";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { userPreferences } from "@nucleum/stores/preferences/user-preferences.store";
   import { formatDatetime } from "@21n/utils/time.utils";
   import { getContext, onMount } from "svelte";
@@ -55,7 +57,7 @@
   <button
     class="w-full h-full px-4 flex justify-center items-center overflow-y-auto"
     onclick={() => {
-      appStore.openLink(node.url);
+      navigation.openLink(node.url);
     }}
   >
     <TweetPreviewUsingWidget tweetUrl={node.url} />
@@ -68,7 +70,7 @@
       class="flex flex-col gap-5 p-4 hover:bg-bgs2 border border-fgs4 rounded-md mo:w-full w-3/4"
       onclick={(event) => {
         event.stopPropagation();
-        appStore.openLink(node.url);
+        navigation.openLink(node.url);
       }}
     >
       {#if parent}

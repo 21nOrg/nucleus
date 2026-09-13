@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { appStore } from "@nucleum/stores/app.store";
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import LinkSearchResultItem from "@nucleum/features/memory/common/linkbox/LinkSearchResultItem.svelte";
   let { items = [] }: { items?: any[] } = $props();
   function onClick(e: MouseEvent, item: any) {
-    appStore.resourceClickHandler(e, item.id);
+    navigation.resourceClickHandler(e, item.id);
   }
 </script>
 

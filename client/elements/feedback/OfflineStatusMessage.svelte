@@ -1,21 +1,23 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import context from "@nucleum/stores/context.store";
   import account from "@nucleum/stores/account.store";
-  import view from "@nucleum/stores/view.store";
+
   import { UserDataMode } from "@nucleum/client/runtime/account/account.type";
   import Icon from "@21n/elements/Icon.svelte";
   import { Size } from "@21n/elements/size.enum";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Action } from "@nucleum/client/config/action.enum";
 
   let {
-    isIconOnly = false,
+    isIconOnly = false
   }: {
     isIconOnly?: boolean;
   } = $props();
 
   function onClick() {
-    appStore.runAction(Action.OFFLINE_STATUS);
+    requireCommandHost().runAction(Action.OFFLINE_STATUS);
   }
 
   const label = $derived(

@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import ScrollViewBottomSpacer from "@21n/layout/scrollView/ScrollViewBottomSpacer.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import PropertiesListView from "@nucleum/features/collections/properties/PropertiesListView.svelte";
   import type { IActiveNodeStore } from "@nucleum/features/memory/node/node.store";
   import EmptyStatusView from "@21n/elements/feedback/EmptyStatusView.svelte";
@@ -286,7 +288,7 @@
   }
 
   function onEditProperties() {
-    appStore.runAction(
+    requireCommandHost().runAction(
       resourceAction(Resource.property, ResourceActionType.EDIT),
       {
         componentParams: {

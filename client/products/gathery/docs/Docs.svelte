@@ -1,10 +1,13 @@
 <script>
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Autocomplete from "@21n/elements/autocomplete/Autocomplete.svelte";
   import Button from "@21n/elements/button/Button.svelte";
   import PanelSwitcher from "@21n/elements/switcher/PanelSwitcher.svelte";
   import Text from "@21n/elements/text/Text.svelte";
   import NodeThumbnail from "@nucleum/features/memory/node/thumbnail/NodeThumbnail.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { ButtonVariant } from "@21n/elements/button/button.type";
   import { Size } from "@21n/elements/size.enum";
   import { PanelSwitcherStyle } from "@21n/elements/switcher/switcher.enum";
@@ -42,7 +45,7 @@
       size={Size.sm}
       type={ButtonVariant.PRIMARY}
       onclick={() => {
-        appStore.runAction(GatheryEvent.NEW_DOC);
+        requireCommandHost().runAction(GatheryEvent.NEW_DOC);
       }}
     />
   </div>
@@ -60,8 +63,8 @@
           <NodeThumbnail
             item={doc}
             onClick={() => {
-              appStore.toggleSearchParam({ doc: doc.id });
-              appStore.runAction(GatheryEvent.OPEN_DOC, doc);
+              navigation.toggleSearchParam({ doc: doc.id });
+              requireCommandHost().runAction(GatheryEvent.OPEN_DOC, doc);
             }}
           />
         {/each}

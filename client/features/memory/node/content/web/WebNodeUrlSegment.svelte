@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import type { IContextMenu } from "@21n/elements/contextMenu/context-menu.type";
-  import { appStore } from "@nucleum/stores/app.store";
+
   let { url }: { url: string } = $props();
   let copyLabel = $state("Copy link");
   let copyTimeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -13,7 +15,7 @@
           label: "Open link",
           icon: "weblink",
           callback: async () => {
-            appStore.openLink(url ?? "");
+            navigation.openLink(url ?? "");
           }
         },
         {
@@ -44,7 +46,7 @@
     title="Open link"
     onclick={() => {
       if (!url) return;
-      appStore.openLink(url);
+      navigation.openLink(url);
     }}
   >
     <span class="truncate">

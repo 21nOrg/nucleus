@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import Button from "@21n/elements/button/Button.svelte";
   import { appStore } from "@nucleum/stores/app.store";
   import { Size } from "@21n/elements/size.enum";
@@ -56,14 +58,16 @@
           try {
             const authProvider = resolveAuthFnProvider(provider.oauth_slug);
             if (!authProvider) return;
-            const response = await (await authClient()).startSocialSignIn({
+            const response = await (
+              await authClient()
+            ).startSocialSignIn({
               provider: authProvider,
               returnTo: window.location.origin,
               callbackMode: "redirect"
             });
             if (response.ok) {
               if (window.self !== window.top) {
-                appStore.openLink(response.data.redirectTo, true);
+                navigation.openLink(response.data.redirectTo, true);
               } else {
                 window.location.href = response.data.redirectTo;
               }

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { logger } from "@nucleum/client/runtime/logging/logger";
   import { Resource } from "@nucleum/datafn/resource.enum";
   import { AccessMode } from "@nucleum/datafn/resource.type";
@@ -59,7 +61,7 @@
       if (accessMode !== AccessMode.TAB || !resolvedId) return;
       const resource = determineResourceType(resolvedId);
       if (!resource || resource === Resource.unknown) return;
-      const action = appStore.resolveAction(resource);
+      const action = requireCommandHost().resolveAction(resource);
       if (!action) return;
       appStore.update((s) => ({ ...s, currentComponent: action }));
     } catch (e) {

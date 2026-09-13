@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { appStore } from "@nucleum/stores/app.store";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { Action } from "@nucleum/client/config/action.enum";
   import InlineSyncingFeedback from "@21n/elements/feedback/InlineSyncingFeedback.svelte";
   import { Resource } from "@nucleum/datafn/resource.enum";
@@ -16,14 +17,14 @@
         icon="terminal-window"
         tooltip="Command"
         shortcut={Action.CMD}
-        onClick={() => appStore.runAction(Action.CMD)}
+        onClick={() => requireCommandHost().runAction(Action.CMD)}
       />
     </div>
     <div>
       <RightNavMenuItem
         icon="question"
         tooltip="Help"
-        onClick={() => appStore.runAction(Action.HELP)}
+        onClick={() => requireCommandHost().runAction(Action.HELP)}
       />
       <InlineSyncingFeedback
         resource={Resource.everything}

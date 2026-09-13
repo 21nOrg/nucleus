@@ -1,5 +1,5 @@
 <script lang="ts">
-  // import { goto } from "$app/navigation";
+  import { navigation } from "@21n/layout/navigation/navigation";
   import { page } from "$app/stores";
   import AppLoadingView from "@21n/layout/paint/AppLoadingView.svelte";
   import { appStore } from "@nucleum/stores/app.store";
@@ -21,7 +21,7 @@
         debugMessage = "token present";
         handleOAuthCompletion({ token });
       } else if (!codeQueryParam) {
-        appStore.gotoPath("/signup?msg=invalidoauth");
+        navigation.gotoPath("/signup?msg=invalidoauth");
         return;
       } else {
         debugMessage = "code present. processing oauth";
@@ -30,7 +30,7 @@
           codeQueryParam
         );
         if (!response) {
-          appStore.gotoErrorPage("OAuth failure");
+          navigation.gotoErrorPage("OAuth failure");
           return;
         }
         const json = await response.json();
@@ -39,7 +39,7 @@
       }
     } catch (e) {
       console.error({ at: "OAuthRedirect.onMount", error: e });
-      appStore.gotoErrorPage("OAuth failure");
+      navigation.gotoErrorPage("OAuth failure");
     }
   });
 
@@ -83,13 +83,13 @@
         ctx: "handleUrlSchemeRedirection",
         product: $appStore.product
       });
-      appStore.gotoPath(
+      navigation.gotoPath(
         $appStore.product + "://oauthsignin" + "?token=" + token
       );
     } catch (err) {
       debugMessage = "ios - url scheme redirection error" + err;
       console.error({ err, ctx: "handleUrlSchemeRedirection" });
-      appStore.gotoErrorPage(debugMessage);
+      navigation.gotoErrorPage(debugMessage);
     }
   }
   async function handleMacOSEmbedRedirection(token: string) {
@@ -98,7 +98,7 @@
       logger.log({
         ctx: "handleMacOSEmbedRedirection"
       });
-      appStore.gotoPath(
+      navigation.gotoPath(
         (import.meta.env?.VITE_CUSTOM_PROTOCOL ?? "tauri") +
           "://localhost/index.html" +
           "?token=" +
@@ -107,7 +107,7 @@
     } catch (err) {
       debugMessage = "macos - embed redirection error" + err;
       logger.error({ err, ctx: "handleMacOSEmbedRedirection" });
-      appStore.gotoErrorPage(debugMessage);
+      navigation.gotoErrorPage(debugMessage);
     }
   }
 </script>

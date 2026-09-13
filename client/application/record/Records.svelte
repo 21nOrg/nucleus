@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { Arrangement } from "@21n/elements/direction.enum";
   import { cn } from "@21n/utils/ui.utils";
   import CollectionThumbnail from "@nucleum/features/collections/thumbnail/CollectionThumbnail.svelte";
@@ -32,9 +34,9 @@
   import type { ITaskThumb } from "@nucleum/features/focus/tasks/task.type";
   import type { ICalendarEvent } from "@nucleum/features/calendar/events/event.type";
   import ScrollViewBottomSpacer from "@21n/layout/scrollView/ScrollViewBottomSpacer.svelte";
-  import { tabs } from "@21n/layout/topNav/tabs/tabs.store";
+
   import { stringify } from "@21n/shared-utils/json.utils";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { datafn } from "@nucleum/datafn/datafn.store";
   import { toSvelteDataStore } from "@datafn/svelte";
   import { datafnHeavyComputedSignalOptions } from "@nucleum/datafn/signalCache";
@@ -166,7 +168,7 @@
       ? bulkEditStore.clickHandler(item.id)
       : false;
     if (!result) {
-      appStore.resourceClickHandler(resolveMouseEvent(e), item.id, {
+      navigation.resourceClickHandler(resolveMouseEvent(e), item.id, {
         defaultTo: defaultAccessMode,
         origin: accessPoint
       });

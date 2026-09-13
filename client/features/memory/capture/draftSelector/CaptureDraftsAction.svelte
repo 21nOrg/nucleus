@@ -10,7 +10,7 @@
   import Icon from "@21n/elements/Icon.svelte";
   import { Size } from "@21n/elements/size.enum";
   import { cn } from "@21n/utils/ui.utils";
-  import { appEvents } from "@nucleum/stores/notification.store";
+  import { appEvents } from "@nucleum/stores/events/app-events.store";
   import { datafn } from "@nucleum/datafn/datafn.store";
 
   let {

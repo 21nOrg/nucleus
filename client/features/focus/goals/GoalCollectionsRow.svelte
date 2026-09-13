@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { Resource } from "@nucleum/datafn/resource.enum";
   import Button from "@21n/elements/button/Button.svelte";
   import Divider from "@21n/elements/Divider.svelte";
   import Icon from "@21n/elements/Icon.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { toasts } from "@nucleum/stores/notification.store";
   import { ColorStrength } from "@21n/theme/appearance.type";
   import { Orientation, Placement } from "@21n/elements/direction.enum";
@@ -76,8 +78,8 @@
   }
 
   function onClick(e: CustomEvent) {
-    if (appStore.determineClickAccessMode(e.detail.event)) {
-      appStore.resourceClickHandler(e.detail.event, e.detail.item, {
+    if (navigation.determineClickAccessMode(e.detail.event)) {
+      navigation.resourceClickHandler(e.detail.event, e.detail.item, {
         searchParams: {
           [AppSearchParam.RESOURCE]: Resource.collection,
           [AppSearchParam.TYPE]: "all"
@@ -91,9 +93,9 @@
       [AccessMode.POP]: e.detail.item.toString(),
       [`${AccessMode.POP}At`]: new Date().getTime()
     };
-    appStore.closeResource({ accessMode: AccessMode.POP });
+    navigation.closeResource({ accessMode: AccessMode.POP });
     setTimeout(() => {
-      appStore.gotoPath("/library", { queryParams });
+      navigation.gotoPath("/library", { queryParams });
     }, 0);
   }
 
@@ -109,8 +111,8 @@
   <button
     class="flex items-center gap-2 h-full border border-bgs4 hover:border-fgs3 rounded-full px-2 py-0.5 text-b2 whitespace-nowrap bg-bgs2 text-fgs1"
     onclick={() => {
-      appStore.closeResource();
-      appStore.gotoPath("/library", {
+      navigation.closeResource();
+      navigation.gotoPath("/library", {
         queryParams: {
           resource: Resource.objective,
           type: $objective.type?.toLowerCase()

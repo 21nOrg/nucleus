@@ -1,10 +1,15 @@
 <script lang="ts">
+  import { subscription } from "@nucleum/application/subscription/subscription";
+
   import account from "@nucleum/stores/account.store";
   import Button from "@21n/elements/button/Button.svelte";
   import { ButtonStyle, ButtonVariant } from "@21n/elements/button/button.type";
   import modalEvent from "@nucleum/stores/overlays/modal.store";
   import { Action } from "@nucleum/client/config/action.enum";
-  import { resolveNextRenewalDate, SUBSCRIPTION_PLANS } from "@nucleum/application/subscription/userPlan.utils";
+  import {
+    resolveNextRenewalDate,
+    SUBSCRIPTION_PLANS
+  } from "@nucleum/application/subscription/userPlan.utils";
   import { parseAndFormatDate } from "@21n/utils/time.utils";
   import PlanFeatureList from "@nucleum/application/subscription/elements/PlanFeatureList.svelte";
   import { toasts } from "@nucleum/stores/notification.store";
@@ -33,7 +38,7 @@
       return;
     }
     isCancelInProgress = true;
-    const response = await account.modifySubscription({
+    const response = await subscription.modifySubscription({
       type: "cancel"
     });
     isCancelInProgress = false;

@@ -1,8 +1,10 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { cn } from "@21n/utils/ui.utils";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Action } from "@nucleum/client/config/action.enum";
   import account from "@nucleum/stores/account.store";
   import { PlanType } from "@nucleum/schema/account/subscription";
@@ -35,7 +37,7 @@
       }
     )}
     onclick={() =>
-      appStore.runAction(Action.SETTINGS, {
+      requireCommandHost().runAction(Action.SETTINGS, {
         searchParams: {
           [AppSearchParam.SETTING]: Action.USER_BILLING
         }

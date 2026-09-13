@@ -1,5 +1,7 @@
 <script lang="ts">
-  import { logger } from "@nucleum/client/runtime/logging/logger";
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import modalEvent from "@nucleum/stores/overlays/modal.store";
   import { onMount } from "svelte";
   import { MAX_FILE_SIZE_MB } from "@nucleum/stores/files/file.constants";
@@ -12,10 +14,10 @@
   import { resourceAction } from "@nucleum/datafn/resource.utils";
   import { Resource } from "@nucleum/datafn/resource.enum";
   import { AccessMode } from "@nucleum/datafn/resource.type";
-import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
+  import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
   import { generateResourceId } from "@nucleum/datafn/id.utils";
   import { AppSearchParam } from "@nucleum/stores/appStore.type";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import ShareContentSaver from "@nucleum/features/memory/capture/ShareContentSaver.svelte";
 
   let { event }: { event: ClipboardEvent } = $props();
@@ -56,7 +58,7 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
       contentType: data?.contentType ?? NodeType.SIMPLE_TEXT
     });
     modalEvent.hide(MemotronAction.PASTE_CONFIRMATION);
-    appStore.runAction(
+    requireCommandHost().runAction(
       resourceAction(Resource.node, ResourceActionType.CREATE),
       {
         searchParams: {
@@ -75,7 +77,7 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
 
   function handleOpen({ nodeId }: { nodeId: string | undefined }) {
     if (nodeId) {
-      appStore.openResource(nodeId, AccessMode.POP);
+      navigation.openResource(nodeId, AccessMode.POP);
     }
     modalEvent.hide(MemotronAction.PASTE_CONFIRMATION);
   }

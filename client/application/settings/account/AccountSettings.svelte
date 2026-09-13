@@ -1,4 +1,8 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { accountDeletion } from "@nucleum/application/account/account-deletion";
+  import { fileUpload } from "@nucleum/stores/files/file-upload";
+
   import Button from "@21n/elements/button/Button.svelte";
   import account from "@nucleum/stores/account.store";
   import { onMount } from "svelte";
@@ -8,8 +12,8 @@
     properCase
   } from "@21n/shared-utils/text.utils";
   import { PlanStatus } from "@nucleum/schema/account/subscription";
-import { UserDataMode } from "@nucleum/client/runtime/account/account.type";
-import { type EmailParts } from "@nucleum/schema/account/profile.type";
+  import { UserDataMode } from "@nucleum/client/runtime/account/account.type";
+  import { type EmailParts } from "@nucleum/schema/account/profile.type";
   import { ButtonStyle, ButtonVariant } from "@21n/elements/button/button.type";
   import Text from "@21n/elements/text/Text.svelte";
   import { TextStyle } from "@21n/elements/text/text.enum";
@@ -28,14 +32,14 @@ import { type EmailParts } from "@nucleum/schema/account/profile.type";
   import type { IRecordId } from "@nucleum/schema/legacy/data.type";
   import { appStore } from "@nucleum/stores/app.store";
   import { Action } from "@nucleum/client/config/action.enum";
-  import { resolveNextRenewalDate, resolvePlanLabel } from "@nucleum/application/subscription/userPlan.utils";
-import { determineIfPlanIsActive } from "@nucleum/client/runtime/account/plan.utils";
   import {
-    BillingCycle,
-    PlanType
-  } from "@nucleum/schema/account/subscription";
+    resolveNextRenewalDate,
+    resolvePlanLabel
+  } from "@nucleum/application/subscription/userPlan.utils";
+  import { determineIfPlanIsActive } from "@nucleum/client/runtime/account/plan.utils";
+  import { BillingCycle, PlanType } from "@nucleum/schema/account/subscription";
   import { parseAndFormatDate } from "@21n/utils/time.utils";
-  import RestorePurchaseAction from "@nucleum/application/subscription/RestorePurchaseAction.svelte";
+
   import view from "@nucleum/stores/view.store";
   import { AppSearchParam } from "@nucleum/stores/appStore.type";
   import { Product } from "@nucleum/client/config/product.type";
@@ -134,7 +138,7 @@ import { determineIfPlanIsActive } from "@nucleum/client/runtime/account/plan.ut
       passwordError = undefined;
       return;
     }
-    appStore.gotoPath("/account/forgot-password", {
+    navigation.gotoPath("/account/forgot-password", {
       queryParams: {
         ...(accountEmail ? { email: accountEmail } : {}),
         mode: accountDetails?.hasPassword ? "reset" : "set"
@@ -260,7 +264,7 @@ import { determineIfPlanIsActive } from "@nucleum/client/runtime/account/plan.ut
       if (all.length === 1) {
         isSaveInProgress = true;
         let file = all[0];
-        const response = await account.uploadFileV2(
+        const response = await fileUpload.uploadFileV2(
           file.type,
           file.name,
           new Blob([file], { type: file.type })
@@ -546,7 +550,7 @@ import { determineIfPlanIsActive } from "@nucleum/client/runtime/account/plan.ut
             label="Go to billing"
             icon="wallet"
             onclick={() => {
-              appStore.toggleSearchParam({
+              navigation.toggleSearchParam({
                 [AppSearchParam.SETTING]: Action.USER_BILLING
               });
             }}
@@ -573,7 +577,7 @@ import { determineIfPlanIsActive } from "@nucleum/client/runtime/account/plan.ut
         label="Delete account"
         type={ButtonVariant.DANGER}
         onclick={async () => {
-          await account.delete();
+          await accountDeletion.delete();
         }}
       />
     {/if}

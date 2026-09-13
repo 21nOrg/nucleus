@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { appStore } from "@nucleum/stores/app.store";
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { socialSubNodeTypeList } from "@nucleum/features/memory/node/node.type";
-import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
+  import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import type { INode } from "@nucleum/features/memory/node/node.type";
 
   let { node }: { node: INode } = $props();
@@ -77,12 +78,12 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
     role="button"
     tabindex="0"
     onclick={() => {
-      if (node.url) appStore.openLink(node.url);
+      if (node.url) navigation.openLink(node.url);
     }}
     onkeydown={(event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        if (node.url) appStore.openLink(node.url);
+        if (node.url) navigation.openLink(node.url);
       }
     }}
   >

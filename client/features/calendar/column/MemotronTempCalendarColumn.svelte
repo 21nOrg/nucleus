@@ -1,8 +1,10 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import Button from "@21n/elements/button/Button.svelte";
   import Text from "@21n/elements/text/Text.svelte";
   import InlineFeedbackText from "@nucleum/extensions/clipper/InlineFeedbackText.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Action } from "@nucleum/client/config/action.enum";
   import { AppSearchParam } from "@nucleum/stores/appStore.type";
   import { TextStyle } from "@21n/elements/text/text.enum";
@@ -10,7 +12,10 @@
   import { parseAndFormatDate } from "@21n/utils/time.utils";
   import { AccessMode } from "@nucleum/datafn/resource.type";
   import CalendarNotesPanel from "@nucleum/features/calendar/column/CalendarNotesPanel.svelte";
-  import { AlertType, type IInlineStatus } from "@nucleum/stores/notifications/notification.type";
+  import {
+    AlertType,
+    type IInlineStatus
+  } from "@nucleum/stores/notifications/notification.type";
   import { setContext } from "svelte";
   import { Context } from "@nucleum/stores/appStore.type";
   import { Size } from "@21n/elements/size.enum";
@@ -63,7 +68,7 @@
   function openNotesInFullScreen() {
     const id = resolveCalendarNotesId(date, scale);
     if (!id) return;
-    appStore.openResource(id, AccessMode.POP);
+    navigation.openResource(id, AccessMode.POP);
   }
 </script>
 
@@ -100,7 +105,7 @@
         icon="history"
         tooltip="History"
         onclick={() => {
-          appStore.openResource(Action.HISTORY, AccessMode.POP, {
+          navigation.openResource(Action.HISTORY, AccessMode.POP, {
             searchParams: { [AppSearchParam.DATE]: date.toISOString() }
           });
         }}

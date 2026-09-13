@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import TextInput from "@21n/elements/input/TextInput.svelte";
   import { Size } from "@21n/elements/size.enum";
   import { InputStyle } from "@21n/elements/input/input.type";
@@ -131,7 +133,7 @@
               const url =
                 image.user.links.html +
                 `?utm_source=${$appStore.product ?? "21n"}&utm_medium=referral`;
-              appStore.openLink(url);
+              navigation.openLink(url);
             }}
           >
             by {image.user.name}

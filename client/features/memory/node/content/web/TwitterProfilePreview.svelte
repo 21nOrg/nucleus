@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { appStore } from "@nucleum/stores/app.store";
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import type { ITwitterProfile } from "@nucleum/features/memory/node/node.type";
 
   let { node }: { node: ITwitterProfile } = $props();
@@ -15,12 +16,12 @@
     role="button"
     tabindex="0"
     onclick={() => {
-      appStore.openLink(node.url);
+      navigation.openLink(node.url);
     }}
     onkeydown={(event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        appStore.openLink(node.url);
+        navigation.openLink(node.url);
       }
     }}
   >

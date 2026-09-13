@@ -1,6 +1,9 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Text from "@21n/elements/text/Text.svelte";
   import { Orientation } from "@21n/elements/direction.enum";
   import { TextStyle } from "@21n/elements/text/text.enum";
@@ -8,7 +11,7 @@
   import ComponentResolver from "@21n/layout/paint/ComponentResolver.svelte";
   import type { IAction } from "@nucleum/client/config/action.type";
   import { AppSearchParam } from "@nucleum/stores/appStore.type";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import ProfileCpSection from "@nucleum/application/settings/account/ProfileCPSection.svelte";
   import SettingsFooter from "@nucleum/application/settings/SettingsFooter.svelte";
   import EmptyStatusView from "@21n/elements/feedback/EmptyStatusView.svelte";
@@ -36,13 +39,13 @@
       return;
     }
     selected = slug;
-    const action = appStore.resolveAction(slug);
+    const action = requireCommandHost().resolveAction(slug);
     if (action?.component) {
       pageAction = action;
       return;
     }
     pageAction = null;
-    appStore.runAction(slug);
+    requireCommandHost().runAction(slug);
   }
 </script>
 
@@ -57,7 +60,7 @@
         {parentBgIndex}
         isPreventDefault={true}
         onclick={() => {
-          if (backPath) appStore.gotoPath(backPath);
+          if (backPath) navigation.gotoPath(backPath);
         }}
       >
         <Text
@@ -71,7 +74,7 @@
         context="modal"
         parentBackgroundIndex={2}
         onclick={() => {
-          appStore.toggleSearchParam({
+          navigation.toggleSearchParam({
             [AppSearchParam.SETTING]: Action.ACCOUNT
           });
         }}
@@ -102,9 +105,9 @@
                       width="w-40"
                       onclick={() => {
                         selected = item;
-                        const action = appStore.resolveAction(item);
+                        const action = requireCommandHost().resolveAction(item);
                         if (action?.component) pageAction = action;
-                        appStore.toggleSearchParam({
+                        navigation.toggleSearchParam({
                           [AppSearchParam.SETTING]: item
                         });
                       }}

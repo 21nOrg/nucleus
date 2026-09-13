@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { fileDrop } from "@nucleum/actions/fileDrop.action";
   import { fileStore } from "@nucleum/stores/files/file.store";
   import Button from "@21n/elements/button/Button.svelte";
@@ -458,7 +460,7 @@
           label="Import from other apps"
           icon="download"
           onclick={() => {
-            appStore.runAction(Action.IMPORT_FROM_OTHER_APPS);
+            requireCommandHost().runAction(Action.IMPORT_FROM_OTHER_APPS);
           }}
         />
       {/if}

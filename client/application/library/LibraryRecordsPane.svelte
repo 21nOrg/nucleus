@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { resolveObjectiveSubTypesForSwitcher } from "@nucleum/features/focus/goals/goal.utils";
   import { resolveTaskSubTypesForSwitcher } from "@nucleum/features/focus/tasks/task.utils";
   import { resolveNodeSubTypesForSwitcher } from "@nucleum/features/memory/node/node.utils";
@@ -23,7 +26,7 @@
   import LibrarySearchBox from "@nucleum/application/library/LibrarySearchBox.svelte";
   import { CollectionType } from "@nucleum/features/collections/collection.type";
   import { rootNodeTypeList } from "@nucleum/features/memory/node/node.type";
-import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
+  import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
 
   import {
     activeResourceFilter,
@@ -42,7 +45,7 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import { enumToString } from "@21n/shared-utils/text.utils";
   import Toggle from "@21n/elements/toggle/Toggle.svelte";
   import { toasts } from "@nucleum/stores/notification.store";
-  import { onDestroy, onMount, tick } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { page } from "$app/stores";
   import InlineSearchBar from "@21n/elements/InlineSearchBar.svelte";
   import { InputStyle } from "@21n/elements/input/input.type";
@@ -850,8 +853,16 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
       }}
     />
     <LibrarySubTypeSwitcher
-      options={resource === Resource.node ? resolveNodeSubTypesForSwitcher() : resource === Resource.collection ? resolveCollectionSubTypesForSwitcher() : resource === Resource.objective ? resolveObjectiveSubTypesForSwitcher(true) : resource === Resource.task ? resolveTaskSubTypesForSwitcher() : []}
-      onSearchParamsChange={(params) => appStore.toggleSearchParam(params)}
+      options={resource === Resource.node
+        ? resolveNodeSubTypesForSwitcher()
+        : resource === Resource.collection
+          ? resolveCollectionSubTypesForSwitcher()
+          : resource === Resource.objective
+            ? resolveObjectiveSubTypesForSwitcher(true)
+            : resource === Resource.task
+              ? resolveTaskSubTypesForSwitcher()
+              : []}
+      onSearchParamsChange={(params) => navigation.toggleSearchParam(params)}
       {resource}
       {isConstrainedWidth}
       {accessPoint}
@@ -971,11 +982,11 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
             : undefined}
         onclick={() => {
           if (resource === Resource.node) {
-            appStore.openLink(
+            navigation.openLink(
               $appStore.appData?.urls?.chromeExtension ?? "https://memotron.app"
             );
           } else {
-            appStore.runAction(
+            requireCommandHost().runAction(
               resourceAction(resource, ResourceActionType.CREATE)
             );
           }

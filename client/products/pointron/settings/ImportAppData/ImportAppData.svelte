@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { fileUpload } from "@nucleum/stores/files/file-upload";
+
   import view from "@nucleum/stores/view.store";
   import modalEvent from "@nucleum/stores/overlays/modal.store";
   import Icon from "@21n/elements/Icon.svelte";
@@ -22,7 +24,7 @@
   } from "@nucleum/products/pointron/settings/data/data.type";
   import { ButtonStyle, ButtonVariant } from "@21n/elements/button/button.type";
   import Divider from "@21n/elements/Divider.svelte";
-  import { cn } from "@21n/utils/ui.utils";
+
   import { Display } from "@21n/elements/display.enum";
   import { enumToString, properCase } from "@21n/shared-utils/text.utils";
   import { renderMdAsHtml } from "@21n/elements/markdown/markdown.utils";
@@ -308,7 +310,7 @@
       } else {
         try {
           const userId = get(account)?.userInfo?.id.split(":")[1] ?? "";
-          const [url] = await account.tempUploadToS3(tempFileList[0].file);
+          const [url] = await fileUpload.tempUploadToS3(tempFileList[0].file);
           const timeZone = detectTimeZone();
           const region = $account.userInfo?.region;
           let body = {

@@ -1,6 +1,8 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Modal from "@nucleum/components/overlays/Modal.svelte";
   import { appStore } from "@nucleum/stores/app.store";
   import view from "@nucleum/stores/view.store";
@@ -11,9 +13,9 @@
   import {
     toasts,
     confirmationNotification,
-    fullPageLoadingScreen,
-    appEvents
+    fullPageLoadingScreen
   } from "@nucleum/stores/notification.store";
+  import { appEvents } from "@nucleum/stores/events/app-events.store";
   import { Size } from "@21n/elements/size.enum";
   import { fly, slide } from "svelte/transition";
   import ComponentResolver from "@21n/layout/paint/ComponentResolver.svelte";
@@ -130,7 +132,7 @@
   function resolvePop(resourceId: string) {
     if (!resourceId) return;
     const slug = resourceId.split(":")[0];
-    const action = appStore.resolveAction(slug);
+    const action = requireCommandHost().resolveAction(slug);
     if (!action) return;
     pop = {
       path: slug,

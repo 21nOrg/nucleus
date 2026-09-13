@@ -1,6 +1,7 @@
+import { requireCommandHost } from "@nucleum/stores/commands/command-host";
 import { logger } from "@nucleum/client/runtime/logging/logger";
 import { toasts } from "@nucleum/stores/notification.store";
-import { appStore } from "@nucleum/stores/app.store";
+
 import { MemotronAction } from "@nucleum/features/memory/memory-action.enum";
 
 type ClipboardItemEntry = {
@@ -132,10 +133,12 @@ export async function openPasteConfirmationModalFromClipboard() {
   try {
     const event = await resolveClipboardEvent();
     if (!event) {
-      toasts.error("Unable to access clipboard. Try using the paste shortcut instead.");
+      toasts.error(
+        "Unable to access clipboard. Try using the paste shortcut instead."
+      );
       return;
     }
-    appStore.runAction(MemotronAction.PASTE_CONFIRMATION, {
+    requireCommandHost().runAction(MemotronAction.PASTE_CONFIRMATION, {
       componentParams: {
         event
       }

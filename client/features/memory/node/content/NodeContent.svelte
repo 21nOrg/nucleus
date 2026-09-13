@@ -1,7 +1,12 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import Text from "@21n/elements/text/Text.svelte";
-  import { headingNodeTypes, type INodeStructure } from "@nucleum/features/memory/node/node.type";
-import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
+  import {
+    headingNodeTypes,
+    type INodeStructure
+  } from "@nucleum/features/memory/node/node.type";
+  import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import { TextStyle } from "@21n/elements/text/text.enum";
   import {
     hierarchyFactorLimit,
@@ -19,12 +24,12 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import { ColorStrength } from "@21n/theme/appearance.type";
   import { formatDatetime } from "@21n/utils/time.utils";
   import { onDestroy, onMount } from "svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { userPreferences } from "@nucleum/stores/preferences/user-preferences.store";
   import { logger } from "@nucleum/client/runtime/logging/logger";
   import { setContext, getContext } from "svelte";
   import { BlockAction } from "@nucleum/features/memory/markdown/md.type";
-  import { wordCounter } from "@nucleum/actions/counter.action";
+  import { wordCounter } from "@nucleum/features/memory/node/content/word-counter.action";
   import { generateResourceId } from "@nucleum/datafn/id.utils";
   import { Resource } from "@nucleum/datafn/resource.enum";
   import { Size } from "@21n/elements/size.enum";
@@ -128,9 +133,9 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
       });
       if (!x) return;
       const currentAccessMode = determineResourceAccessMode($node.id);
-      const clickedAccessMode = appStore.determineClickAccessMode(x.event);
+      const clickedAccessMode = navigation.determineClickAccessMode(x.event);
       if (clickedAccessMode && clickedAccessMode !== currentAccessMode) {
-        appStore.openResource(x.id, clickedAccessMode);
+        navigation.openResource(x.id, clickedAccessMode);
         node.eventStore.set(undefined);
         return;
       }
@@ -161,7 +166,7 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
       tabs.replace(id, $node.id);
       return;
     }
-    appStore.openResource(id, currentAccessMode);
+    navigation.openResource(id, currentAccessMode);
   }
 
   onDestroy(() => {

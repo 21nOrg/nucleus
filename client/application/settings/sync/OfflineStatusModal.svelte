@@ -1,10 +1,12 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Icon from "@21n/elements/Icon.svelte";
   import account from "@nucleum/stores/account.store";
   import { UserDataMode } from "@nucleum/client/runtime/account/account.type";
   import { Size } from "@21n/elements/size.enum";
   import { Action } from "@nucleum/client/config/action.enum";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import ModalFooter from "@21n/elements/modal/ModalFooter.svelte";
   import { Orientation } from "@21n/elements/direction.enum";
   import context from "@nucleum/stores/context.store";
@@ -40,7 +42,7 @@
         label: "See all downloads",
         icon: "weblink-two",
         callback: async () => {
-          appStore.runAction("downloads");
+          requireCommandHost().runAction("downloads");
           return true;
         }
       }}

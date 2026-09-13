@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { appStore } from "@nucleum/stores/app.store";
   import { onMount } from "svelte";
   import { properCase } from "@21n/shared-utils/text.utils";
@@ -207,7 +209,7 @@
 
   async function onOfflineClick() {
     await account.startOfflineSession();
-    appStore.gotoPath("/");
+    navigation.gotoPath("/");
   }
 </script>
 
@@ -328,7 +330,7 @@
             size={Size.sm}
             onclick={() => {
               if ($appStore.appData?.urls?.git)
-                appStore.openLink($appStore.appData?.urls?.git);
+                navigation.openLink($appStore.appData?.urls?.git);
             }}
           />
         {/if}
@@ -339,9 +341,9 @@
           size={Size.sm}
           onclick={() => {
             if ($appStore.appData?.urls?.pricing)
-              appStore.openLink($appStore.appData?.urls?.pricing);
+              navigation.openLink($appStore.appData?.urls?.pricing);
             else if ($appStore.appData?.urls?.landing)
-              appStore.openLink(
+              navigation.openLink(
                 `https://${$appStore.appData?.urls?.landing}/pricing`
               );
           }}
@@ -353,7 +355,7 @@
           size={Size.sm}
           onclick={() => {
             if ($appStore.appData?.urls?.docs)
-              appStore.openLink($appStore.appData?.urls?.docs);
+              navigation.openLink($appStore.appData?.urls?.docs);
           }}
         />
         <Button
@@ -363,7 +365,7 @@
           size={Size.sm}
           onclick={() => {
             if ($appStore.appData?.urls?.discord)
-              appStore.openLink($appStore.appData?.urls?.discord);
+              navigation.openLink($appStore.appData?.urls?.discord);
           }}
         />
       </div>

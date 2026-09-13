@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import AutocompleteResultItem from "@21n/elements/autocomplete/AutocompleteResultItem.svelte";
   import type { AutocompleteListItemType } from "@21n/elements/autocomplete/autocompleteListItem.type";
   import { generateUID } from "@21n/utils/utils";
@@ -8,7 +10,7 @@
   import { Size } from "@21n/elements/size.enum";
   import FormControlLabel from "@21n/elements/text/formLabel/FormControlLabel.svelte";
   import Button from "@21n/elements/button/Button.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { PointronAction } from "@nucleum/client/config/focus-action.enum";
   let {
     listContainerStyle = "",
@@ -35,7 +37,8 @@
     values?: string[];
     label?: string;
     chipsVariant?: ChipVariant;
-    onListItemClick?: ((event: CustomEvent<AutocompleteListItemType>) => void) | undefined;
+    onListItemClick?:
+      ((event: CustomEvent<AutocompleteListItemType>) => void) | undefined;
   } = $props();
   void parentBackgroundIndex;
 
@@ -240,7 +243,7 @@
                 size={Size.xs}
                 parentBgIndex={2}
                 onclick={() => {
-                  appStore.runAction(PointronAction.TAGS);
+                  requireCommandHost().runAction(PointronAction.TAGS);
                 }}
               />
             </span>
@@ -252,7 +255,7 @@
         tooltip="Edit tags"
         parentBgIndex={2}
         onclick={() => {
-          appStore.runAction(PointronAction.TAGS);
+          requireCommandHost().runAction(PointronAction.TAGS);
         }}
       />
     </span>

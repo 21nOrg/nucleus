@@ -5,12 +5,12 @@
   import { resizeListener } from "@nucleum/actions/resize.action";
   import PanelSwitcher from "@21n/elements/switcher/PanelSwitcher.svelte";
   import { PanelSwitcherStyle } from "@21n/elements/switcher/switcher.enum";
-  import { uiState, uiStateDerived } from "@nucleum/stores/uiState/uiState.store";
+  import { uiState } from "@nucleum/stores/uiState/uiState.store";
+
   import { UIState, UIStateScope } from "@nucleum/stores/uiState/uiState.type";
   import { MemotronOverviewPanel } from "@nucleum/products/memotron/overview/overview.type";
   import { Product } from "@nucleum/client/config/product.type";
   import { appStore } from "@nucleum/stores/app.store";
-  import { cn } from "@21n/utils/ui.utils";
 
   let {
     isConstrainedWidth = $bindable(false),

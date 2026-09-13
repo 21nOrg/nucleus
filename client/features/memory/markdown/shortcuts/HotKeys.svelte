@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Table2 from "@21n/elements/table/Table2.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { TableCellType } from "@21n/elements/table/table.type";
   import HotKeyShortcutText from "@nucleum/features/memory/markdown/shortcuts/HotKeyShortcutText.svelte";
   import { keyboardShortcuts } from "@nucleum/stores/keyboard/shortcuts.store";
@@ -10,7 +12,7 @@
     .map((x) => ({
       id: x.action,
       shortcut: x,
-      label: appStore.resolveAction(x.action)?.label
+      label: requireCommandHost().resolveAction(x.action)?.label
     }))
     .filter((x) => x.label !== undefined);
 </script>

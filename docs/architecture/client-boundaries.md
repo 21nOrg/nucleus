@@ -43,13 +43,23 @@ The feature entry-point list records the existing public surface, including indi
 
 Features cannot import application or product implementations. Shared stores, utilities, actions, components and elements cannot transitively load capability or application composition at runtime. Explicit type-only edges are excluded from runtime reachability; legacy persistence adapters can still reference capability types. Cross-capability imports remain permitted through declared public entries, so the complete source graph is not claimed to be acyclic.
 
-Application and extension shells configure permanent overlay, resource-action, panel, shortcut, recents, record-renderer and action-renderer contracts in `client/application/composition/resource-hosts.ts`. Configuration runs from both base and user shells, before resource presentation is instantiated. Shared Markdown display owns portable parsing; memory owns Markdown editing. Shared file state and presentation, resource enums, event contracts and action identifiers no longer depend on capability implementations.
+Application and extension shells configure permanent overlay, resource-action, panel, shortcut, recents, record-renderer and action-renderer contracts in `client/application/composition/resource-hosts.ts`. Configuration runs from base, user, and extension shells before presentation or command execution. Shared Markdown display owns portable parsing; memory owns Markdown editing. Shared file state and presentation, resource enums, event contracts and action identifiers no longer depend on capability implementations.
 
-The public feature API contains 145 entries: memory 57, focus 52, collections 16, calendar 13, spaces 6 and system 1. Each has a static consumer outside its capability. The checker rejects unused public entries and private external imports. This reduces the previous 154 entries by moving shared contracts and infrastructure to their proper owners without introducing barrels or compatibility paths.
+The public feature API is enumerated in `tools/check/feature-entrypoints.json`. Each has a static consumer outside its capability. The checker rejects unused public entries and private external imports. This reduces the previous 154 entries by moving shared contracts and infrastructure to their proper owners without introducing barrels or compatibility paths.
 
 Registered workspaces declare their production source imports. `@nucleum/client` owns the existing config/runtime/next aliases. Source workspaces bundled by an app declare co-hosted workspace requirements as peer dependencies; existing build dependencies remain dependencies. Peers describe the host's source compilation requirements without adding artificial Turbo build cycles. This is not a claim that each source package builds or installs independently. The checker verifies both resolved workspace and external package imports; test and story dependencies are outside this production-source check.
 
 The narrow Library now mounts resource panes only after a resource is selected. A dedicated focus-capability test covers the portrait Library in Nucleum and Pointron; a seeded Recents probe verifies visibility before and after reload without page errors. Broader regression results are recorded below separately from the architecture checks.
+
+## Application-state ownership follow-up
+
+`client/stores/app.store.ts` retains product state and state mutation. URL/history and resource navigation live in `client/layout/navigation/navigation.ts`. Product command lookup/execution lives in `client/application/commands/action-runner.ts`; shared callers use the permanent `CommandHost` installed from `resource-hosts.ts`. No old methods delegate to the new owners.
+
+Account session state stays shared. Deletion confirmation and cleanup orchestration live in `client/application/account/account-deletion.ts`; subscription operations live in `client/application/subscription/subscription.ts`; file conversion, thumbnail generation, signing, and local/remote storage live in `client/stores/files/file-upload.ts`. Legacy OAuth initiation belongs to application account composition.
+
+Product menu persistence lives beside navigation. Tab and sidebar mutations live beside those layouts; generic UI-state persistence remains shared. Shortcut hints derive from a scoped UI-state observer and update when product or device context changes. Focus owns its scheduled notification queue, and the existing native transport delivers messages. Memory owns its word-count and PDF-overlay DOM actions. The unused Markdown action and empty `@nucleum/cx` workspace are retired, including active aliases and workspace declarations.
+
+The remaining shared stores are not certified as universally minimal. Notification presentation stays in `notification.store.ts`; application events have a separate `stores/events` owner. Legacy account session bootstrapping still spans persistence adapters. Further splits must identify concrete ownership and consumer benefits rather than create generic wrapper layers.
 
 ## Verification
 

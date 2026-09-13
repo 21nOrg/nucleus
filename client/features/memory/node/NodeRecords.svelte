@@ -1,15 +1,17 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import ScrollViewBottomSpacer from "@21n/layout/scrollView/ScrollViewBottomSpacer.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Arrangement } from "@21n/elements/direction.enum";
   import { type INodeThumb } from "@nucleum/features/memory/node/node.type";
-import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
+  import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import { cn } from "@21n/utils/ui.utils";
   import NodeThumbnail from "@nucleum/features/memory/node/thumbnail/NodeThumbnail.svelte";
   import { onDestroy, onMount } from "svelte";
-  import { fade } from "svelte/transition";
+
   import view from "@nucleum/stores/view.store";
-  import NodeThumbnailTitle from "@nucleum/features/memory/node/thumbnail/NodeThumbnailTitle.svelte";
+
   import type { IRecordId } from "@nucleum/schema/legacy/data.type";
   import { isSameResource } from "@nucleum/datafn/resource.utils";
   import { hoverable } from "@nucleum/actions/hover.action";
@@ -161,7 +163,7 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
     resolveBulkEditorInstance();
     logger.log({ at: "NodeItems onClick", item, multiSelectContext });
     const result = bulkEditStore.clickHandler(item.id);
-    if (!result) appStore.resourceClickHandler(e, item.id);
+    if (!result) navigation.resourceClickHandler(e, item.id);
   }
 </script>
 

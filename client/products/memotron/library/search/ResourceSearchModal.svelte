@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { onMount } from "svelte";
   import ResourceSearchBase from "@nucleum/products/memotron/library/search/ResourceSearchBase.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Action } from "@nucleum/client/config/action.enum";
   import SearchInput from "@nucleum/application/search/SearchInput.svelte";
 
@@ -24,7 +26,7 @@
   {isInline}
   onClose={() => {
     if (isInline) return;
-    appStore.closeResource({
+    navigation.closeResource({
       id: Action.SEARCH
     });
   }}

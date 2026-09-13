@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import SubAtomLogo from "@21n/branding/SubAtomLogo.svelte";
   import ColorSchemeSelector from "@nucleum/application/settings/appearance/ColorSchemeSelector.svelte";
   import Button from "@21n/elements/button/Button.svelte";
@@ -17,7 +19,9 @@
   }: {
     config: IOnboardingConfig;
   } = $props();
-  const onboardingVideoUrl = $derived($appStore?.appData?.urls?.onboardingVideo);
+  const onboardingVideoUrl = $derived(
+    $appStore?.appData?.urls?.onboardingVideo
+  );
   const docsUrl = $derived(
     $appStore.appData?.urls?.docs ?? $appStore.appData?.urls?.guides
   );
@@ -68,13 +72,13 @@
             label="Get started"
             icon="proceed"
             type={ButtonVariant.PRIMARY}
-            onclick={() => appStore.gotoPath("/")}
+            onclick={() => navigation.gotoPath("/")}
           />
           <Button
             label="Read the docs"
             icon="book-open"
             onclick={() => {
-              if (docsUrl) appStore.openLink(docsUrl);
+              if (docsUrl) navigation.openLink(docsUrl);
             }}
           />
         </div>
@@ -85,9 +89,7 @@
         <div
           class="cw:w-full w-[40rem] max-w-full h-96 mx-auto rounded-lg overflow-hidden"
         >
-          <YoutubeVideoPreview
-            url={onboardingVideoUrl ?? ""}
-          />
+          <YoutubeVideoPreview url={onboardingVideoUrl ?? ""} />
         </div>
       </aside>
     {/if}

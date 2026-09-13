@@ -1,7 +1,13 @@
 <script lang="ts">
+  import { fileUpload } from "@nucleum/stores/files/file-upload";
+  import { toasts } from "@nucleum/stores/notification.store";
+
   import modalEvent from "@nucleum/stores/overlays/modal.store";
   import { Action } from "@nucleum/client/config/action.enum";
-  import { BarStyle, PanelSwitcherStyle } from "@21n/elements/switcher/switcher.enum";
+  import {
+    BarStyle,
+    PanelSwitcherStyle
+  } from "@21n/elements/switcher/switcher.enum";
   import { TextStyle } from "@21n/elements/text/text.enum";
   import Button from "@21n/elements/button/Button.svelte";
   import ColorPicker from "@21n/elements/colorPicker/ColorPicker.svelte";
@@ -11,7 +17,7 @@
   import GradientsSelector from "@21n/elements/colorPicker/gradients/GradientsSelector.svelte";
   import { fileDrop } from "@nucleum/actions/fileDrop.action";
   import Icon from "@21n/elements/Icon.svelte";
-  import account from "@nucleum/stores/account.store";
+
   import type { IRecordId } from "@nucleum/schema/legacy/data.type";
   import { Resource } from "@nucleum/datafn/resource.enum";
   import FileView from "@nucleum/components/files/FileView.svelte";
@@ -111,31 +117,52 @@
       })
     );
   }
-  async function handleDrop(droppedFiles: File[]) {
-    let files = Array.isArray(droppedFiles) ? droppedFiles : [droppedFiles];
+  async function handleDrop(
+    _allFiles: File[],
+    validFiles: File[],
+    errors: { file: File; type: string }[]
+  ) {
+    if (errors.length > 0) {
+      toasts.error(
+        errors.some((error) => error.type === "size")
+          ? "Please select a file smaller than 15 MB."
+          : "Please select a JPG, JPEG, PNG, HEIC, or PDF file."
+      );
+      return;
+    }
+    const file = validFiles[0];
+    if (!file) return;
     isUploadInProgress = true;
 
-    let file = files[0];
-
-    let imageLocalURL = new Blob([file], { type: file.type });
-    let response = await account.uploadFileV2(
-      file.type,
-      file.name,
-      imageLocalURL
-    );
-
-    if (response) {
-      const uploadedId = response[0]?.id;
-      if (!uploadedId) return;
-      value = uploadedId;
-      _value = uploadedId;
-      onSelect?.(
-        new CustomEvent("select", {
-          detail: uploadedId
-        })
+    try {
+      const imageLocalURL = new Blob([file], { type: file.type });
+      const response = await fileUpload.uploadFileV2(
+        file.type,
+        file.name,
+        imageLocalURL
       );
+
+      if (response) {
+        const uploadedId = response[0]?.id;
+        if (!uploadedId) {
+          toasts.error("Failed to upload cover. Please try again.");
+          return;
+        }
+        value = uploadedId;
+        _value = uploadedId;
+        onSelect?.(
+          new CustomEvent("select", {
+            detail: uploadedId
+          })
+        );
+      } else {
+        toasts.error("Failed to upload cover. Please try again.");
+      }
+    } catch {
+      toasts.error("Failed to upload cover. Please try again.");
+    } finally {
+      isUploadInProgress = false;
     }
-    isUploadInProgress = false;
   }
 
   function resolvePanelSwitcherItems(isFileUploadAvailable: boolean) {
@@ -197,8 +224,8 @@
         <div
           class="flex flex-col gap-3 items-center justify-center h-full w-full bg-bgs2 rounded-md border border-brs3 border-dashed"
           use:fileDrop={{
-            accept: ".jpg,.png,.pdf",
-            multiple: true,
+            accept: ".jpg,.jpeg,.png,.heic,.pdf",
+            multiple: false,
             maxSize: 15 * 1024 * 1024,
             onDrop: handleDrop
           }}

@@ -1,11 +1,13 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { tick } from "svelte";
   import { appStore } from "@nucleum/stores/app.store";
   import view from "@nucleum/stores/view.store";
   import type { IAction } from "@nucleum/client/config/action.type";
   import { ActionType } from "@nucleum/client/config/action.type";
   import { Action } from "@nucleum/client/config/action.enum";
-  import { GlobalEvent } from "@nucleum/stores/notifications/event.enum";
+
   import { isValidArrayWithData } from "@21n/shared-utils/obj.utils";
   import CmdResultItem from "@nucleum/application/commandBar/CmdResultItem.svelte";
   import { userPreferences } from "@nucleum/stores/preferences/user-preferences.store";
@@ -32,7 +34,10 @@
   const selectedAction = $derived.by(() => {
     if (!filteredActions.length) return null;
     if (!selectedActionState) return filteredActions[0];
-    return filteredActions.find(findInList(selectedActionState)) ?? filteredActions[0];
+    return (
+      filteredActions.find(findInList(selectedActionState)) ??
+      filteredActions[0]
+    );
   });
   export function moveSelection(direction: "up" | "down") {
     const currentIndex = filteredActions.findIndex(findInList(selectedAction));
@@ -57,7 +62,7 @@
       } else {
         onClose?.();
         await tick();
-        appStore.runAction(resolvedAction.action, {
+        requireCommandHost().runAction(resolvedAction.action, {
           componentParams: {
             isCmdBarLaunch: true
           }
@@ -99,9 +104,7 @@
         action.label &&
         !action.isInactive &&
         !action.isMeta &&
-        !(
-          !$view.isPortrait && action.action === Action.LIBRARY_PORTRAIT
-        ) &&
+        !(!$view.isPortrait && action.action === Action.LIBRARY_PORTRAIT) &&
         !(
           $view.isPortrait &&
           isPortraitLibraryAvailable &&

@@ -1,17 +1,18 @@
 <script lang="ts">
-  import { AccessMode } from "@nucleum/datafn/resource.type";
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import InlineMarkdownTextInput from "@nucleum/features/memory/markdown/content/InlineMarkdownTextInput.svelte";
   import Button from "@21n/elements/button/Button.svelte";
-  import Text from "@21n/elements/text/Text.svelte";
+
   import { Size } from "@21n/elements/size.enum";
-  import { TextStyle } from "@21n/elements/text/text.enum";
+
   import { type IActiveNodeStore } from "@nucleum/features/memory/node/node.store";
   import {
     canHaveTraces,
     socialPostNodeTypeList
   } from "@nucleum/features/memory/node/node.type";
   import { ResourcePanelType } from "@nucleum/stores/resources/resource-panel.type";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { focusById } from "@nucleum/actions/focusById.action";
   import { generateSimpleRandomId } from "@21n/shared-utils/crypto.utils";
   import InfoCard from "@nucleum/features/memory/node/metadata/InfoCard.svelte";
@@ -61,7 +62,7 @@
           span="col-span-2"
           onclick={(e) => {
             if (!_label?.parent.id) return;
-            appStore.resourceClickHandler(e, _label?.parent.id, {
+            navigation.resourceClickHandler(e, _label?.parent.id, {
               origin: $node.id
             });
           }}
@@ -80,8 +81,8 @@
         onclick={() => node.switchPanel(ResourcePanelType.LINKS)}
       />
       <InfoCard
-      label="Properties"
-      value={$node.propertyValues?.length || 0}
+        label="Properties"
+        value={$node.propertyValues?.length || 0}
         parentBgIndex={0}
         onclick={() => node.switchPanel(ResourcePanelType.PROPERTIES)}
       />

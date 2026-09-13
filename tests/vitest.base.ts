@@ -1,7 +1,7 @@
 import path from "node:path";
 
 import tsconfigPaths from "vite-tsconfig-paths";
-import { svelte } from "@sveltejs/vite-plugin-svelte";
+import { svelte, vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import { buildViteAliases, loadAliasMap } from "../tools/alias-utils.mjs";
 
 export const repoRoot = path.resolve(__dirname, "..");
@@ -50,5 +50,5 @@ export const coverageConfig = (name: string) => ({
 
 export const clientPlugins = [
   ...basePlugins,
-  svelte()
+  svelte({ preprocess: vitePreprocess({ script: true }) })
 ];

@@ -1,6 +1,8 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { sidebarState } from "@21n/layout/leftPanel/sidebar-state";
+
   import type { Snippet } from "svelte";
   import AppMenuSwitcher from "@21n/layout/leftPanel/appMenuSwitcher/AppMenuSwitcher.svelte";
   import { appStore } from "@nucleum/stores/app.store";
@@ -66,12 +68,12 @@
       parentBackgroundIndex={1}
       layoutContext={LayoutContext.MINIMIZED}
     />
-      {#if isHovered}
-        <Button
-          onclick={onMinimizeToggled}
-          size={Size.sm}
-          label="switch to verbose"
-        />
+    {#if isHovered}
+      <Button
+        onclick={onMinimizeToggled}
+        size={Size.sm}
+        label="switch to verbose"
+      />
     {/if}
   </button>
 {:else}
@@ -113,7 +115,7 @@
               testId="leftnav-sidebar-toggle-icon"
               ariaLabel="Toggle sidebar width"
               onclick={() => {
-                uiState.toggleSidebar();
+                sidebarState.toggleSidebar();
               }}
             />
           {/if}

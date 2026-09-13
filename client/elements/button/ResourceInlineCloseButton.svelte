@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import Button from "@21n/elements/button/Button.svelte";
   import { ButtonStyle, ButtonVariant } from "@21n/elements/button/button.type";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { AccessMode } from "@nucleum/datafn/resource.type";
   import { generateSimpleRandomId } from "@21n/shared-utils/crypto.utils";
   import { Size } from "@21n/elements/size.enum";
@@ -39,9 +41,9 @@
       size={Size.sm}
       onclick={() => {
         if (accessMode === AccessMode.FULL) {
-          appStore.toggleFullScreen(accessMode, id);
+          navigation.toggleFullScreen(accessMode, id);
         } else {
-          appStore.closeResource({ id, accessMode });
+          navigation.closeResource({ id, accessMode });
         }
       }}
     />

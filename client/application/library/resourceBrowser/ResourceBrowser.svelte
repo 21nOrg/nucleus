@@ -1,18 +1,25 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { onDestroy, onMount, type Snippet } from "svelte";
   import Panel from "@21n/layout/paint/Panel.svelte";
   import { ButtonStyle } from "@21n/elements/button/button.type";
   import { Arrangement } from "@21n/elements/direction.enum";
   import { Size } from "@21n/elements/size.enum";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Resource } from "@nucleum/datafn/resource.enum";
   import { page } from "$app/stores";
   import ResourceResolver from "@21n/layout/paint/ResourceResolver.svelte";
   import { resourceAction } from "@nucleum/datafn/resource.utils";
-  import { ResourceAccessPoint, AccessMode, ResourceAccessPointState } from "@nucleum/datafn/resource.type";
-import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
+  import {
+    ResourceAccessPoint,
+    AccessMode,
+    ResourceAccessPointState
+  } from "@nucleum/datafn/resource.type";
+  import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
   import { uiState } from "@nucleum/stores/uiState/uiState.store";
-  import { isValidString } from "@21n/shared-utils/text.utils";
+
   import EmptyStatusView from "@21n/elements/feedback/EmptyStatusView.svelte";
   import { UIState } from "@nucleum/stores/uiState/uiState.type";
   import LibraryRecordsPane from "@nucleum/application/library/LibraryRecordsPane.svelte";
@@ -52,7 +59,7 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
       resource === Resource.task
         ? PointronAction.CREATE_TASK_INLINE
         : resourceAction(resource, ResourceActionType.CREATE);
-    appStore.runAction(action, {
+    requireCommandHost().runAction(action, {
       componentParams: {
         context: ResourceAccessPoint.BROWSER
       }
@@ -124,7 +131,7 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
     isExpanded={determineExpansionType(resource)}
     onBack={() => {
       if (onBack) onBack();
-      else if (backPath) appStore.gotoPath(backPath);
+      else if (backPath) navigation.gotoPath(backPath);
     }}
     info={tooltip ? { body: tooltip } : undefined}
     isShowBackButton={hasBack}

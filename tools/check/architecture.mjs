@@ -27,6 +27,39 @@ const sourceFiles = new Set(files);
 const edges = [];
 const externalImports = [];
 const retiredImports = [];
+const retiredStoreMethods = new Map([
+  [
+    "client/stores/app.store.ts",
+    new Set([
+      "gotoPath",
+      "openResource",
+      "closeResource",
+      "runAction",
+      "runResourceAction",
+      "initiateOAuth2Flow"
+    ])
+  ],
+  [
+    "client/stores/account.store.ts",
+    new Set([
+      "delete",
+      "confirmDelete",
+      "uploadFile",
+      "uploadFileV2",
+      "getSignedUrl",
+      "saveLocalFile",
+      "tempUploadToS3",
+      "modifySubscription",
+      "initiateSubscription",
+      "restorePurchase",
+      "verifyPayment"
+    ])
+  ],
+  [
+    "client/stores/uiState/uiState.store.ts",
+    new Set(["addResourceToTabs", "removeResourceFromTabs", "toggleSidebar"])
+  ]
+]);
 const retiredApplicationPaths = new Set(
   JSON.parse(
     fs.readFileSync(
@@ -80,6 +113,15 @@ for (const file of files) {
       ts.ScriptKind.TS
     );
     const visit = (node) => {
+      if (
+        (ts.isMethodDeclaration(node) || ts.isPropertyAssignment(node)) &&
+        retiredStoreMethods.get(file)?.has(node.name.getText(source))
+      )
+        retiredImports.push({
+          from: file,
+          to: node.name.getText(source),
+          reason: "Domain behavior returned to a shared state module"
+        });
       let specifier;
       if (
         (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
@@ -104,6 +146,12 @@ for (const file of files) {
       )
         specifier = node.arguments[0].text;
       if (specifier) {
+        if (/^@nucleum\/cx(?:\/|$)/.test(specifier))
+          retiredImports.push({
+            from: file,
+            to: specifier,
+            reason: "Retired empty workspace"
+          });
         if (
           /^@21n\/(types|shared-types)(\/|$)/.test(specifier) ||
           /(?:^|\/)client\/types(?:\/|$)|(?:^|\/)shared\/types(?:\/|$)/.test(
@@ -126,12 +174,19 @@ for (const file of files) {
             reason: "Relocated reusable application module"
           });
         if (target) {
-          const typeOnly = ts.isImportTypeNode(node) ||
-            (ts.isImportDeclaration(node) && Boolean(node.importClause?.isTypeOnly ||
-              (!node.importClause?.name && node.importClause?.namedBindings &&
-                ts.isNamedImports(node.importClause.namedBindings) &&
-                node.importClause.namedBindings.elements.length > 0 &&
-                node.importClause.namedBindings.elements.every((item) => item.isTypeOnly)))) ||
+          const typeOnly =
+            ts.isImportTypeNode(node) ||
+            (ts.isImportDeclaration(node) &&
+              Boolean(
+                node.importClause?.isTypeOnly ||
+                (!node.importClause?.name &&
+                  node.importClause?.namedBindings &&
+                  ts.isNamedImports(node.importClause.namedBindings) &&
+                  node.importClause.namedBindings.elements.length > 0 &&
+                  node.importClause.namedBindings.elements.every(
+                    (item) => item.isTypeOnly
+                  ))
+              )) ||
             (ts.isExportDeclaration(node) && Boolean(node.isTypeOnly));
           edges.push({ from: file, to: target, typeOnly });
         } else externalImports.push({ from: file, to: specifier });
@@ -146,7 +201,15 @@ const production = ({ from }) =>
   !/\.(test|spec)\./.test(from) && !from.includes("/tests/");
 const violations = edges.filter(production).filter(({ from, to }) => {
   if (
-    /^client\/stores\/resources\/recent(?:\.store|\.type|-host)\.ts$/.test(from) &&
+    from === "client/stores/app.store.ts" &&
+    (/^client\/(application|features|products|layout)\//.test(to) ||
+      to === "client/stores/account.store.ts")
+  )
+    return true;
+  if (
+    /^client\/stores\/resources\/recent(?:\.store|\.type|-host)\.ts$/.test(
+      from
+    ) &&
     (/^client\/(application|features|products)\//.test(to) ||
       to === "client/stores/app.store.ts")
   )
@@ -164,11 +227,15 @@ const violations = edges.filter(production).filter(({ from, to }) => {
       from === "server/common/relay/index.ts" &&
       to === "client/components/flux/flux.type"
     );
-  if (from.startsWith("client/features/") && /^client\/(products|application)\//.test(to))
+  if (
+    from.startsWith("client/features/") &&
+    /^client\/(products|application)\//.test(to)
+  )
     return true;
   if (
     from === "client/stores/resources/record-renderer.ts" &&
-    (/^client\/(application|features|products)\//.test(to) || to === "client/stores/app.store.ts")
+    (/^client\/(application|features|products)\//.test(to) ||
+      to === "client/stores/app.store.ts")
   )
     return true;
   if (
@@ -215,6 +282,18 @@ const violations = edges.filter(production).filter(({ from, to }) => {
   return false;
 });
 violations.push(...retiredImports);
+if (
+  fs.existsSync(path.join(root, "client/cx/package.json")) ||
+  JSON.parse(
+    fs.readFileSync(path.join(root, "package.json"), "utf8")
+  ).workspaces.includes("client/cx") ||
+  aliases.some(([name]) => name === "@nucleum/cx")
+)
+  violations.push({
+    from: "package.json",
+    to: "client/cx",
+    reason: "Retired empty workspace"
+  });
 const productionGraph = new Map();
 const runtimeGraph = new Map();
 for (const { from, to } of edges.filter(production)) {
@@ -227,7 +306,8 @@ for (const { from, to, typeOnly } of edges.filter(production)) {
   runtimeGraph.get(from).push(to);
 }
 for (const root of runtimeGraph.keys()) {
-  if (!/^client\/(stores|utils|actions|components|elements)\//.test(root)) continue;
+  if (!/^client\/(stores|utils|actions|components|elements)\//.test(root))
+    continue;
   const pending = [...runtimeGraph.get(root)];
   const visited = new Set();
   while (pending.length) {
@@ -235,7 +315,11 @@ for (const root of runtimeGraph.keys()) {
     if (visited.has(target)) continue;
     visited.add(target);
     if (/^client\/(application|features|products)\//.test(target))
-      violations.push({ from: root, to: target, reason: "Shared runtime dependency reaches composition" });
+      violations.push({
+        from: root,
+        to: target,
+        reason: "Shared runtime dependency reaches composition"
+      });
     pending.push(...(runtimeGraph.get(target) ?? []));
   }
 }
@@ -244,7 +328,11 @@ for (const root of productionGraph.keys()) {
   const isIsolatedRuntime = /^client\/runtime\/(embed|inference|audio)\//.test(
     root
   );
-  if (!isSharedMarkdown && !isIsolatedRuntime && !root.startsWith("client/stores/overlays/"))
+  if (
+    !isSharedMarkdown &&
+    !isIsolatedRuntime &&
+    !root.startsWith("client/stores/overlays/")
+  )
     continue;
   const pending = [...productionGraph.get(root)];
   const visited = new Set();
@@ -254,10 +342,12 @@ for (const root of productionGraph.keys()) {
     visited.add(target);
     if (
       isSharedMarkdown
-        ? target.startsWith("client/") && !target.startsWith("client/elements/markdown/")
+        ? target.startsWith("client/") &&
+          !target.startsWith("client/elements/markdown/")
         : isIsolatedRuntime
-        ? target.startsWith("client/") && !target.startsWith("client/runtime/")
-        : /^client\/(application|features|products)\//.test(target)
+          ? target.startsWith("client/") &&
+            !target.startsWith("client/runtime/")
+          : /^client\/(application|features|products)\//.test(target)
     )
       violations.push({
         from: root,
@@ -265,8 +355,8 @@ for (const root of productionGraph.keys()) {
         reason: isSharedMarkdown
           ? "Shared Markdown presentation transitively depends on frontend implementation"
           : isIsolatedRuntime
-          ? "Runtime transport transitively depends on frontend implementation"
-          : "Overlay state transitively depends on composition"
+            ? "Runtime transport transitively depends on frontend implementation"
+            : "Overlay state transitively depends on composition"
       });
     pending.push(...(productionGraph.get(target) ?? []));
   }
@@ -289,8 +379,16 @@ for (const edge of edges.filter(production)) {
 }
 for (const entry of contract) {
   const capability = entry.split("/").slice(0, 3).join("/") + "/";
-  if (!edges.some((edge) => edge.to === entry && !edge.from.startsWith(capability)))
-    violations.push({ from: "tools/check/feature-entrypoints.json", to: entry, reason: "Public feature entry has no external consumer" });
+  if (
+    !edges.some(
+      (edge) => edge.to === entry && !edge.from.startsWith(capability)
+    )
+  )
+    violations.push({
+      from: "tools/check/feature-entrypoints.json",
+      to: entry,
+      reason: "Public feature entry has no external consumer"
+    });
 }
 violations.push(...checkWorkspaceDependencies(edges, externalImports));
 if (process.argv.includes("--graph"))

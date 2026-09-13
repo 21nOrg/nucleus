@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import type { Snippet } from "svelte";
   import { Size } from "@21n/elements/size.enum";
   import type { ISelectItem } from "@21n/elements/select/select.type";
@@ -68,7 +71,7 @@
             isEnabled={backPath !== null}
             isPreventDefault={true}
             onclick={() => {
-              if (backPath) appStore.gotoPath(backPath);
+              if (backPath) navigation.gotoPath(backPath);
             }}
             class="h-full"
           >
@@ -96,7 +99,7 @@
             tooltip="Calendar settings"
             size={Size.sm}
             onclick={() => {
-              appStore.runAction(Action.CALENDAR_SETTINGS, {
+              requireCommandHost().runAction(Action.CALENDAR_SETTINGS, {
                 componentParams: {
                   panel
                 }

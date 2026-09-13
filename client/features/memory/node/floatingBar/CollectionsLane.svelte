@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { Resource } from "@nucleum/datafn/resource.enum";
   import Button from "@21n/elements/button/Button.svelte";
   import Divider from "@21n/elements/Divider.svelte";
@@ -21,12 +23,15 @@
   } from "@nucleum/datafn/resource.utils";
   import { popover, tooltip } from "@nucleum/actions/popover.action";
   import { headingNodeTypes } from "@nucleum/features/memory/node/node.type";
-import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
+  import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import { logger } from "@nucleum/client/runtime/logging/logger";
   import { ResourceError } from "@nucleum/datafn/resource-error";
   import { ResourceErrorCode } from "@nucleum/schema/resource-error.enum";
-  import { AccessMode, ResourceAccessPoint } from "@nucleum/datafn/resource.type";
-import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
+  import {
+    AccessMode,
+    ResourceAccessPoint
+  } from "@nucleum/datafn/resource.type";
+  import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
   import view from "@nucleum/stores/view.store";
   import { AppSearchParam } from "@nucleum/stores/appStore.type";
   import { getContext } from "svelte";
@@ -45,7 +50,7 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
     isReadOnlyMode?: boolean;
   } = $props();
   let popoverRef: any;
-  const navigation = getContext<IProductNavConfig>(PRODUCT_NAV_CONTEXT);
+  const productNavigation = getContext<IProductNavConfig>(PRODUCT_NAV_CONTEXT);
   let isPreventContentTypeRender = $derived(
     headingNodeTypes.includes($node.contentType)
   );
@@ -91,8 +96,8 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
   }
 
   function onClick(e: CustomEvent) {
-    if (appStore.determineClickAccessMode(e.detail.event)) {
-      appStore.resourceClickHandler(e.detail.event, e.detail.item, {
+    if (navigation.determineClickAccessMode(e.detail.event)) {
+      navigation.resourceClickHandler(e.detail.event, e.detail.item, {
         searchParams: {
           [AppSearchParam.RESOURCE]: Resource.collection,
           [AppSearchParam.TYPE]: "all"
@@ -106,9 +111,9 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
       [AccessMode.POP]: e.detail.item.toString(),
       [`${AccessMode.POP}At`]: new Date().getTime()
     };
-    appStore.closeResource({ accessMode: AccessMode.POP });
+    navigation.closeResource({ accessMode: AccessMode.POP });
     setTimeout(() => {
-      appStore.gotoPath("/library", { queryParams });
+      navigation.gotoPath("/library", { queryParams });
     }, 0);
   }
 
@@ -125,16 +130,16 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
     <button
       class="flex items-center gap-2 h-full border border-bgs4 hover:border-fgs3 rounded-full px-2 py-0.5 text-b2 whitespace-nowrap bg-bgs2 text-fgs1"
       onclick={() => {
-        appStore.closeResource();
+        navigation.closeResource();
         const path = $view.isPortrait
           ? resourceAction(Resource.node, ResourceActionType.BROWSE)
           : Action.LIBRARY;
-        appStore.gotoPath(`/${path}`, {
+        navigation.gotoPath(`/${path}`, {
           queryParams: {
             resource: Resource.node,
             type: $node.contentType.toLowerCase(),
             [AppSearchParam.RETURN_TO]:
-              navigation?.homePathPt ??
+              productNavigation?.homePathPt ??
               getProductNavConfig($appStore.product).homePathPt
           }
         });

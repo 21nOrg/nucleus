@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import type { IObjectiveThumb } from "@nucleum/features/focus/goals/goal.type";
   import CustomColorPropagator from "@21n/elements/style/CustomColorPropagator.svelte";
   import { resolveResourceIcon } from "@nucleum/datafn/resource.utils";
@@ -7,7 +9,7 @@
   import { Resource } from "@nucleum/datafn/resource.enum";
   import { cn } from "@21n/utils/ui.utils";
   import context from "@nucleum/stores/context.store";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import {
     AccessMode,
     ResourceAccessPoint
@@ -38,7 +40,7 @@
       !($context.isEmbed && $context.embed === Embed.HANDSET) &&
       accessPoint !== ResourceAccessPoint.OBJECTIVE
     ) {
-      appStore.openResource(objective.id, AccessMode.POP);
+      navigation.openResource(objective.id, AccessMode.POP);
       e.stopPropagation();
     }
   }

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { popover } from "@nucleum/actions/popover.action";
   import Avatar from "@21n/elements/avatarPicker/Avatar.svelte";
   import CustomColorPropagator from "@21n/elements/style/CustomColorPropagator.svelte";
@@ -11,9 +13,9 @@
   import TextContent from "@nucleum/features/memory/markdown/content/TextContent.svelte";
   import CalloutSelector from "@nucleum/features/memory/markdown/callout/CalloutSelector.svelte";
   import { MemotronAction } from "@nucleum/features/memory/memory-action.enum";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { cn } from "@21n/utils/ui.utils";
-  import { logger } from "@nucleum/client/runtime/logging/logger";
+
   import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import type { IRecordId } from "@nucleum/schema/legacy/data.type";
 
@@ -28,7 +30,11 @@
     body: ICalloutBody;
     mdStore: MdStoreType;
     isHovering?: boolean;
-    onUpdate?: ((event: CustomEvent<{ callout?: ICalloutSetting; text?: string }>) => void) | undefined;
+    onUpdate?:
+      | ((
+          event: CustomEvent<{ callout?: ICalloutSetting; text?: string }>
+        ) => void)
+      | undefined;
   } = $props();
   let _callout = $state<ICalloutSetting>(resolveCallout());
   let ref = $state<HTMLElement>();
@@ -57,7 +63,7 @@
         },
         onEdit: () => {
           ref?.dispatchEvent(new CustomEvent("hide"));
-          appStore.runAction(MemotronAction.CALLOUT_SETTINGS);
+          requireCommandHost().runAction(MemotronAction.CALLOUT_SETTINGS);
         }
       }
     };

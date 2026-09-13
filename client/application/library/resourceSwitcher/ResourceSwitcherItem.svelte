@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { Placement } from "@21n/elements/direction.enum";
   import { Size } from "@21n/elements/size.enum";
   import { properCase } from "@21n/shared-utils/text.utils";
@@ -10,7 +12,7 @@
   import { resourceAction } from "@nucleum/datafn/resource.utils";
   import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
   import { Resource } from "@nucleum/datafn/resource.enum";
-  import { appMenuStore } from "@nucleum/stores/appMenu/appMenu.store";
+  import { appMenuStore } from "@21n/layout/navigation/app-menu.store";
   import { PopoverTriggerMethod } from "@nucleum/actions/popover.type";
   import { hoverable } from "@nucleum/actions/hover.action";
   import { popover } from "@nucleum/actions/popover.action";
@@ -62,7 +64,9 @@
       value: "create",
       icon: "plus",
       callback: async () => {
-        appStore.runAction(resourceAction(resource, ResourceActionType.CREATE));
+        requireCommandHost().runAction(
+          resourceAction(resource, ResourceActionType.CREATE)
+        );
         popRef.dispatchEvent(new CustomEvent("hide"));
       }
     };

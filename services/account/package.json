@@ -40,7 +40,8 @@
     "test:e2e:apifn:ratelimit": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --preserve-symlinks\" tsx src/testing/run-apifn-ratelimit.ts",
     "test:otp-linking": "tsx src/testing/run-otp-linking-regression.ts",
     "test:e2e:apifn:postgres": "test -n \"$ACCOUNT_E2E_BASE_URL\" && NODE_OPTIONS=\"${NODE_OPTIONS:-} --preserve-symlinks\" apifn test .apifn/account --env memory --env-var baseUrl=$ACCOUNT_E2E_BASE_URL --output .apifn/results/postgres.json",
-    "test:e2e:apifn:dynamodb": "test -n \"$ACCOUNT_E2E_BASE_URL\" && NODE_OPTIONS=\"${NODE_OPTIONS:-} --preserve-symlinks\" apifn test .apifn/account --env memory --env-var baseUrl=$ACCOUNT_E2E_BASE_URL --output .apifn/results/dynamodb.json"
+    "test:e2e:apifn:dynamodb": "test -n \"$ACCOUNT_E2E_BASE_URL\" && NODE_OPTIONS=\"${NODE_OPTIONS:-} --preserve-symlinks\" apifn test .apifn/account --env memory --env-var baseUrl=$ACCOUNT_E2E_BASE_URL --output .apifn/results/dynamodb.json",
+    "test:datafn:migrations": "tsx src/testing/run-datafn-migrations.ts"
   },
   "dependencies": {
     "@authfn/api-keys": "0.1.1",

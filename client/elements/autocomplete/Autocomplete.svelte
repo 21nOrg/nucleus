@@ -6,7 +6,7 @@
   import Icon from "@21n/elements/Icon.svelte";
   import { Size } from "@21n/elements/size.enum";
   import { cn } from "@21n/utils/ui.utils";
-  import { appEvents } from "@nucleum/stores/notification.store";
+  import { appEvents } from "@nucleum/stores/events/app-events.store";
   import type { IEvent } from "@21n/elements/input/event.type";
   import { GlobalEvent } from "@nucleum/stores/notifications/event.enum";
   let {
@@ -50,7 +50,8 @@
     placeholder?: string;
     inputValue?: string;
     value?: AutocompleteListItemType | null;
-    onListItemClick?: ((event: CustomEvent<AutocompleteListItemType>) => void) | undefined;
+    onListItemClick?:
+      ((event: CustomEvent<AutocompleteListItemType>) => void) | undefined;
     onReset?: ((event: CustomEvent<void>) => void) | undefined;
     onSearch?: ((event: CustomEvent<void>) => void) | undefined;
   } = $props();

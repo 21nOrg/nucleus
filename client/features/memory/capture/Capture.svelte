@@ -1,12 +1,10 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import Writer from "@nucleum/features/memory/capture/Writer.svelte";
   import Button from "@21n/elements/button/Button.svelte";
-  import { ButtonStyle, ButtonVariant } from "@21n/elements/button/button.type";
-  import {
-    acquireDnDPage,
-    appStore,
-    isInEditMode
-  } from "@nucleum/stores/app.store";
+  import { ButtonVariant } from "@21n/elements/button/button.type";
+  import { acquireDnDPage, isInEditMode } from "@nucleum/stores/app.store";
   import { cn } from "@21n/utils/ui.utils";
   import TypeSelector from "@nucleum/features/memory/capture/TypeSelector.svelte";
   import { Size } from "@21n/elements/size.enum";
@@ -24,7 +22,7 @@
   import { generateResourceId } from "@nucleum/datafn/id.utils";
   import { postMessageToParent } from "@nucleum/client/runtime/embed/embed.utils";
   import { EmbedMessage } from "@nucleum/client/runtime/embed/embedMessage.enum";
-  import { appEvents } from "@nucleum/stores/notification.store";
+  import { appEvents } from "@nucleum/stores/events/app-events.store";
   import type { IEvent } from "@21n/elements/input/event.type";
   import type { IRecordId } from "@nucleum/schema/legacy/data.type";
   import {
@@ -39,10 +37,10 @@
   import WebCaptureModal from "@nucleum/features/memory/capture/web/WebCaptureModal.svelte";
   import type { WebArtifact } from "@nucleum/features/memory/capture/web/webCapture.types";
   import { fly } from "svelte/transition";
-  import { Placement } from "@21n/elements/direction.enum";
+
   import ComponentShortcutListener from "@nucleum/components/keyboard/ComponentShortcutListener.svelte";
   import { MemotronAction } from "@nucleum/features/memory/memory-action.enum";
-  import { Action } from "@nucleum/client/config/action.enum";
+
   import { Context } from "@nucleum/stores/appStore.type";
   import EdgeButton from "@21n/elements/button/EdgeButton.svelte";
 
@@ -113,7 +111,7 @@
     }
     subs.forEach((x) => x());
     setTimeout(() => {
-      appStore.toggleSearchParam([
+      navigation.toggleSearchParam([
         AppSearchParam.LINK,
         AppSearchParam.BULK,
         AppSearchParam.CLIPBOARD
@@ -133,7 +131,7 @@
   function reset() {
     captureStore.reset();
     if ($view.isConstrainedWidth) {
-      appStore.closeResource({ accessMode: AccessMode.POP });
+      navigation.closeResource({ accessMode: AccessMode.POP });
     }
     postMessageToParent(EmbedMessage.MENU_ITEM_SELECTED);
   }
@@ -286,7 +284,7 @@
               tooltip="Close capture"
               label="Close"
               onclick={() => {
-                appStore.closeResource({ accessMode: AccessMode.MAIN });
+                navigation.closeResource({ accessMode: AccessMode.MAIN });
               }}
             />
           </div>

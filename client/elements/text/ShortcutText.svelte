@@ -9,7 +9,7 @@
   import type { IKeyboardShortcut } from "@21n/elements/keyboard/shortcut.type";
   import { KeyboardKey } from "@21n/elements/keyboard/keyboard.type";
   import { Embed } from "@nucleum/client/runtime/context.type";
-  import { uiStateDerived } from "@nucleum/stores/uiState/uiState.store";
+  import { shortcutHints } from "@nucleum/stores/keyboard/shortcut-hints.store";
 
   let {
     shortcut,
@@ -77,7 +77,7 @@
   );
 </script>
 
-{#if ($uiStateDerived?.isShowHotKeyHints || isAlwaysShown) && shortcut && $context.embed !== Embed.HANDSET && $context.embed !== Embed.TABLET}
+{#if ($shortcutHints?.isShowHotKeyHints || isAlwaysShown) && shortcut && $context.embed !== Embed.HANDSET && $context.embed !== Embed.TABLET}
   <span
     class={cn(
       "flex justify-center items-center whitespace-nowrap font--mono rounded-md",
@@ -120,7 +120,7 @@
           "text-aps1": parentBgIndex === undefined && isAccentOutlined
         })}
       />
-    {:else if text && textReplacements.some((x) => text?.includes(x.key.toUpperCase()))}
+    {:else if text && textReplacements.some( (x) => text?.includes(x.key.toUpperCase()) )}
       {@const replacement = textReplacements.find((x) =>
         text?.includes(x.key.toUpperCase())
       )}

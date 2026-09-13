@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import Button from "@21n/elements/button/Button.svelte";
   import { Size } from "@21n/elements/size.enum";
   import { properCase } from "@21n/shared-utils/text.utils";
@@ -96,7 +98,7 @@
             isEmbed: true,
             redirectTo: response.data.redirectTo
           });
-          appStore.openLink(response.data.redirectTo, true);
+          navigation.openLink(response.data.redirectTo, true);
         } else {
           logger.error({
             at: "OAuthOptions.startSocialSignIn.failed",

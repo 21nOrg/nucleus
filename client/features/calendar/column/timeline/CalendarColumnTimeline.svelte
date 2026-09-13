@@ -1,8 +1,13 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import PanelSwitcher from "@21n/elements/switcher/PanelSwitcher.svelte";
   import { appStore } from "@nucleum/stores/app.store";
   import { Product } from "@nucleum/client/config/product.type";
-  import { BarStyle, PanelSwitcherStyle } from "@21n/elements/switcher/switcher.enum";
+  import {
+    BarStyle,
+    PanelSwitcherStyle
+  } from "@21n/elements/switcher/switcher.enum";
   import { cn } from "@21n/utils/ui.utils";
   import CalendarColumnTasksPanel from "@nucleum/features/calendar/column/CalendarColumnTasksPanel.svelte";
   import CalendarColumnEventsPanel from "@nucleum/features/calendar/column/CalendarColumnEventsPanel.svelte";
@@ -108,7 +113,7 @@
   }
 
   function handleCreateEvent() {
-    appStore.runAction(
+    requireCommandHost().runAction(
       resourceAction(Resource.event, ResourceActionType.CREATE),
       {
         componentParams: { date }
@@ -117,7 +122,7 @@
   }
 
   async function handleCreateTask() {
-    appStore.runAction(PointronAction.CREATE_TASK_INLINE, {
+    requireCommandHost().runAction(PointronAction.CREATE_TASK_INLINE, {
       componentParams: { date }
     });
   }

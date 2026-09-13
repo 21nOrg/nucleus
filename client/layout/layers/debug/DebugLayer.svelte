@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Icon from "@21n/elements/Icon.svelte";
   import Button from "@21n/elements/button/Button.svelte";
   import { appStore } from "@nucleum/stores/app.store";
@@ -14,7 +16,7 @@
   import context from "@nucleum/stores/context.store";
   import { cn } from "@21n/utils/ui.utils";
   import account from "@nucleum/stores/account.store";
-  import { Action } from "@nucleum/client/config/action.enum";
+
   import { FallbackTracker } from "@21n/utils/fallbackTracker.utils";
   import { userPreferences } from "@nucleum/stores/preferences/user-preferences.store";
   let { isShowAsPage = false }: { isShowAsPage?: boolean } = $props();
@@ -172,7 +174,7 @@
       <Button
         type={ButtonVariant.PRIMARY}
         onclick={() => {
-          appStore.runAction("dexie-console");
+          requireCommandHost().runAction("dexie-console");
         }}
         size={Size.sm}
         icon="terminal"

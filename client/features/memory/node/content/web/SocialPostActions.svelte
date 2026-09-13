@@ -1,10 +1,12 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { type IButtonParams } from "@21n/elements/button/button.type";
   import ButtonGroup from "@21n/elements/button/ButtonGroup.svelte";
   import { Size } from "@21n/elements/size.enum";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { type INode } from "@nucleum/features/memory/node/node.type";
-import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
+  import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import { resolveContentPreview } from "@nucleum/features/memory/node/node.utils";
   import { properCase } from "@21n/shared-utils/text.utils";
   import { toasts } from "@nucleum/stores/notification.store";
@@ -51,7 +53,7 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
       size: Size.sm,
       callback: async () => {
         if (!node.url) return;
-        appStore.openLink(node.url);
+        navigation.openLink(node.url);
       }
     } as IButtonParams
   ]);

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import type { Snippet } from "svelte";
   import { Resource } from "@nucleum/datafn/resource.enum";
   import PanelSwitcher from "@21n/elements/switcher/PanelSwitcher.svelte";
@@ -20,7 +22,10 @@
     resolveProductResources,
     resolveResourceIcon
   } from "@nucleum/datafn/resource.utils";
-  import { KeyboardKey, ModifierKey } from "@21n/elements/keyboard/keyboard.type";
+  import {
+    KeyboardKey,
+    ModifierKey
+  } from "@21n/elements/keyboard/keyboard.type";
   import ShortcutText from "@21n/elements/text/ShortcutText.svelte";
   import { cn } from "@21n/utils/ui.utils";
   import context from "@nucleum/stores/context.store";
@@ -226,11 +231,11 @@
       return;
     }
     if ($view.isPortrait) {
-      appStore.openResource(item.id, AccessMode.FULL);
+      navigation.openResource(item.id, AccessMode.FULL);
       return;
     }
-    appStore.toggleSearchParam([AccessMode.MAIN]);
-    appStore.resourceClickHandler(e.detail.event, item.id, {
+    navigation.toggleSearchParam([AccessMode.MAIN]);
+    navigation.resourceClickHandler(e.detail.event, item.id, {
       origin: Action.SEARCH
     });
   }

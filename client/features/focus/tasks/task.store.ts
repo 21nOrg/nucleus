@@ -1,9 +1,13 @@
+import { requireCommandHost } from "@nucleum/stores/commands/command-host";
 import { Resource } from "@nucleum/datafn/resource.enum";
 import { type IRecordId } from "@nucleum/schema/legacy/data.type";
 import type { ITask } from "@nucleum/features/focus/tasks/task.type";
 import { ResourceAccessPoint } from "@nucleum/datafn/resource.type";
 import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
-import type { IContextMenu, IContextMenuItem } from "@21n/elements/contextMenu/context-menu.type";
+import type {
+  IContextMenu,
+  IContextMenuItem
+} from "@21n/elements/contextMenu/context-menu.type";
 import { appStore } from "@nucleum/stores/app.store";
 import { Action } from "@nucleum/client/config/action.enum";
 import { get } from "svelte/store";
@@ -74,7 +78,7 @@ class TaskActions {
             ? "Change objective"
             : "Assign objective",
       callback: async () => {
-        appStore.runAction(Action.EDIT_TASK_OBJECTIVE, {
+        requireCommandHost().runAction(Action.EDIT_TASK_OBJECTIVE, {
           componentParams: {
             taskId: this.task.id,
             context: this.accessPoint

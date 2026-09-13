@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import TimeComposition from "@nucleum/features/focus/advanced/composition/TimeComposition.svelte";
   import IntervalBar from "@nucleum/features/focus/elements/intervalbar/IntervalBar.svelte";
   import { PointronAction } from "@nucleum/client/config/focus-action.enum";
   import { focusItemsStore } from "@nucleum/features/focus/session.store";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { advancedCompositionDraft } from "@nucleum/features/focus/advanced/composition/advancedCompositionDraft.store";
   let { parentBgIndex = 1 }: { parentBgIndex?: number } = $props();
 
@@ -21,7 +23,8 @@
   </div>
   <button
     class="flex flex-col items-center gap-1 cw:pb-40 pb-16"
-    onclick={() => appStore.runAction(PointronAction.SHOW_FOCUSITEMS_MODAL)}
+    onclick={() =>
+      requireCommandHost().runAction(PointronAction.SHOW_FOCUSITEMS_MODAL)}
   >
     <span class="underline-dotted">
       {focusItemsCount > 0

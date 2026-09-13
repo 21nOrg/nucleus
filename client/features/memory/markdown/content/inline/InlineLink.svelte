@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { appStore } from "@nucleum/stores/app.store";
+  import { navigation } from "@21n/layout/navigation/navigation";
 
   let {
     href,
@@ -14,7 +14,10 @@
   class="inline-link text-aps1 underline hover:bg-aps3 px-0.5 rounded-md cursor-pointer"
   data-label={label}
   {href}
-  onclick={() => appStore.openLink(href)}
+  onclick={(event) => {
+    event.preventDefault();
+    navigation.openLink(href);
+  }}
 >
   {label ?? href}
 </a>

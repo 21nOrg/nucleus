@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import type { Snippet } from "svelte";
   import type { IActiveCollectionStore } from "./collection.store";
   import TextInput from "@21n/elements/input/TextInput.svelte";
@@ -6,8 +8,11 @@
   import { InputStyle } from "@21n/elements/input/input.type";
   import ContextMenuAction from "@21n/elements/contextMenu/ContextMenuAction.svelte";
   import { resolveCollectionContextMenu } from "./collection.store";
-  import { AccessMode, ResourceAccessPoint } from "@nucleum/datafn/resource.type";
-import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
+  import {
+    AccessMode,
+    ResourceAccessPoint
+  } from "@nucleum/datafn/resource.type";
+  import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
   import Icon from "@21n/elements/Icon.svelte";
   import { cn } from "@21n/utils/ui.utils";
   import Toggle from "@21n/elements/toggle/Toggle.svelte";
@@ -15,16 +20,16 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
   import { CollectionType } from "@nucleum/features/collections/collection.type";
   import Avatar from "@21n/elements/avatarPicker/Avatar.svelte";
   import { objIsEmpty } from "@21n/shared-utils/obj.utils";
-  import Button from "@21n/elements/button/Button.svelte";
+
   import { resizeListener } from "@nucleum/actions/resize.action";
   import { Placement } from "@21n/elements/direction.enum";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { popover, tooltip } from "@nucleum/actions/popover.action";
-  import view from "@nucleum/stores/view.store";
+
   import Tooltip from "@21n/elements/text/Tooltip.svelte";
-  import TextArea from "@21n/elements/input/TextArea.svelte";
+
   import { PopoverTriggerMethod } from "@nucleum/actions/popover.type";
-  import FormLabelTooltip from "@21n/elements/text/formLabel/FormLabelTooltip.svelte";
+
   import { isValidAvatar } from "@21n/elements/avatarPicker/avatar.utils";
   import { resourceAction } from "@nucleum/datafn/resource.utils";
   import { Resource } from "@nucleum/datafn/resource.enum";
@@ -103,7 +108,7 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
   }
 
   function openPropertiesEditor() {
-    appStore.runAction(
+    requireCommandHost().runAction(
       resourceAction(Resource.property, ResourceActionType.EDIT),
       {
         componentParams: {

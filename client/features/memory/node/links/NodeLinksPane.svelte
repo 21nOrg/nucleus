@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { onDestroy } from "svelte";
   import LinkThumbnailItems from "@nucleum/features/memory/node/links/LinkThumbnailItems.svelte";
   import { Size } from "@21n/elements/size.enum";
@@ -14,7 +16,7 @@
   import { LinkType } from "@nucleum/datafn/link.type";
   import LinkSearch from "@nucleum/features/memory/common/linkbox/LinkSearch.svelte";
   import ScrollViewBottomSpacer from "@21n/layout/scrollView/ScrollViewBottomSpacer.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Resource } from "@nucleum/datafn/resource.enum";
   import { logger } from "@nucleum/client/runtime/logging/logger";
   import type { IRecordId } from "@nucleum/schema/legacy/data.type";
@@ -362,7 +364,7 @@
     resolveBulkEditorInstance();
     const result = bulkEditStore.clickHandler(e.detail.id);
     if (!result) {
-      appStore.resourceClickHandler(e.detail.event, e.detail.id, {
+      navigation.resourceClickHandler(e.detail.event, e.detail.id, {
         origin: $node.id
       });
     }

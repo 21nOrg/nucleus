@@ -1,4 +1,4 @@
-import type { IAppMenuStore } from "@nucleum/stores/appMenu/appMenu.type";
+import type { IAppMenuStore } from "@21n/layout/navigation/app-menu.type";
 import { Resource } from "@nucleum/datafn/resource.enum";
 import { appStore } from "@nucleum/stores/app.store";
 import { get, writable } from "svelte/store";

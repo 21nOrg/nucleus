@@ -5,14 +5,9 @@
   import { resizeListener } from "@nucleum/actions/resize.action";
   import PanelSwitcher from "@21n/elements/switcher/PanelSwitcher.svelte";
   import { PanelSwitcherStyle } from "@21n/elements/switcher/switcher.enum";
-  import {
-    uiState,
-    uiStateDerived
-  } from "@nucleum/stores/uiState/uiState.store";
-  import {
-    UIState,
-    UIStateScope
-  } from "@nucleum/stores/uiState/uiState.type";
+  import { uiState } from "@nucleum/stores/uiState/uiState.store";
+
+  import { UIState, UIStateScope } from "@nucleum/stores/uiState/uiState.type";
   import { OverviewPanel } from "@nucleum/client/config/product.type";
   import { Product } from "@nucleum/client/config/product.type";
   import { resolveProductConfig } from "@nucleum/products/product.config";

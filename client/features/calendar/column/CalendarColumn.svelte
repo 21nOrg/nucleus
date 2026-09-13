@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { resizeListener } from "@nucleum/actions/resize.action";
   import DatePicker from "@21n/elements/datetime/DatePicker.svelte";
   import Text from "@21n/elements/text/Text.svelte";
@@ -17,8 +19,7 @@
   import CalendarColumnPanelResolver from "@nucleum/features/calendar/column/CalendarColumnPanelResolver.svelte";
   import CalendarColumnPanelSelector from "@nucleum/features/calendar/column/CalendarColumnPanelSelector.svelte";
   import CalendarColumnTimeline from "@nucleum/features/calendar/column/timeline/CalendarColumnTimeline.svelte";
-  import Divider from "@21n/elements/Divider.svelte";
-  import { Orientation } from "@21n/elements/direction.enum";
+
   import { generateSimpleRandomId } from "@21n/shared-utils/crypto.utils";
   import { page } from "$app/stores";
   import Icon from "@21n/elements/Icon.svelte";
@@ -98,7 +99,7 @@
   function openNotesInFullScreen() {
     const id = resolveCalendarNotesId(date, scale);
     if (!id) return;
-    appStore.openResource(id, AccessMode.POP);
+    navigation.openResource(id, AccessMode.POP);
   }
 </script>
 
@@ -120,7 +121,7 @@
             class="text-fgs3"
             size={Size.lg}
             onclick={() => {
-              appStore.gotoPath(backPath);
+              navigation.gotoPath(backPath);
             }}
           />
         {/if}

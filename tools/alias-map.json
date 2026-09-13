@@ -17,7 +17,6 @@
   "@nucleum/legacy": "client/legacy",
   "@21n/illustrations": "client/illustrations",
   "@21n/icons-v2": "client/iconsV2",
-  "@nucleum/cx": "client/cx",
   "@nucleum/client": "client",
   "@21n/shared-utils": "shared/utils",
   "@21n/shared-dbo": "shared/dbo",

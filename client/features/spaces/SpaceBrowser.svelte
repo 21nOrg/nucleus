@@ -1,11 +1,13 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import ModalFooter from "@21n/elements/modal/ModalFooter.svelte";
   import OptionSelector from "@21n/elements/select/OptionSelector.svelte";
   import {
     spaceInContext,
     spaceStore
   } from "@nucleum/features/spaces/space.store";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Orientation } from "@21n/elements/direction.enum";
   import { GatheryEvent } from "@nucleum/features/spaces/gatheryEvent.enum";
   import { OptionSelectorStyle } from "@21n/elements/select/select.type";
@@ -39,7 +41,7 @@
     primaryAction={{
       label: "Create Space",
       callback: async () => {
-        appStore.runAction(GatheryEvent.CREATE_SPACE);
+        requireCommandHost().runAction(GatheryEvent.CREATE_SPACE);
         return true;
       }
     }}

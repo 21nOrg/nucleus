@@ -1,8 +1,11 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+  import { subscription } from "@nucleum/application/subscription/subscription";
+
   import EmptyStatusView from "@21n/elements/feedback/EmptyStatusView.svelte";
   import ErrorStatusPane from "@21n/elements/feedback/ErrorStatusPane.svelte";
   import account from "@nucleum/stores/account.store";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Action } from "@nucleum/client/config/action.enum";
   import { onMount } from "svelte";
 
@@ -36,9 +39,18 @@
 
   async function checkPaymentStatus() {
     if (!nonce) return;
-    const response = await account.verifyPayment(nonce);
+    const response = await subscription.verifyPayment(nonce);
     if (response?.status === "success") {
-      appStore.runAction(Action.PLAN_ONBOARDING);
+      requireCommandHost().runAction(Action.PLAN_ONBOARDING);
+    } else if (response?.status === "unavailable") {
+      error =
+        response.reason === "offline"
+          ? "You're offline"
+          : "Payment verification is unavailable";
+      errorSubText =
+        response.reason === "offline"
+          ? "Connect to the internet and reload this page."
+          : "Please reload this page and try again.";
     } else {
       if (statusUrlParam) {
         switch (statusUrlParam) {

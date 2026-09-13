@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Button from "@21n/elements/button/Button.svelte";
   import { PointronAction } from "@nucleum/client/config/focus-action.enum";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { ImportSource } from "@nucleum/products/pointron/settings/data/data.type";
 
   let { isIncludeSelf = true }: { isIncludeSelf?: boolean } = $props();
@@ -31,7 +33,7 @@
   });
 
   function onImportButtonClick(id: string) {
-    appStore.runAction(PointronAction.IMPORT_APP_DATA, {
+    requireCommandHost().runAction(PointronAction.IMPORT_APP_DATA, {
       componentParams: { importSource: id }
     });
   }

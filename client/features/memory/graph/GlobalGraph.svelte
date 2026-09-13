@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import {
     flushSync,
     mount,
@@ -10,7 +12,7 @@
   import EmptyStatusView from "@21n/elements/feedback/EmptyStatusView.svelte";
   import { rootNodeTypeList } from "@nucleum/features/memory/node/node.type";
   import { removeDuplicatesFilter } from "@nucleum/datafn/resource.utils";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { AccessMode } from "@nucleum/datafn/resource.type";
   import { resolveNodeLabelString } from "@nucleum/features/memory/node/node.utils";
   import NodeTitleLabelPart from "@nucleum/features/memory/node/title/NodeTitleLabelPart.svelte";
@@ -199,16 +201,16 @@
       return;
     }
     splitResource = newResource;
-    appStore.resourceClickHandlerForGraph(newResource, event);
+    navigation.resourceClickHandlerForGraph(newResource, event);
   }
   function closeSplitResource() {
     if (!splitResource) return;
-    appStore.closeResource({ id: splitResource });
+    navigation.closeResource({ id: splitResource });
     splitResource = undefined;
   }
 
   function onCanvasClick() {
-    appStore.closeResource({ accessMode: AccessMode.SPLIT });
+    navigation.closeResource({ accessMode: AccessMode.SPLIT });
   }
 </script>
 

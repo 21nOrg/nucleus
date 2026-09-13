@@ -1,15 +1,6 @@
 import type { IButtonParams } from "@21n/elements/button/button.type";
 import type { Size } from "@21n/elements/size.enum";
 
-export type ScheduledNotification = {
-  inSeconds: number;
-  message: string;
-  title?: string;
-  timestamp: number;
-  sound?: string;
-  id: string;
-};
-
 export type Toast = {
   id: string;
   type: AlertType;

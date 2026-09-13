@@ -24,7 +24,6 @@
     "client/legacy",
     "client/illustrations",
     "client/iconsV2",
-    "client/cx",
     "shared/utils",
     "shared/dbo",
     "schema",

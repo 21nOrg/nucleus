@@ -7,7 +7,7 @@
   import Button from "@21n/elements/button/Button.svelte";
   import { SyncStatus } from "@nucleum/extensions/clipper/contentScripts/types";
   import { ButtonVariant } from "@21n/elements/button/button.type";
-  import { appEvents } from "@nucleum/stores/notification.store";
+  import { appEvents } from "@nucleum/stores/events/app-events.store";
   import { ClipperExtensionEvent } from "@nucleum/client/config/events/clipper-event.type";
   import { Size } from "@21n/elements/size.enum";
   import { userPreferences } from "@nucleum/stores/preferences/user-preferences.store";

@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import type { IBreadcrumbItem } from "@21n/elements/breadcrumbsV2/breadcrumbItem.type";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import BreadcrumbItem from "@21n/elements/breadcrumbsV2/BreadcrumbItem.svelte";
   import { popover } from "@nucleum/actions/popover.action";
   import BreadcrumbsOverflowPopover from "@21n/elements/breadcrumbsV2/BreadcrumbsOverflowPopover.svelte";
@@ -16,7 +18,12 @@
     isPreventDefault?: boolean;
     limit?: number;
     onClick?:
-      | ((event: CustomEvent<{ event: MouseEvent | KeyboardEvent; item: IBreadcrumbItem }>) => void)
+      | ((
+          event: CustomEvent<{
+            event: MouseEvent | KeyboardEvent;
+            item: IBreadcrumbItem;
+          }>
+        ) => void)
       | undefined;
   } = $props();
   /**
@@ -28,15 +35,15 @@
       onClick?.(new CustomEvent("click", { detail: { event: e, item } }));
       return;
     }
-    if (item.path) appStore.gotoPath(item.path);
+    if (item.path) navigation.gotoPath(item.path);
     else if (item.resourceId) {
       const lastItem = items[items.length - 1];
       const replaceId = lastItem.id ?? lastItem.resourceId;
-      appStore.resourceClickHandler(
+      navigation.resourceClickHandler(
         e instanceof MouseEvent ? e : undefined,
         item.resourceId,
         {
-        replaceId
+          replaceId
         }
       );
     }

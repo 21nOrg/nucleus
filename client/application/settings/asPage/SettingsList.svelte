@@ -1,9 +1,12 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Text from "@21n/elements/text/Text.svelte";
   import { Orientation } from "@21n/elements/direction.enum";
   import { TextStyle } from "@21n/elements/text/text.enum";
   import SettingThumbnail from "@nucleum/application/settings/SettingThumbnail.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { ActionType } from "@nucleum/client/config/action.type";
   import { AppSearchParam } from "@nucleum/stores/appStore.type";
   let {
@@ -16,16 +19,15 @@
     orientation?: Orientation;
   } = $props();
   function onClick(item: string) {
-    const component = appStore.resolveAction(item);
+    const component = requireCommandHost().resolveAction(item);
     if (
       component?.type === ActionType.LINK ||
       component?.type === ActionType.FUNCTION
     )
-      appStore.runAction(item, { isReturnIfComponent: true });
-    else if (component?.path) appStore.gotoPath(component.path);
-    // else appStore.gotoPath("/cp/" + item);
+      requireCommandHost().runAction(item, { isReturnIfComponent: true });
+    else if (component?.path) navigation.gotoPath(component.path);
     else
-      appStore.toggleSearchParam({
+      navigation.toggleSearchParam({
         [AppSearchParam.SETTING]: item
       });
   }

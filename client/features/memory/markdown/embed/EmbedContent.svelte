@@ -1,8 +1,14 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import MediaContentResolver from "@nucleum/features/memory/node/content/MediaContentResolver.svelte";
-  import { mediaNodeTypeList, type INode, type INodeThumb } from "@nucleum/features/memory/node/node.type";
-import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
-  import { getContext, onMount, untrack } from "svelte";
+  import {
+    mediaNodeTypeList,
+    type INode,
+    type INodeThumb
+  } from "@nucleum/features/memory/node/node.type";
+  import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
+  import { getContext, untrack } from "svelte";
   import { get } from "svelte/store";
   import type { IEmbedBlockBody } from "@nucleum/features/memory/markdown/md.type";
   import EmbedContentPlaceholder from "@nucleum/features/memory/markdown/embed/EmbedContentPlaceholder.svelte";
@@ -18,7 +24,7 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import Collection from "@nucleum/features/collections/Collection.svelte";
   import { determineResourceType } from "@nucleum/datafn/resource.utils";
   import { resizable } from "@nucleum/actions/resize.action";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import NodeTitleLabelPart from "@nucleum/features/memory/node/title/NodeTitleLabelPart.svelte";
   import Icon from "@21n/elements/Icon.svelte";
   import { Size } from "@21n/elements/size.enum";
@@ -61,8 +67,7 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
     isHovering?: boolean;
     onDelete?: ((event?: CustomEvent<void>) => void) | undefined;
     onUpdate?:
-      | ((event: CustomEvent<Partial<IEmbedBlockBody>>) => void)
-      | undefined;
+      ((event: CustomEvent<Partial<IEmbedBlockBody>>) => void) | undefined;
   } = $props();
   const embedResourceType = $derived(
     body?.id ? determineResourceType(body.id) : undefined
@@ -312,7 +317,7 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
 
   function onEditTitle(e: MouseEvent) {
     if ($view.isConstrainedWidth) {
-      if (body.id) appStore.openResource(body.id, AccessMode.POP);
+      if (body.id) navigation.openResource(body.id, AccessMode.POP);
       return;
     }
     e.stopPropagation();
@@ -350,7 +355,7 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
       onclick={(e) => {
         if (resolveEmbedTarget(e.target)?.classList.contains("resizer")) return;
         if (_mediaBlock?.contentType === NodeType.FILE) return;
-        if (body.id) appStore.openResource(body.id, AccessMode.POP);
+        if (body.id) navigation.openResource(body.id, AccessMode.POP);
       }}
     >
       {#if isShowPreview}
@@ -444,7 +449,7 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
                   class="text-xs text-left text-fgs4 whitespace-nowrap shrink-0 hover:underline"
                   onclick={(e) => {
                     if (_mediaBlock?.url) {
-                      appStore.openLink(_mediaBlock.url);
+                      navigation.openLink(_mediaBlock.url);
                     }
                     e.stopPropagation();
                   }}
@@ -472,7 +477,7 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
                     style={ButtonStyle.OUTLINED}
                     onclick={() => {
                       if (body.id)
-                        appStore.openResource(body.id, AccessMode.POP);
+                        navigation.openResource(body.id, AccessMode.POP);
                     }}
                   />
                 {/if}
@@ -498,7 +503,7 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
                     style={ButtonStyle.OUTLINED}
                     onclick={(e) => {
                       if (_mediaBlock?.url) {
-                        appStore.openLink(_mediaBlock.url);
+                        navigation.openLink(_mediaBlock.url);
                       }
                       e.stopPropagation();
                     }}

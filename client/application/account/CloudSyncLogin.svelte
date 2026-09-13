@@ -1,10 +1,18 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { page } from "$app/stores";
   import Button from "@21n/elements/button/Button.svelte";
   import TextInput from "@21n/elements/input/TextInput.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
-  import { EmbedDataMessage, EmbedMessage } from "@nucleum/client/runtime/embed/embedMessage.enum";
-  import { postDataToParent, postMessageToParent } from "@nucleum/client/runtime/embed/embed.utils";
+
+  import {
+    EmbedDataMessage,
+    EmbedMessage
+  } from "@nucleum/client/runtime/embed/embedMessage.enum";
+  import {
+    postDataToParent,
+    postMessageToParent
+  } from "@nucleum/client/runtime/embed/embed.utils";
   import { isValidEmail } from "@21n/shared-utils/text.utils";
   import { onMount } from "svelte";
   import view from "@nucleum/stores/view.store";
@@ -152,15 +160,12 @@
     } else {
       const signedIn = await finishAuthFnLogin(client, json);
       if (!signedIn) {
-        showError("Authentication completed, but session setup failed. Please try again.");
+        showError(
+          "Authentication completed, but session setup failed. Please try again."
+        );
         return;
       }
     }
-    //TODO - login from extension case
-    // if (isLoginFromExtension) {
-    //   postTokenToExtension(json);
-    //   appStore.runAction(Action.EXTENSTION_LOGIN);
-    // } else await account.signIn(json, { isNewUser: isSignup });
     actionInProgress = false;
   }
 
@@ -245,12 +250,12 @@
       showInfo("OTP sent to your email address. Please check your inbox.");
       return true;
     }
-      logger.warn({
-        at: "CloudSyncLogin.sendOTP.notSent",
-        identifierHash: await sha256(email.trim().toLowerCase()),
-        region,
-        response
-      });
+    logger.warn({
+      at: "CloudSyncLogin.sendOTP.notSent",
+      identifierHash: await sha256(email.trim().toLowerCase()),
+      region,
+      response
+    });
     return false;
   }
 
@@ -467,7 +472,7 @@
             size={Size.xs}
             label="Forgot password?"
             onclick={() => {
-              appStore.gotoPath("/account/forgot-password");
+              navigation.gotoPath("/account/forgot-password");
             }}
           />
         </div>

@@ -1,6 +1,8 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import type { Snippet } from "svelte";
   import AppMenuSwitcher from "@21n/layout/leftPanel/appMenuSwitcher/AppMenuSwitcher.svelte";
   import { LayoutContext } from "@21n/layout/layout-mode.type";
@@ -142,15 +144,15 @@
               size={Size.md}
               onclick={(e) => {
                 e.stopPropagation();
-                appStore.runAction(Action.NAVIGATOR);
+                requireCommandHost().runAction(Action.NAVIGATOR);
               }}
             />
             <!-- <AppMenuSwitcherItem
               parentBackgroundIndex={2}
               onClick={() => {
-                appStore.runAction(Action.NAVIGATOR);
+                requireCommandHost().runAction(Action.NAVIGATOR);
               }}
-              item={() => appStore.resolveAction(Action.NAVIGATOR)}
+              item={() => requireCommandHost().resolveAction(Action.NAVIGATOR)}
             /> -->
           </div>
         </div>

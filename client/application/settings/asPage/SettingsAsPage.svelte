@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import EmptyStatusView from "@21n/elements/feedback/EmptyStatusView.svelte";
   import SettingsAsPageLayout from "@nucleum/application/settings/asPage/SettingsAsPageLayout.svelte";
   import ComponentResolver from "@21n/layout/paint/ComponentResolver.svelte";
@@ -6,7 +8,7 @@
   import view from "@nucleum/stores/view.store";
   import SettingsAsModal from "@nucleum/application/settings/SettingsAsModal.svelte";
   import { AppSearchParam } from "@nucleum/stores/appStore.type";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import ComponentEmbedLayer from "@21n/layout/layers/ComponentEmbedLayer.svelte";
   const route = $derived($page.url.searchParams.get(AppSearchParam.SETTING));
   const backPath = $derived(
@@ -14,7 +16,7 @@
   );
 
   function handleBack() {
-    if (backPath) appStore.gotoPath(backPath);
+    if (backPath) navigation.gotoPath(backPath);
   }
 </script>
 

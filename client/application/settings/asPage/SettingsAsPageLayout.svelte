@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import type { Snippet } from "svelte";
   import { appStore } from "@nucleum/stores/app.store";
   import { AppSearchParam } from "@nucleum/stores/appStore.type";
@@ -36,7 +38,7 @@
     <NavigationHeader
       label={$appStore.currentComponent?.label ?? ""}
       backCallback={() => {
-        appStore.toggleSearchParam([AppSearchParam.SETTING]);
+        navigation.toggleSearchParam([AppSearchParam.SETTING]);
       }}
     />
     <div class="flex flex-col flex-grow">
@@ -50,15 +52,17 @@
       {isShowBackButton}
       parentBgIndex={2}
       onBack={() => {
-        appStore.toggleSearchParam([AppSearchParam.SETTING]);
+        navigation.toggleSearchParam([AppSearchParam.SETTING]);
       }}
     >
       {#snippet nonPadded()}
-        <div class="flex flex-col gap-8 grow overflow-auto portrait:pb-40 pb-20">
+        <div
+          class="flex flex-col gap-8 grow overflow-auto portrait:pb-40 pb-20"
+        >
           <div class="pt-4">
             <ProfileCpSection
               onclick={() =>
-                appStore.toggleSearchParam({
+                navigation.toggleSearchParam({
                   [AppSearchParam.SETTING]: "account"
                 })}
               parentBackgroundIndex={0}

@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { appStore } from "@nucleum/stores/app.store";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { Size } from "@21n/elements/size.enum";
   import { Orientation } from "@21n/elements/direction.enum";
   import FormControlLabel from "@21n/elements/text/formLabel/FormControlLabel.svelte";
@@ -35,7 +36,7 @@
   <button
     class="flex justify-center items-center w-full border border-brs3 rounded-md h-11 text-base"
     onclick={() => {
-      appStore.runAction(
+      requireCommandHost().runAction(
         resourceAction(Resource.property, ResourceActionType.EDIT),
         {
           componentParams: {

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { appStore } from "@nucleum/stores/app.store";
   import AccountForm from "@nucleum/application/settings/account/signup/AccountForm.svelte";
   import PanelSwitcher from "@21n/elements/switcher/PanelSwitcher.svelte";
@@ -63,7 +65,7 @@
     }
     const session = await (await authClient()).getSession();
     if (session.ok && session.data.session) {
-      appStore.gotoPath("/");
+      navigation.gotoPath("/");
     }
   });
 
@@ -101,7 +103,10 @@
           try {
             isSigningIn = true;
             if (parsed.oauth.regionId) {
-              await clientStorage.set(ClientStorageKey.REGION, parsed.oauth.regionId);
+              await clientStorage.set(
+                ClientStorageKey.REGION,
+                parsed.oauth.regionId
+              );
             }
             await account.embedOAuthSignin(token);
           } finally {
@@ -213,7 +218,7 @@
                   size={Size.sm}
                   onclick={() => {
                     if ($appStore.appData?.urls?.git)
-                      appStore.openLink($appStore.appData?.urls?.git);
+                      navigation.openLink($appStore.appData?.urls?.git);
                   }}
                 />
               {/if}
@@ -224,9 +229,9 @@
                 size={Size.sm}
                 onclick={() => {
                   if ($appStore.appData?.urls?.pricing)
-                    appStore.openLink($appStore.appData?.urls?.pricing);
+                    navigation.openLink($appStore.appData?.urls?.pricing);
                   else if ($appStore.appData?.urls?.landing)
-                    appStore.openLink(
+                    navigation.openLink(
                       `https://${$appStore.appData?.urls?.landing}/pricing`
                     );
                 }}
@@ -238,7 +243,7 @@
                 size={Size.sm}
                 onclick={() => {
                   if ($appStore.appData?.urls?.docs)
-                    appStore.openLink($appStore.appData?.urls?.docs);
+                    navigation.openLink($appStore.appData?.urls?.docs);
                 }}
               />
               <Button
@@ -248,7 +253,7 @@
                 size={Size.sm}
                 onclick={() => {
                   if ($appStore.appData?.urls?.discord)
-                    appStore.openLink($appStore.appData?.urls?.discord);
+                    navigation.openLink($appStore.appData?.urls?.discord);
                 }}
               />
             </div>

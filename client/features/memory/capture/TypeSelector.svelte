@@ -1,10 +1,11 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { CaptureMethod } from "@nucleum/features/memory/capture/capture.type";
   import { MemotronAction } from "@nucleum/features/memory/memory-action.enum";
   import Button from "@21n/elements/button/Button.svelte";
   import type { ISelectItem } from "@21n/elements/select/select.type";
   import { Size } from "@21n/elements/size.enum";
-  import { appStore } from "@nucleum/stores/app.store";
 
   import TypeSelectorItem from "@nucleum/features/memory/capture/typeSelector/TypeSelectorItem.svelte";
   import Text from "@21n/elements/text/Text.svelte";
@@ -186,7 +187,7 @@
             }
           )}
           onclick={() => {
-            appStore.runAction(MemotronAction.CAPTURE_SETTINGS);
+            requireCommandHost().runAction(MemotronAction.CAPTURE_SETTINGS);
           }}
         >
           <Icon icon="more-outline-horizontal" />
@@ -201,7 +202,7 @@
       isUnderlined={true}
       size={Size.sm}
       onclick={() => {
-        appStore.runAction(MemotronAction.CAPTURE_SETTINGS);
+        requireCommandHost().runAction(MemotronAction.CAPTURE_SETTINGS);
       }}
     />
   {/if}

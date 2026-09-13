@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { pointronPreferences } from "@nucleum/features/focus/preferences.store";
   import FormControlLabel from "@21n/elements/text/formLabel/FormControlLabel.svelte";
   import { formatSeconds } from "@21n/utils/time.utils";
@@ -10,7 +12,7 @@
   import { uiState } from "@nucleum/stores/uiState/uiState.store";
   import Button from "@21n/elements/button/Button.svelte";
   import { ButtonStyle } from "@21n/elements/button/button.type";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { PointronAction } from "@nucleum/client/config/focus-action.enum";
   let {
     selectedItem = $bindable(0),
@@ -48,7 +50,7 @@
         size={Size.xs}
         isUnderlined={true}
         onclick={() => {
-          appStore.runAction(PointronAction.SESSION_SETTINGS_MODAL);
+          requireCommandHost().runAction(PointronAction.SESSION_SETTINGS_MODAL);
         }}
       />
     </div>

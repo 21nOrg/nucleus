@@ -1,11 +1,10 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import VerticalSwitcher from "@21n/elements/switcher/VerticalSwitcher.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { uiState } from "@nucleum/stores/uiState/uiState.store";
-  import {
-    UIState,
-    UIStateScope
-  } from "@nucleum/stores/uiState/uiState.type";
+  import { UIState, UIStateScope } from "@nucleum/stores/uiState/uiState.type";
   import { Placement } from "@21n/elements/direction.enum";
   import { Size } from "@21n/elements/size.enum";
   import { VerticalSwitcherStyle } from "@21n/elements/switcher/switcher.enum";
@@ -34,7 +33,7 @@
 
   function onSwitch(val: ISelectValue) {
     if (!val || !isOverviewPanel(val)) return;
-    appStore.toggleSearchParamRecordSpecific("overview", { tab: val });
+    navigation.toggleSearchParamRecordSpecific("overview", { tab: val });
     uiState.setState(UIState.nucleusOverviewPanel, val, {
       scope: UIStateScope.DEVICE
     });

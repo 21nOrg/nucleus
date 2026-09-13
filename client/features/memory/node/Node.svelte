@@ -1,22 +1,25 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import NodeLoadingPulse from "@21n/elements/feedback/animations/NodeLoadingPulse.svelte";
-  import {
-    ActiveNodeStore,
-    type IActiveNodeStore
-  } from "@nucleum/features/memory/node/node.store";
+  import { ActiveNodeStore } from "@nucleum/features/memory/node/node.store";
   import {
     AccessMode,
     ResourceAccessPoint
   } from "@nucleum/datafn/resource.type";
-  import { mediaNodeTypeList, NodeView, webNodeTypeList } from "@nucleum/features/memory/node/node.type";
-import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
+  import {
+    mediaNodeTypeList,
+    NodeView,
+    webNodeTypeList
+  } from "@nucleum/features/memory/node/node.type";
+  import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import MediaNode from "@nucleum/features/memory/node/base/MediaNode.svelte";
   import NonMediaNode from "@nucleum/features/memory/node/base/NonMediaNode.svelte";
   import { onDestroy, onMount, setContext, untrack } from "svelte";
-  import { Resource } from "@nucleum/datafn/resource.enum";
+
   import { debouncer } from "@21n/utils/utils";
   import { logger } from "@nucleum/client/runtime/logging/logger";
-  import { acquireDnDPage, appStore } from "@nucleum/stores/app.store";
+  import { acquireDnDPage } from "@nucleum/stores/app.store";
   import EmptyStatusView from "@21n/elements/feedback/EmptyStatusView.svelte";
   import { page } from "$app/stores";
   import { AppSearchParam } from "@nucleum/stores/appStore.type";
@@ -51,7 +54,7 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   let isShowFloatingBar = $state(true);
 
   let nodeViewParam = $derived(
-    appStore.resolveRecordSpecificSearchParam(id, AppSearchParam.NODE_VIEW)
+    navigation.resolveRecordSpecificSearchParam(id, AppSearchParam.NODE_VIEW)
   );
   $effect(() => {
     const currentView = $page.url?.searchParams?.get(nodeViewParam);
@@ -77,7 +80,7 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
       initialize();
     }
   });
-  appStore.clearAllTooltips();
+  navigation.clearAllTooltips();
 
   async function initialize(ctx?: string) {
     logger.log({ at: "Node.initialize", id, ctx });

@@ -1,6 +1,8 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { appStore } from "@nucleum/stores/app.store";
   import view from "@nucleum/stores/view.store";
   import LeftNavExpandable from "@21n/layout/leftPanel/LeftNavExpandable.svelte";
@@ -36,7 +38,7 @@
             <div class="px-3 w-full mt-4">
               <button
                 class="h-10 w-full flex justify-between items-center px-2 border border-brs3 rounded-md hover:bg-bgs3 text-b2 text-fgs2 font-light"
-                onclick={() => appStore.runAction(Action.SEARCH)}
+                onclick={() => requireCommandHost().runAction(Action.SEARCH)}
               >
                 <span class="flex gap-2 items-center">
                   <Icon icon="search" size={Size.sm} />
@@ -56,7 +58,7 @@
             <Button
               icon="search"
               parentBgIndex={2}
-              onclick={() => appStore.runAction(Action.SEARCH)}
+              onclick={() => requireCommandHost().runAction(Action.SEARCH)}
             />
           </div>
         {/snippet}

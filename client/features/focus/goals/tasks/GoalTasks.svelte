@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { page } from "$app/stores";
   import InlineInfoBanner from "@21n/elements/text/InlineInfoBanner.svelte";
   import {
@@ -8,7 +10,6 @@
   import TaskLibrary from "@nucleum/features/focus/tasks/TaskLibrary.svelte";
   import Task from "@nucleum/features/focus/tasks/Task.svelte";
   import type { IRecordId } from "@nucleum/schema/legacy/data.type";
-  import { appStore } from "@nucleum/stores/app.store";
 
   let {
     id,
@@ -19,7 +20,7 @@
   } = $props();
 
   const taskParam = $derived(
-    appStore.resolveRecordSpecificSearchParam(id, "task")
+    navigation.resolveRecordSpecificSearchParam(id, "task")
   );
   const selectedTaskId = $derived(
     $page.url.searchParams.get(taskParam) as IRecordId | null

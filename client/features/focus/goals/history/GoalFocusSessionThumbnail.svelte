@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import type {
     ISessionLogThumb,
     ISessionThumb
   } from "@nucleum/features/focus/logs/log.type";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { formatSeconds } from "@21n/utils/time.utils";
   import { cn } from "@21n/utils/ui.utils";
   import type { IRecordId } from "@nucleum/schema/legacy/data.type";
@@ -30,7 +32,7 @@
 <button
   class="relative flex items-start pl-6"
   onclick={(e) => {
-    appStore.resourceClickHandler(e, session.id, {
+    navigation.resourceClickHandler(e, session.id, {
       origin: objectiveId
     });
   }}
@@ -79,16 +81,16 @@
               {/if}
             </div>
           </div>
-              {#if log.task}
-                <button
-                  onclick={(e) => {
-                    const taskId = log.task?.id;
-                    if (!taskId) return;
-                    e.stopPropagation();
-                    appStore.resourceClickHandler(e, taskId);
-                  }}
-                  class="text-b2 notouch:hover:underline"
-                >
+          {#if log.task}
+            <button
+              onclick={(e) => {
+                const taskId = log.task?.id;
+                if (!taskId) return;
+                e.stopPropagation();
+                navigation.resourceClickHandler(e, taskId);
+              }}
+              class="text-b2 notouch:hover:underline"
+            >
               {log.task.label}
             </button>
           {/if}

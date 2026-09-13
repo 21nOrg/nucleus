@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { subscription } from "@nucleum/application/subscription/subscription";
+
   import Button from "@21n/elements/button/Button.svelte";
   import { ButtonStyle } from "@21n/elements/button/button.type";
-  import account from "@nucleum/stores/account.store";
+
   import { Size } from "@21n/elements/size.enum";
   import { toasts } from "@nucleum/stores/notification.store";
   import context from "@nucleum/stores/context.store";
@@ -10,8 +12,8 @@
   import { postMessageToParent } from "@nucleum/client/runtime/embed/embed.utils";
   const isAppleContext = $derived(
     $context.isEmbed &&
-    ($context.os === OperatingSystem.IOS ||
-      $context.os === OperatingSystem.MACOS)
+      ($context.os === OperatingSystem.IOS ||
+        $context.os === OperatingSystem.MACOS)
   );
 
   async function restore() {
@@ -21,7 +23,7 @@
       return;
     }
     toasts.showProgress("restorePlan", "Restoring purchase...");
-    const response = await account.restorePurchase();
+    const response = await subscription.restorePurchase();
     if (response.status === "multiple_valid_transactions") {
       toasts.error("Please contact us via Discord or email.", {
         title: "Multiple valid plans found."
@@ -33,6 +35,12 @@
       toasts.error("No valid plan found");
     } else if (response.status === "success") {
       toasts.success("Purchase restored");
+    } else if (response.status === "unavailable") {
+      toasts.error(
+        response.reason === "offline"
+          ? "Connect to the internet and try again"
+          : "Purchase restoration is unavailable. Try again later."
+      );
     }
     toasts.closeProgress("restorePlan");
   }

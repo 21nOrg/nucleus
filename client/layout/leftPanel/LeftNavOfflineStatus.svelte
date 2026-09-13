@@ -1,8 +1,10 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import account from "@nucleum/stores/account.store";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import context from "@nucleum/stores/context.store";
   import { UserDataMode } from "@nucleum/client/runtime/account/account.type";
   import { Action } from "@nucleum/client/config/action.enum";
@@ -22,9 +24,9 @@
     )}
     onclick={() => {
       if ($account.dataMode === UserDataMode.LOCAL) {
-        appStore.runAction(Action.SETTINGS);
+        requireCommandHost().runAction(Action.SETTINGS);
       } else {
-        appStore.runAction(Action.SYNC_SETTINGS);
+        requireCommandHost().runAction(Action.SYNC_SETTINGS);
       }
     }}>{isInThinMode ? "Offline" : "Offline mode"}</button
   >

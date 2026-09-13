@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import {
     reorderList,
     type DragDropEvent
@@ -6,7 +8,7 @@
   import Button from "@21n/elements/button/Button.svelte";
   import InlineInfoBanner from "@21n/elements/text/InlineInfoBanner.svelte";
   import Text from "@21n/elements/text/Text.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { ButtonStyle } from "@21n/elements/button/button.type";
   import type { IRecordId } from "@nucleum/schema/legacy/data.type";
   import { Size } from "@21n/elements/size.enum";
@@ -85,7 +87,8 @@
               }) as IRenderedSubObjective
           )
       : []),
-    ...($objective.subObjectivesLayout === SubObjectivesLayout.STEPS && isActiveResource
+    ...($objective.subObjectivesLayout === SubObjectivesLayout.STEPS &&
+    isActiveResource
       ? [
           {
             label: undefined,
@@ -100,12 +103,13 @@
   );
 
   const completedSubObjectivesCount = $derived(
-    $objective.children?.filter((t: IObjective) => t.status === ObjectiveStatus.COMPLETED)
-      .length
+    $objective.children?.filter(
+      (t: IObjective) => t.status === ObjectiveStatus.COMPLETED
+    ).length
   );
 
   function onSubObjectiveClick(id: IRecordId, event?: MouseEvent) {
-    appStore.resourceClickHandler(event, id, {
+    navigation.resourceClickHandler(event, id, {
       replaceId: $objective.id
     });
   }
@@ -118,7 +122,9 @@
       : payload.label;
   }
 
-  function resolveObjectiveParentPath(parent?: Pick<IObjective, "id" | "parentPath">) {
+  function resolveObjectiveParentPath(
+    parent?: Pick<IObjective, "id" | "parentPath">
+  ) {
     if (!parent?.id) return "";
     return parent.parentPath
       ? `${parent.parentPath}-${parent.id}`
@@ -227,7 +233,11 @@
   async function onReorderSubObjectives(event: DragDropEvent) {
     const { fromId, toId } = event;
     if (!fromId || !toId || fromId === toId || !$objective.children) return;
-    $objective.children = shiftResourceInArray($objective.children, fromId, toId);
+    $objective.children = shiftResourceInArray(
+      $objective.children,
+      fromId,
+      toId
+    );
     const reorderedSubObjectives = shiftResourceInArray(
       _subObjectives,
       fromId,
@@ -356,7 +366,9 @@
   </div>
 
   {#if isExpandArchiveSubObjectives}
-    {@const archiveSubObjectives = $objective.children?.filter(archivedResourceFilter)}
+    {@const archiveSubObjectives = $objective.children?.filter(
+      archivedResourceFilter
+    )}
     {#if archiveSubObjectives && isValidArrayWithData(archiveSubObjectives)}
       <div class="flex flex-col gap-2 p-4">
         <Text

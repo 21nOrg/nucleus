@@ -9,13 +9,16 @@
   import modalEvent, {
     isPrimaryActionDisabled
   } from "@nucleum/stores/overlays/modal.store";
-  import { appEvents } from "@nucleum/stores/notification.store";
+  import { appEvents } from "@nucleum/stores/events/app-events.store";
   import { GlobalEvent } from "@nucleum/stores/notifications/event.enum";
   import { resolveModalOnFront } from "@21n/utils/browser.utils";
   import { Size } from "@21n/elements/size.enum";
   import { logger } from "@nucleum/client/runtime/logging/logger";
   import InlineErrorMessage from "@21n/elements/text/InlineErrorMessage.svelte";
-  import { KeyboardKey, ModifierKey } from "@21n/elements/keyboard/keyboard.type";
+  import {
+    KeyboardKey,
+    ModifierKey
+  } from "@21n/elements/keyboard/keyboard.type";
   import { Orientation } from "@21n/elements/direction.enum";
   import { cn } from "@21n/utils/ui.utils";
   import { Action } from "@nucleum/client/config/action.enum";

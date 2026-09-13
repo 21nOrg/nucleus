@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { fileUpload } from "@nucleum/stores/files/file-upload";
+
   import PanelSwitcher from "@21n/elements/switcher/PanelSwitcher.svelte";
   import { ColorStrength } from "@21n/theme/appearance.type";
   import { deepCopy } from "@21n/shared-utils/obj.utils";
@@ -25,7 +27,7 @@
   import AvatarRenderer from "@21n/elements/avatarPicker/AvatarRenderer.svelte";
   import { emojis, materialSymbols } from "@21n/elements/avatarPicker/avatars";
   import SwitchInput from "@21n/elements/toggle/SwitchInput.svelte";
-  import account from "@nucleum/stores/account.store";
+
   import UploadButton from "@21n/elements/button/UploadButton.svelte";
   import { abg, cn } from "@21n/utils/ui.utils";
   import view from "@nucleum/stores/view.store";
@@ -251,8 +253,7 @@
   const handleScroll = debouncer(function () {
     const container = avatarsParentContainer;
     if (!container) return;
-    const scrollBottom =
-      container.scrollTop + container.clientHeight;
+    const scrollBottom = container.scrollTop + container.clientHeight;
 
     if (scrollBottom + 100 >= container.scrollHeight && !isLoadingMore) {
       lazyLoadAvatars();
@@ -377,9 +378,7 @@
           tempEmote = current;
         }
       }
-      usedIcons.sort(
-        (a, b) => (b[0].frequency ?? 0) - (a[0].frequency ?? 0)
-      );
+      usedIcons.sort((a, b) => (b[0].frequency ?? 0) - (a[0].frequency ?? 0));
       userPreferences.setAvatarPicker({ usedIcons });
     } else {
       const usedEmojis = [...($userPreferences.avatarPicker?.usedEmojis ?? [])];
@@ -403,9 +402,7 @@
         }
       }
 
-      usedEmojis.sort(
-        (a, b) => (b[0].frequency ?? 0) - (a[0].frequency ?? 0)
-      );
+      usedEmojis.sort((a, b) => (b[0].frequency ?? 0) - (a[0].frequency ?? 0));
       userPreferences.setAvatarPicker({ usedEmojis });
     }
     avatarClickCallback(tempEmote);
@@ -437,7 +434,7 @@
   async function uploadedImageToEmote(input: any) {
     let imageLocalURL = new Blob([input], { type: input.type });
     let customName = input.name.split(".")[0].trim();
-    let fileSaveResponse = await account.uploadFileV2(
+    let fileSaveResponse = await fileUpload.uploadFileV2(
       input.type,
       customName,
       imageLocalURL

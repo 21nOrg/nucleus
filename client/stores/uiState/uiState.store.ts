@@ -1,12 +1,12 @@
 import { Resource } from "@nucleum/datafn/resource.enum";
 import { logger } from "@nucleum/client/runtime/logging/logger";
-import { get, writable } from "svelte/store";
+import { derived, get, writable } from "svelte/store";
 import { ResourceAccessPoint } from "@nucleum/datafn/resource.type";
 import { appStore } from "@nucleum/stores/app.store";
-import { ObservableStore } from "@nucleum/stores/client.store";
+
 import { datafn } from "@nucleum/datafn/datafn.store";
 import { Action } from "@nucleum/client/config/action.enum";
-import { InteractionMode } from "@21n/elements/keyboard/interaction-mode.type";
+
 import {
   UIState,
   UIStateScope,
@@ -14,13 +14,7 @@ import {
   type IUIStateStore
 } from "@nucleum/stores/uiState/uiState.type";
 import context from "@nucleum/stores/context.store";
-import { Embed } from "@nucleum/client/runtime/context.type";
-import type { IRecordId } from "@nucleum/schema/legacy/data.type";
-import { toasts } from "@nucleum/stores/notification.store";
-import {
-  resourceInList,
-  isSameResource
-} from "@nucleum/datafn/resource.utils";
+
 import { parse, stringify } from "@21n/shared-utils/json.utils";
 import { migrateLegacyNucleusProductKeys } from "@nucleum/stores/productKeyMigration.utils";
 import {
@@ -97,6 +91,15 @@ export const uiState = {
   get() {
     return get(uiStateLocal);
   },
+  /** Observes a scoped preference across data, product, and device changes. */
+  observeState(
+    keyParam: Action | UIState | ResourceAccessPoint,
+    params?: IUIStateParams
+  ) {
+    return derived([uiStateLocal, appStore, context], () =>
+      uiState.getState(keyParam, params)
+    );
+  },
   resolveKey(keyParam: string, params?: IUIStateParams) {
     let key: string = keyParam;
     const product = get(appStore).product;
@@ -117,7 +120,6 @@ export const uiState = {
     }
     return key;
   },
-
   setState(
     keyParam: Action | UIState | ResourceAccessPoint,
     value: any,
@@ -144,9 +146,7 @@ export const uiState = {
       this.modify({ [key]: value });
       logger.log({ context: "uiState.store - setState", key, value });
     }
-    uiStateDerived.refreshState();
   },
-
   getState(
     keyParam: Action | UIState | ResourceAccessPoint,
     params?: IUIStateParams
@@ -168,7 +168,6 @@ export const uiState = {
     }
     return this.get()[key];
   },
-
   getResourceState(
     resource: Resource,
     location: ResourceAccessPoint,
@@ -177,7 +176,6 @@ export const uiState = {
     const key = `${resource}-${location}-${keyParam}`;
     return this.get()[key];
   },
-
   setResourceState(
     resource: Resource,
     location: ResourceAccessPoint,
@@ -188,7 +186,6 @@ export const uiState = {
     this.modify({ [key]: value });
     logger.log({ context: "uiState.store - setResourceState", key, value });
   },
-
   modify(n: Partial<IUIStateStore>) {
     const mutationTokens = addOptimisticKvEntries(pendingUiStateValues, n);
     uiStateLocal.update((current) => ({ ...current, ...n }));
@@ -202,7 +199,6 @@ export const uiState = {
     }, rollbackPendingValues);
     return mutation;
   },
-
   loader(data: IUIStateStore) {
     if (!data || typeof data !== "object" || Array.isArray(data)) return;
     const migrated = migrateLegacyUiStateKeys(data);
@@ -213,94 +209,7 @@ export const uiState = {
     });
     return datafn.kv.set(Resource.uiState, migrated);
   },
-
-  addResourceToTabs(id: IRecordId) {
-    const current = this.getState(ResourceAccessPoint.TABS, {
-      scope: UIStateScope.PRODUCT
-    });
-    if (current?.includes(id.toString())) {
-      toasts.error("Resource already present in top bar");
-      return;
-    }
-    this.setState(
-      ResourceAccessPoint.TABS,
-      [...(current ?? []), id.toString()],
-      {
-        scope: UIStateScope.PRODUCT
-      }
-    );
-  },
-
-  removeResourceFromTabs(id: IRecordId) {
-    const current = this.getState(ResourceAccessPoint.TABS, {
-      scope: UIStateScope.PRODUCT
-    });
-    if (!current?.some(resourceInList(id))) return;
-    this.setState(
-      ResourceAccessPoint.TABS,
-      current.filter((x: IRecordId) => !isSameResource(x, id)),
-      {
-        scope: UIStateScope.PRODUCT
-      }
-    );
-  },
-
-  toggleSidebar() {
-    const isCompletelyHideLeftNavBar = this.getState(
-      UIState.completelyHideLeftNavBar,
-      {
-        scope: UIStateScope.PRODUCT
-      }
-    );
-    if (isCompletelyHideLeftNavBar) {
-      const currentState = this.getState(UIState.isHideLeftNavBar);
-      this.setState(UIState.isHideLeftNavBar, !currentState);
-      return;
-    }
-    const val = this.getState(UIState.isInThinMode);
-    this.setState(UIState.isInThinMode, !val);
-    const labelsVal = this.getState(UIState.hideLeftNavMenuLabels, {
-      scope: UIStateScope.DAP
-    });
-    this.setState(UIState.hideLeftNavMenuLabels, !labelsVal, {
-      scope: UIStateScope.DAP
-    });
-  },
-
   destroy() {
     uiStateSignal.dispose();
   }
 };
-
-/**
- *
- * TODO - populate app store derived value for interaction mode on uiState restore from cloud
- */
-class UIDerivedState extends ObservableStore<{ isShowHotKeyHints: boolean }> {
-  constructor() {
-    super("derived-ui-state");
-    this.set({ isShowHotKeyHints: false });
-  }
-
-  refreshState() {
-    this.refreshShortcutHintsState();
-  }
-
-  refreshShortcutHintsState() {
-    const isShortcutHintsDisabled = uiState.getState(
-      UIState.hideShortcutHints,
-      {
-        scope: UIStateScope.DEVICE
-      }
-    );
-    const embed = get(context).embed;
-    this.update((x) => {
-      return {
-        ...x,
-        isShowHotKeyHints: !isShortcutHintsDisabled && embed !== Embed.HANDSET
-      };
-    });
-  }
-}
-
-export const uiStateDerived = new UIDerivedState();

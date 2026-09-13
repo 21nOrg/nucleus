@@ -1,8 +1,11 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { page } from "$app/stores";
   import Button from "@21n/elements/button/Button.svelte";
   import PageNotFoundIllustration from "@21n/illustrations/PageNotFoundIllustration.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import {
     ButtonStyle,
     ButtonVariant,
@@ -22,8 +25,8 @@
   } = $props();
   const is404 = $derived(
     isNotFoundPage ||
-    $page?.url.pathname === "/404" ||
-    $page?.url.pathname === "/404/"
+      $page?.url.pathname === "/404" ||
+      $page?.url.pathname === "/404/"
   );
   const erroredPath = $derived($page?.url?.searchParams?.get("path"));
   const errorParam = $derived($page?.url?.searchParams?.get("error"));
@@ -67,7 +70,7 @@
           style={ButtonStyle.OUTLINED}
           label={is404 ? "Go back home" : "Try again"}
           onclick={() => {
-            appStore.gotoPath("/");
+            navigation.gotoPath("/");
           }}
         />
         {#if !is404}
@@ -76,7 +79,7 @@
             type={ButtonVariant.PRIMARY}
             label="Chat with us"
             onclick={() => {
-              appStore.runAction("discord");
+              requireCommandHost().runAction("discord");
             }}
           />
         {/if}

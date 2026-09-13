@@ -1,9 +1,9 @@
-import {
-  AccessMode,
-  ResourceAccessPoint
-} from "@nucleum/datafn/resource.type";
+import { navigation } from "@21n/layout/navigation/navigation";
+import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+import { tabState } from "@21n/layout/topNav/tabs/tab-state";
+import { AccessMode, ResourceAccessPoint } from "@nucleum/datafn/resource.type";
 import { isRecordId, resourceInList } from "@nucleum/datafn/resource.utils";
-import { appStore } from "@nucleum/stores/app.store";
+
 import { uiState } from "@nucleum/stores/uiState/uiState.store";
 import { UIStateScope } from "@nucleum/stores/uiState/uiState.type";
 import type { HorizontalTrail, VerticalTrail } from "./tabs.type";
@@ -14,7 +14,7 @@ import { get, writable } from "svelte/store";
 class TabStore {
   open(id: IRecordId, backParam?: string) {
     if (!id) return;
-    uiState.addResourceToTabs(id);
+    tabState.addResourceToTabs(id);
     this.activate(id, backParam);
   }
 
@@ -23,14 +23,14 @@ class TabStore {
     const tabs = this.get();
     if (tabs?.some(resourceInList(replaceId))) {
       this.remove(replaceId);
-      uiState.addResourceToTabs(id);
+      tabState.addResourceToTabs(id);
     }
     this.activate(id);
   }
 
   addInBackground(id: IRecordId) {
     if (!id) return;
-    uiState.addResourceToTabs(id);
+    tabState.addResourceToTabs(id);
   }
 
   activate(id: IRecordId, backParam?: string) {
@@ -45,7 +45,7 @@ class TabStore {
       : (backParam ?? window.location.pathname);
     const returnToParam = currentParams.get("returnTo");
 
-    appStore.closeResource({ isRestrictToModals: true });
+    navigation.closeResource({ isRestrictToModals: true });
     const queryParams: Record<string, IRecordId | string> = {};
     if (resolvedBack !== undefined && resolvedBack !== null) {
       queryParams.back = resolvedBack;
@@ -53,13 +53,13 @@ class TabStore {
     if (returnToParam) {
       queryParams.returnTo = returnToParam;
     }
-    appStore.openResource(id, AccessMode.POP, {
+    navigation.openResource(id, AccessMode.POP, {
       searchParams: { ...queryParams }
     });
   }
 
   remove(id: IRecordId) {
-    uiState.removeResourceFromTabs(id);
+    tabState.removeResourceFromTabs(id);
   }
 
   get() {
@@ -130,10 +130,10 @@ function createHorizontalTrailStore() {
     activate(id: IRecordId | Action) {
       const current = get(hTrail);
       if (current.isBaseNonRecord && id === current.path[0]) {
-        appStore.runAction(id);
+        requireCommandHost().runAction(id);
         return;
       } else {
-        appStore.toggleSearchParam([AccessMode.MAIN]);
+        navigation.toggleSearchParam([AccessMode.MAIN]);
       }
       update((state) => {
         return {
@@ -226,13 +226,13 @@ function createVTrailStore() {
     activate(id: IRecordId | Action) {
       const current = get(vTrail);
       if (!isRecordId(current.base) && id === current.base) {
-        appStore.runAction(id);
+        requireCommandHost().runAction(id);
         return;
       } else {
         if (!isRecordId(id)) return;
         const parts = id.split("-");
         const recordId = parts[parts.length - 1];
-        appStore.openResource(recordId, AccessMode.POP, {
+        navigation.openResource(recordId, AccessMode.POP, {
           origin: current.base
         });
       }

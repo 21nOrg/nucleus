@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { fileDrop } from "@nucleum/actions/fileDrop.action";
   import { logger } from "@nucleum/client/runtime/logging/logger";
   import Button from "@21n/elements/button/Button.svelte";
@@ -7,7 +9,7 @@
   import Icon from "@21n/elements/Icon.svelte";
   import InlineErrorMessage from "@21n/elements/text/InlineErrorMessage.svelte";
   import account from "@nucleum/stores/account.store";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import context from "@nucleum/stores/context.store";
   import view from "@nucleum/stores/view.store";
   import { ButtonVariant } from "@21n/elements/button/button.type";
@@ -16,10 +18,13 @@
   import { MAX_FILE_SIZE_MB } from "@nucleum/stores/files/file.constants";
   import { resolveFileUploadErrorMessage } from "@nucleum/features/memory/capture/upload-error.utils";
   import { MemotronAction } from "@nucleum/features/memory/memory-action.enum";
-  import type { NodeType } from "@nucleum/schema/legacy/node-type.enum";
+
   import type { IMultiFileCaptureData } from "@nucleum/features/memory/capture/capture.type";
   import { resolveMultipleFilesData } from "@nucleum/features/memory/capture/capture.utils";
-  import { clipboard, type IActiveCaptureStore } from "@nucleum/features/memory/capture/capture.store";
+  import {
+    clipboard,
+    type IActiveCaptureStore
+  } from "@nucleum/features/memory/capture/capture.store";
   import { AppSearchParam } from "@nucleum/stores/appStore.type";
   import { fly } from "svelte/transition";
 
@@ -109,7 +114,7 @@
     clipboard.set({
       multipleFiles: multipleFilesData
     });
-    appStore.runAction(MemotronAction.CAPTURE_SECONDARY, {
+    requireCommandHost().runAction(MemotronAction.CAPTURE_SECONDARY, {
       searchParams: {
         [AppSearchParam.CLIPBOARD]: true
       },

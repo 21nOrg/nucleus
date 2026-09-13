@@ -1,3 +1,4 @@
+import { requireCommandHost } from "@nucleum/stores/commands/command-host";
 import { Resource } from "@nucleum/datafn/resource.enum";
 import {
   type IActiveSessionStore,
@@ -28,17 +29,16 @@ import modalEvent, {
 } from "@nucleum/stores/overlays/modal.store";
 import {
   toasts,
-  scheduledNotifications,
-  fullPageLoadingScreen,
-  appEvents
+  fullPageLoadingScreen
 } from "@nucleum/stores/notification.store";
+import { appEvents } from "@nucleum/stores/events/app-events.store";
+import { scheduledNotifications } from "./notifications/scheduled-notifications.store";
 import { deepCopy, isValidArrayWithData } from "@21n/shared-utils/obj.utils";
 import { AlertType } from "@nucleum/stores/notifications/notification.type";
 import { generateResourceId } from "@nucleum/datafn/id.utils";
 import type { IRecordId } from "@nucleum/schema/legacy/data.type";
 import { logger } from "@nucleum/client/runtime/logging/logger";
 import {
-  type ISession,
   SessionType,
   type ISessionCapture,
   type ISessionLogCapture
@@ -494,17 +494,21 @@ class ActiveSessionStore extends ObservableStore<IActiveSessionStore> {
   /**
    * Continues the next interval in case of pre defined intervals.
    *
-   * Changing the currentBlockId and state of the session is taken care of in {@link _resumeTimer} method - via {@link _restorePredefinedSessionState} method.
+   * Advances predefined intervals without replacing the active timer.
    */
   private async _continueSession() {
     let session = this.get();
+    if (session.type !== SessionType.PREDEFINED_INTERVALS) return;
     if (session.state == SessionState.FOCUS_RUNNING) {
       appEvents.publish(PointronEvent.INTERVAL_ENDED);
     } else {
       appEvents.publish(PointronEvent.BREAK_ENDED);
       this.modify({ isBreakReminderNotified: false }, { isPersist: false });
     }
-    this._resumeTimer();
+    this._restorePredefinedSessionState(session);
+    this.modify({ timeElapsed: 0 }, { isPersist: false });
+    this.refreshNotifications(this.get());
+    this._postNotificationsToEmbed();
     await this.persist();
   }
 
@@ -679,7 +683,7 @@ class ActiveSessionStore extends ObservableStore<IActiveSessionStore> {
           );
           if (currentBlockIndex === session.intervals.length - 1) {
             this.prefinishSession();
-          } else {
+          } else if (session.type === SessionType.PREDEFINED_INTERVALS) {
             isContinueSession = true;
           }
         }
@@ -843,7 +847,7 @@ class ActiveSessionStore extends ObservableStore<IActiveSessionStore> {
       savedSessionStore.state === SessionState.PRE_FINISHED
     ) {
       this.shallowReset();
-      appStore.runAction(PointronEvent.SESSION_FINISHED);
+      requireCommandHost().runAction(PointronEvent.SESSION_FINISHED);
       this.modify(savedSessionStore, { isPersist: false });
     } else {
       savedSessionStore = this.reset();
@@ -915,10 +919,7 @@ class ActiveSessionStore extends ObservableStore<IActiveSessionStore> {
       ? session.totalIdle
       : 0;
     const elapsed = sessionStart
-      ? Math.max(
-          0,
-          (end.getTime() - sessionStart.getTime()) / 1000 - totalIdle
-        )
+      ? Math.max(0, (end.getTime() - sessionStart.getTime()) / 1000 - totalIdle)
       : session.totalElapsed;
     const intervals = this.resolveFinishedIntervals(session, end, elapsed);
     const currentBlock = intervals.find((x) => x.id === session.currentBlockId);

@@ -1,7 +1,12 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import type { Snippet } from "svelte";
   import { page } from "$app/stores";
-  import { BarStyle, PanelSwitcherStyle } from "@21n/elements/switcher/switcher.enum";
+  import {
+    BarStyle,
+    PanelSwitcherStyle
+  } from "@21n/elements/switcher/switcher.enum";
   import { onMount } from "svelte";
   import QuickStart from "@nucleum/features/focus/quickstart/QuickStart.svelte";
   import Advanced from "@nucleum/features/focus/advanced/Advanced.svelte";
@@ -20,7 +25,7 @@
     type IButtonParams
   } from "@21n/elements/button/button.type";
   import { Size } from "@21n/elements/size.enum";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import QuickStartLayoutToggle from "@nucleum/features/focus/quickstart/actions/QuickStartLayoutToggle.svelte";
   import { cn } from "@21n/utils/ui.utils";
   import { AppSearchParam } from "@nucleum/stores/appStore.type";
@@ -83,7 +88,7 @@
     }
   });
   async function onManualLogClicked() {
-    appStore.runAction(PointronAction.MANUAL_FOCUS_ENTRY);
+    requireCommandHost().runAction(PointronAction.MANUAL_FOCUS_ENTRY);
   }
   async function onStartSessionClicked() {
     await activeSession.startSession();
@@ -190,7 +195,7 @@
     {
       shortcut: focusToggleHotKey,
       callback: () => {
-        appStore.runAction(PointronAction.TOGGLE_FOCUS_SESSION);
+        requireCommandHost().runAction(PointronAction.TOGGLE_FOCUS_SESSION);
       }
     }
   ]}

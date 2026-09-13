@@ -1,13 +1,21 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Button from "@21n/elements/button/Button.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Size } from "@21n/elements/size.enum";
   import { keyboardShortcuts } from "@nucleum/stores/keyboard/shortcuts.store";
   import type { IKeyboardShortcut } from "@21n/elements/keyboard/shortcut.type";
-  import { KeyboardKey, ModifierKey } from "@21n/elements/keyboard/keyboard.type";
+  import {
+    KeyboardKey,
+    ModifierKey
+  } from "@21n/elements/keyboard/keyboard.type";
   import { OperatingSystem } from "@nucleum/client/runtime/context.type";
   import context from "@nucleum/stores/context.store";
-  import { resolveShortcutText, resolveModifiers } from "@21n/elements/keyboard/shortcut.utils";
+  import {
+    resolveShortcutText,
+    resolveModifiers
+  } from "@21n/elements/keyboard/shortcut.utils";
   import { tooltip } from "@nucleum/actions/popover.action";
   let {
     action,
@@ -25,7 +33,7 @@
   let inputRef: HTMLInputElement | undefined = undefined;
   let savedKey = shortcut.key;
   let savedModifiers: ModifierKey[] = [...shortcut.modifiers];
-  const actionDetails = $derived(appStore.resolveAction(action));
+  const actionDetails = $derived(requireCommandHost().resolveAction(action));
   const systemShortcuts = $derived.by(() => resolveSystemShortcuts());
 
   $effect(() => {

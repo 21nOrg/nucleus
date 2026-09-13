@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { activeSession } from "@nucleum/features/focus/session.store";
   import { PointronAction } from "@nucleum/client/config/focus-action.enum";
   import { SessionUIContext } from "@nucleum/features/focus/session.type";
@@ -8,7 +10,7 @@
   } from "@nucleum/features/focus/sessionComposition.type";
   import { SessionState } from "@nucleum/features/focus/sessionState.enum";
   import { SessionType } from "@nucleum/features/focus/logs/log.type";
-  import { appStore, currentTime } from "@nucleum/stores/app.store";
+  import { currentTime } from "@nucleum/stores/app.store";
   import { userPreferences } from "@nucleum/stores/preferences/user-preferences.store";
   import { formatTime } from "@21n/utils/time.utils";
   import { onMount } from "svelte";
@@ -88,7 +90,9 @@
           ? 'text--base px--2'
           : 'text--b3 px--2 py--[0.2rem]'}"
         onclick={() =>
-          appStore.runAction(PointronAction.COMPOSE_BY_END_TIME_MODAL)}
+          requireCommandHost().runAction(
+            PointronAction.COMPOSE_BY_END_TIME_MODAL
+          )}
       >
         {#if resolvedComposition?.type === SessionCompositionType.END_TIME_FIXED && $activeSession.end}
           {formatTime($userPreferences, $activeSession.end)}
@@ -97,9 +101,7 @@
         {:else}
           {formatTime(
             $userPreferences,
-            new Date(
-              $currentTime.getTime() + resolvedPlannedDuration * 1000
-            )
+            new Date($currentTime.getTime() + resolvedPlannedDuration * 1000)
           )}
         {/if}
       </button>

@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { PointronAction } from "@nucleum/client/config/focus-action.enum";
   import Divider from "@21n/elements/Divider.svelte";
   import Icon from "@21n/elements/Icon.svelte";
   import Text from "@21n/elements/text/Text.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { userPreferences } from "@nucleum/stores/preferences/user-preferences.store";
   import view from "@nucleum/stores/view.store";
   import { Orientation } from "@21n/elements/direction.enum";
@@ -51,7 +53,7 @@
   });
 
   async function handleDelete(event: MouseEvent) {
-    appStore.runAction(PointronAction.DELETE_SESSION, {
+    requireCommandHost().runAction(PointronAction.DELETE_SESSION, {
       componentParams: { id: session.id }
     });
     event.stopPropagation();

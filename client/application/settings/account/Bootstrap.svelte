@@ -1,6 +1,9 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { accountDeletion } from "@nucleum/application/account/account-deletion";
+
   import Button from "@21n/elements/button/Button.svelte";
   import account from "@nucleum/stores/account.store";
   import { appStore } from "@nucleum/stores/app.store";
@@ -18,7 +21,7 @@
   const productName = $derived(properCase($appStore?.product ?? "nucleum"));
   const currentUserInfo = $derived($account?.userInfo);
   const isAlreadyBootstrapped = $derived(
-    Boolean(currentUserInfo?.isBootstrapped && currentUserInfo?.region),
+    Boolean(currentUserInfo?.isBootstrapped && currentUserInfo?.region)
   );
 
   $effect(() => {
@@ -61,14 +64,14 @@
             type={ButtonVariant.DANGER}
             style={ButtonStyle.OUTLINED}
             onclick={() => {
-              account.delete();
+              accountDeletion.delete();
             }}
           />
           <Button
             label="Go to home"
             type={ButtonVariant.PRIMARY}
             onclick={() => {
-              appStore.gotoPath("/");
+              navigation.gotoPath("/");
             }}
           />
         </div>

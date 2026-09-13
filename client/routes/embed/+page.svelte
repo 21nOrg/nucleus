@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { oauth } from "@nucleum/application/account/oauth";
+
   import { clientStorage } from "@nucleum/persistence/persistence.utils";
   import { ClientStorageKey } from "@nucleum/persistence/persistence.type";
   import { onMount } from "svelte";
@@ -20,7 +22,7 @@
       (p: OAuthProviderConfig) => p.oauth_slug === providerParam
     );
     if (!provider) return;
-    await appStore.initiateOAuth2Flow(provider.provider, guest);
+    await oauth.initiateOAuth2Flow(provider.provider, guest);
   }
 </script>
 

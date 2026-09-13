@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Divider from "@21n/elements/Divider.svelte";
   import Icon from "@21n/elements/Icon.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import view from "@nucleum/stores/view.store";
   import { ActionType } from "@nucleum/client/config/action.type";
   import { ColorStrength } from "@21n/theme/appearance.type";
@@ -31,7 +33,7 @@
     onclick?: ((event: MouseEvent) => void) | undefined;
   } = $props();
   const dev_isOutlineStyle: boolean = true;
-  const component = $derived(appStore.resolveAction(action));
+  const component = $derived(requireCommandHost().resolveAction(action));
   const activeState = $derived(
     setActiveByPath ? $view.currentPath === "/" + component?.path : isActive
   );

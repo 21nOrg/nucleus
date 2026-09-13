@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import Button from "@21n/elements/button/Button.svelte";
   import TextInput from "@21n/elements/input/TextInput.svelte";
   import InlineFeedbackText from "@nucleum/extensions/clipper/InlineFeedbackText.svelte";
@@ -7,7 +9,7 @@
   import { AlertType } from "@nucleum/stores/notifications/notification.type";
   import { Size } from "@21n/elements/size.enum";
   import { isValidEmail } from "@21n/shared-utils/text.utils";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import view from "@nucleum/stores/view.store";
   import { authClient } from "@nucleum/client/runtime/account/auth";
   import Icon from "@21n/elements/Icon.svelte";
@@ -24,7 +26,9 @@
   let step = $state<"email" | "otp" | "password">("email");
   let showNewPassword = $state(false);
   let showConfirmPassword = $state(false);
-  const flowMode = $derived($page.url.searchParams.get("mode") === "set" ? "set" : "reset");
+  const flowMode = $derived(
+    $page.url.searchParams.get("mode") === "set" ? "set" : "reset"
+  );
 
   function resolveInlineFeedback() {
     return info
@@ -68,7 +72,8 @@
       });
 
       if (!response.ok) {
-        error = response.error.message ?? "Failed to send OTP. Please try again.";
+        error =
+          response.error.message ?? "Failed to send OTP. Please try again.";
         return;
       }
 
@@ -137,7 +142,9 @@
       });
 
       if (!response.ok) {
-        error = response.error.message ?? "Failed to reset password. Please try again.";
+        error =
+          response.error.message ??
+          "Failed to reset password. Please try again.";
         return;
       }
 
@@ -148,7 +155,7 @@
             ? "Password set successfully. Redirecting to login..."
             : "Password reset successful. Redirecting to login...";
         setTimeout(() => {
-          appStore.gotoPath("/account/login");
+          navigation.gotoPath("/account/login");
         }, 2000);
       }
     } catch (err) {
@@ -184,7 +191,7 @@
   }
 
   function handleBackToLogin() {
-    appStore.gotoPath("/account/login");
+    navigation.gotoPath("/account/login");
   }
 
   async function handleResendOTP() {

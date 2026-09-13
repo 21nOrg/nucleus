@@ -1,12 +1,14 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import type { Snippet } from "svelte";
   import { page } from "$app/stores";
   import { resolveAuthSession } from "@nucleum/client/runtime/account/auth";
   import AppLoadingView from "@21n/layout/paint/AppLoadingView.svelte";
   import Button from "@21n/elements/button/Button.svelte";
-  import { appStore } from "../../stores/app.store";
+
   import { productData } from "@nucleum/products/product.resolver";
   import AuthGuard from "@21n/layout/layers/AuthGuard.svelte";
   import { postMessageToParent } from "@nucleum/client/runtime/embed/embed.utils";
@@ -45,7 +47,7 @@
       window.location.reload();
       return;
     }
-    appStore.gotoPath("/account/login", {
+    navigation.gotoPath("/account/login", {
       queryParams: authState === "expired" ? { msg: "expired" } : undefined
     });
   }
@@ -95,7 +97,7 @@
     <Button
       label="Login/Signup"
       onclick={() => {
-        appStore.gotoPath("/account/login");
+        navigation.gotoPath("/account/login");
       }}
     />
   </div>

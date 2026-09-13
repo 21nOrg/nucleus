@@ -1,25 +1,36 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import Icon from "@21n/elements/Icon.svelte";
   import {
     BlockAction,
     type IBlock,
     type IEmbedBlockBody
   } from "@nucleum/features/memory/markdown/md.type";
-  import { headingNodeTypes, mediaNodeTypeList, structuralNodeTypes, webNodeTypeList } from "@nucleum/features/memory/node/node.type";
-import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
+  import {
+    headingNodeTypes,
+    mediaNodeTypeList,
+    structuralNodeTypes,
+    webNodeTypeList
+  } from "@nucleum/features/memory/node/node.type";
+  import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import { onMount } from "svelte";
-  import type { MdStoreType } from "@nucleum/features/memory/markdown/markdown.store";
+
   import { Size } from "@21n/elements/size.enum";
   import { PopoverTriggerMethod } from "@nucleum/actions/popover.type";
-  import { ContextMenuType, type IContextMenu, type IContextMenuItem } from "@21n/elements/contextMenu/context-menu.type";
+  import {
+    ContextMenuType,
+    type IContextMenu,
+    type IContextMenuItem
+  } from "@21n/elements/contextMenu/context-menu.type";
   import { Placement } from "@21n/elements/direction.enum";
   import { cn } from "@21n/utils/ui.utils";
   import FocusRing from "@nucleum/features/memory/markdown/contextMenu/FocusRing.svelte";
   import BlockBrowser from "@nucleum/features/memory/markdown/blockBrowser/BlockBrowser.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { AccessMode } from "@nucleum/datafn/resource.type";
-import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
-  import { uiState } from "@nucleum/stores/uiState/uiState.store";
+  import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
+
   import { Action } from "@nucleum/client/config/action.enum";
   import { MemotronEvent } from "@nucleum/client/config/events/memory-event.enum";
   import { dispatchCustomEvent } from "@21n/utils/browser.utils";
@@ -51,8 +62,7 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
       | ((event: CustomEvent<{ action: BlockAction; data?: any }>) => void)
       | undefined;
     onNodularize?:
-      | ((event: CustomEvent<{ id: IRecordId }>) => void)
-      | undefined;
+      ((event: CustomEvent<{ id: IRecordId }>) => void) | undefined;
     onPopoverVisibility?: ((event: CustomEvent<any>) => void) | undefined;
   } = $props();
   let isHovering: boolean = false;
@@ -190,15 +200,14 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
       value: BlockAction.OPEN_AS_SPLIT,
       icon: "split",
       callback: async () => {
-        appStore.openResource(block.id, AccessMode.FSPLIT);
+        navigation.openResource(block.id, AccessMode.FSPLIT);
       }
     },
     [BlockAction.OPEN_IN_FULL_SCREEN]: {
       value: BlockAction.OPEN_IN_FULL_SCREEN,
       icon: "fullscreen",
       callback: async () => {
-        // appStore.closeResource({ isRestrictToModals: true });
-        appStore.openResource(block.id, AccessMode.FULL);
+        navigation.openResource(block.id, AccessMode.FULL);
       }
     },
     [BlockAction.OPEN_AS_TAB]: {

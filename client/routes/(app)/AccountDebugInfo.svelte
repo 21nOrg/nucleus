@@ -1,10 +1,12 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { clientStorage } from "@nucleum/persistence/persistence.utils";
   import { ClientStorageKey } from "@nucleum/persistence/persistence.type";
   import { parse } from "@21n/shared-utils/json.utils";
   import { authClient } from "@nucleum/client/runtime/account/auth";
   import Button from "@21n/elements/button/Button.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import NewAccountDebugInfo from "@nucleum/application/settings/account/NewAccountDebugInfo.svelte";
   async function refresh() {
     const val = await clientStorage.get(ClientStorageKey.USER);
@@ -13,7 +15,7 @@
 
   async function signOut() {
     (await authClient()).signOut();
-    appStore.gotoPath("/account/login");
+    navigation.gotoPath("/account/login");
   }
 </script>
 

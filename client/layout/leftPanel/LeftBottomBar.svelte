@@ -1,8 +1,10 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import BoxButton from "@21n/elements/button/BoxButton.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Action } from "@nucleum/client/config/action.enum";
   let {
     isInThinMode = false,
@@ -20,6 +22,6 @@
     icon="question"
     tooltip="Help"
     parentBgIndex={2}
-    onclick={async () => appStore.runAction(Action.HELP)}
+    onclick={async () => requireCommandHost().runAction(Action.HELP)}
   />
 </div>

@@ -1,6 +1,8 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import type { Snippet } from "svelte";
   import Notifications from "@nucleum/products/pointron/base/Notifications.svelte";
   import { onMount } from "svelte";
@@ -8,7 +10,7 @@
     activeSession,
     focusItemsStore
   } from "@nucleum/features/focus/session.store";
-  import { appLoadingState, appStore } from "@nucleum/stores/app.store";
+  import { appLoadingState } from "@nucleum/stores/app.store";
   import BackgroundSoundPlayer from "@nucleum/features/focus/backgroundMusic/BackgroundSoundPlayer.svelte";
   import { PointronAction } from "@nucleum/client/config/focus-action.enum";
   import context from "@nucleum/stores/context.store";
@@ -46,7 +48,7 @@
       $activeSession.state === SessionState.FINISHED ||
       $activeSession.state === SessionState.PRE_FINISHED
     ) {
-      appStore.runAction(PointronEvent.SESSION_FINISHED);
+      requireCommandHost().runAction(PointronEvent.SESSION_FINISHED);
     }
   }
 
@@ -60,7 +62,7 @@
   }
 </script>
 
-<UserBaseLayer onReady={onReady}>
+<UserBaseLayer {onReady}>
   {#snippet topnav()}
     <div class="flex gap-1 items-center h-full">
       <FocusTopNavWidget />

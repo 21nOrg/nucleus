@@ -1,10 +1,12 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { onMount } from "svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { pointronPreferences } from "@nucleum/features/focus/preferences.store";
-  import { appEvents } from "@nucleum/stores/notification.store";
+  import { appEvents } from "@nucleum/stores/events/app-events.store";
   import type { IEvent } from "@21n/elements/input/event.type";
   import { PointronEvent } from "@nucleum/client/config/events/focus-event.enum";
   import { postNotificationToParent } from "@nucleum/client/runtime/embed/embed.utils";
@@ -24,14 +26,14 @@
       switch (event.event) {
         case PointronEvent.BREAK_ENDED:
           src = $pointronPreferences.breakEndSound ?? "/sounds/ping.wav";
-          appStore.runAction(
+          requireCommandHost().runAction(
             PointronAction.PREDEFINED_INTERVAL_NOTIFIER_OVERLAY
           );
           body = "Break ended";
           break;
         case PointronEvent.INTERVAL_ENDED:
           src = $pointronPreferences.focusEndSound ?? "/sounds/ping.wav";
-          appStore.runAction(
+          requireCommandHost().runAction(
             PointronAction.PREDEFINED_INTERVAL_NOTIFIER_OVERLAY
           );
           body = "Interval ended";
@@ -39,7 +41,7 @@
         case PointronEvent.BREAK_REMINDER:
           src = $pointronPreferences.focusEndSound ?? "/sounds/ping.wav";
           body = "Interval time limit reached";
-          appStore.runAction(PointronEvent.BREAK_REMINDER);
+          requireCommandHost().runAction(PointronEvent.BREAK_REMINDER);
           break;
         // case PointronEventEnum.PREDEFINED_INTERVAL_NOTIFIER:
         //   runAction(PointronEventEnum.PREDEFINED_INTERVAL_NOTIFIER);
@@ -47,7 +49,7 @@
         case PointronEvent.SESSION_FINISHED:
           src =
             $pointronPreferences.sessionFinishSound ?? "/sounds/dingding.mp3";
-          appStore.runAction(PointronEvent.SESSION_FINISHED);
+          requireCommandHost().runAction(PointronEvent.SESSION_FINISHED);
           break;
         case PointronEvent.SESSION_TIME_IS_UP:
           src =

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import InlineMarkdownTextInput from "@nucleum/features/memory/markdown/content/InlineMarkdownTextInput.svelte";
   import NodeLoadingPulse from "@21n/elements/feedback/animations/NodeLoadingPulse.svelte";
   import type { IActiveNodeStore } from "@nucleum/features/memory/node/node.store";
@@ -35,7 +37,7 @@
   import { Embed } from "@nucleum/client/runtime/context.type";
   import { Resource } from "@nucleum/datafn/resource.enum";
   import { AppSearchParam } from "@nucleum/stores/appStore.type";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import CoverPicker from "@21n/elements/coverPicker/CoverPicker.svelte";
   import CoverRenderer from "@21n/elements/coverPicker/CoverRenderer.svelte";
   import { hoverable } from "@nucleum/actions/hover.action";
@@ -116,7 +118,7 @@
 
   async function onViewSwitch(e: CustomEvent<NodeView>) {
     selectedView = e.detail;
-    appStore.toggleSearchParamRecordSpecific($node.id, {
+    navigation.toggleSearchParamRecordSpecific($node.id, {
       [AppSearchParam.NODE_VIEW]: selectedView
     });
     if (selectedView === NodeView.CONTENT) {

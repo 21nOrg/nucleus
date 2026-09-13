@@ -1,3 +1,5 @@
+import { navigation } from "@21n/layout/navigation/navigation";
+import { requireCommandHost } from "@nucleum/stores/commands/command-host";
 import StorageSettings from "@nucleum/products/pointron/settings/data/StorageSettings.svelte";
 import WidgetSettings from "@nucleum/products/pointron/settings/WidgetSettings.svelte";
 import TrackingSettings from "@nucleum/products/pointron/settings/targets/TrackingSettings.svelte";
@@ -43,7 +45,7 @@ import { activeSession } from "@nucleum/features/focus/session.store";
 import { PointronAction } from "@nucleum/client/config/focus-action.enum";
 import { PointronEvent } from "@nucleum/client/config/events/focus-event.enum";
 import AnalyticsViewsPageEditMobile from "@nucleum/features/focus/analytics/AnalyticsViewsPageEditMobile.svelte";
-import { appStore } from "@nucleum/stores/app.store";
+
 import { Embed } from "@nucleum/client/runtime/context.type";
 import ImportOnboarding from "@nucleum/products/pointron/settings/data/ImportOnboarding.svelte";
 import { Action } from "@nucleum/client/config/action.enum";
@@ -62,7 +64,7 @@ import { AccessMode } from "@nucleum/datafn/resource.type";
 import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
 import NodeLoadingPulse from "@21n/elements/feedback/animations/NodeLoadingPulse.svelte";
 import { appMenuActionLabelsByAction } from "@nucleum/client/config/product-nav.config";
-//TODO - use dummy task if this causes any issues - like earlier
+
 import Task from "@nucleum/features/focus/tasks/Task.svelte";
 import CreateTask from "@nucleum/features/focus/tasks/CreateTask.svelte";
 import Objective from "@nucleum/features/focus/goals/Goal.svelte";
@@ -170,7 +172,7 @@ async function createObjective(params?: {
   });
   toasts.success("New objective created successfully");
   if (params?.isPreventOpenAfterCreate) return objective;
-  appStore.openResource(objective.id, AccessMode.POP, {
+  navigation.openResource(objective.id, AccessMode.POP, {
     searchParams: {
       [AppSearchParam.EDIT]: true,
       [AppSearchParam.LINK]: params?.linkSearchParam ?? null
@@ -289,7 +291,7 @@ export const pointronActions: IAction[] = [
       }
     }
   },
-  //TODO - Disabling sheet due to issues with stores not being present.
+
   {
     action: PointronAction.MANUAL_FOCUS_ENTRY,
     component: ManualLogPane,
@@ -438,9 +440,7 @@ export const pointronActions: IAction[] = [
     action: Action.OVERVIEW,
     component: AnalyticsV2,
     type: ActionType.PAGE,
-    // icon: "ph:presentation-chart-light",
-    // icon: "chart-line-up",
-    // icon: "heroicons:rectangle-group",
+
     icon: "overview",
     label: appMenuActionLabelsByAction[Action.OVERVIEW]
   },
@@ -515,7 +515,7 @@ export const pointronActions: IAction[] = [
     isMeta: true,
     type: ActionType.FUNCTION,
     fn: async () => {
-      appStore.runAction(PointronAction.IMPORT_EXPORT);
+      requireCommandHost().runAction(PointronAction.IMPORT_EXPORT);
     },
     hideContext: [Embed.HANDSET]
   },
@@ -624,9 +624,9 @@ export const pointronActions: IAction[] = [
     type: ActionType.FUNCTION,
     fn: async () => {
       if (isSessionRunningPreCondition()) {
-        appStore.runAction(PointronAction.FINISH_FOCUS_SESSION);
+        requireCommandHost().runAction(PointronAction.FINISH_FOCUS_SESSION);
       } else {
-        appStore.runAction(PointronAction.START_FOCUS_SESSION);
+        requireCommandHost().runAction(PointronAction.START_FOCUS_SESSION);
       }
     }
   },
@@ -708,7 +708,7 @@ export const pointronActions: IAction[] = [
                 context: PointronAction.DELETE_SESSION
               });
               toasts.success("Session log deleted successfully");
-              appStore.closeResource({ id: sessionId });
+              navigation.closeResource({ id: sessionId });
               return true;
             } catch (e) {
               toasts.error("Failed to delete session log");

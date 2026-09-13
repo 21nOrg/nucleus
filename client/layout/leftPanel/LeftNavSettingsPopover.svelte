@@ -1,7 +1,7 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-  import { appMenuStore } from "@nucleum/stores/appMenu/appMenu.store";
+  import { appMenuStore } from "@21n/layout/navigation/app-menu.store";
   import { acquireDnDPage, appStore } from "@nucleum/stores/app.store";
   import { Resource } from "@nucleum/datafn/resource.enum";
   import Icon from "@21n/elements/Icon.svelte";

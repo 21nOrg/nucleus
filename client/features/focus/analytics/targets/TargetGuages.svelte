@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { getCorrespoingHorizonFrequencyLabel } from "@21n/utils/time.utils";
   import Guage from "@nucleum/features/focus/analytics/charts/Guage.svelte";
   import { Size } from "@21n/elements/size.enum";
@@ -6,7 +8,7 @@
   import { isValidArrayWithData } from "@21n/shared-utils/obj.utils";
   import Icon from "@21n/elements/Icon.svelte";
   import EmptyStatusView from "@21n/elements/feedback/EmptyStatusView.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { PointronAction } from "@nucleum/client/config/focus-action.enum";
 
   let {
@@ -19,14 +21,14 @@
     type?: "semi" | "full";
     parentBgIndex?: number;
     data?:
-    | {
-        scale: TimeScale;
-        actual: number;
-        target: number;
-        streak: { value: number; lastWhenStreakBroke: string };
-        isCurrentAchieved: boolean;
-      }[]
-    | [];
+      | {
+          scale: TimeScale;
+          actual: number;
+          target: number;
+          streak: { value: number; lastWhenStreakBroke: string };
+          isCurrentAchieved: boolean;
+        }[]
+      | [];
   } = $props();
 
   let guages = $derived.by(() => {
@@ -96,7 +98,7 @@
       actionText="Set targets"
       {parentBgIndex}
       onclick={() => {
-        appStore.runAction(PointronAction.SET_TARGETS);
+        requireCommandHost().runAction(PointronAction.SET_TARGETS);
       }}
     />
   {/if}

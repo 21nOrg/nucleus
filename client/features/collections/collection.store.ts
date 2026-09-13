@@ -1,3 +1,4 @@
+import { requireCommandHost } from "@nucleum/stores/commands/command-host";
 import { Resource } from "@nucleum/datafn/resource.enum";
 import { ActiveResourceStore } from "@nucleum/stores/resources/active-resource.store";
 import {
@@ -21,13 +22,16 @@ import {
   assignDefaultLabelAsFallback,
   serializePropertyForDatafn
 } from "@nucleum/features/collections/properties/property.utils";
-import { ContextMenuType, type IContextMenu, type IContextMenuItem } from "@21n/elements/contextMenu/context-menu.type";
+import {
+  ContextMenuType,
+  type IContextMenu,
+  type IContextMenuItem
+} from "@21n/elements/contextMenu/context-menu.type";
 import context from "@nucleum/stores/context.store";
 import { get } from "svelte/store";
 import { resourceAction } from "@nucleum/datafn/resource.utils";
 import { toasts } from "@nucleum/stores/notification.store";
-import { dispatchCustomEvent } from "@21n/utils/browser.utils";
-import { GlobalEvent } from "@nucleum/stores/notifications/event.enum";
+
 import { Embed } from "@nucleum/client/runtime/context.type";
 import { appStore } from "@nucleum/stores/app.store";
 import { datafn } from "@nucleum/datafn/datafn.store";
@@ -203,9 +207,7 @@ export class ActiveCollectionStore extends ActiveResourceStore<
           id: this.id.toString(),
           relations: {
             views: relationRefs(
-              views.map((item) =>
-                typeof item === "string" ? item : item.id
-              )
+              views.map((item) => (typeof item === "string" ? item : item.id))
             )
           }
         } as const;
@@ -455,19 +457,19 @@ export const collectionLayoutOptions = [
   {
     value: CollectionLayout.TABLE,
     icon: "table",
-    // badge: "Planned",
+
     isDisabled: true
   },
   {
     value: CollectionLayout.CALENDAR,
     icon: "calendar",
-    // badge: "Planned",
+
     isDisabled: true
   },
   {
     value: CollectionLayout.MAP,
     icon: "map",
-    // badge: "Planned",
+
     isDisabled: true
   }
 ];
@@ -511,11 +513,7 @@ export function resolveCollectionContextMenu(
     commonGroups = [
       {
         group: "open",
-        items: [
-          resourceActions.openAsTab(),
-          // resourceActions.openAsSplit(),
-          resourceActions.maximize()
-        ]
+        items: [resourceActions.openAsTab(), resourceActions.maximize()]
       },
       moreGroup
     ];
@@ -527,8 +525,7 @@ export function resolveCollectionContextMenu(
         items: [
           resourceActions.star(),
           resourceActions.select(accessPoint),
-          //TODO - clicking edit should open edit mode - not opening for Collection
-          // resourceActions.edit(accessPoint),
+
           resourceActions.copyLink()
         ]
       },
@@ -560,12 +557,7 @@ export function resolveCollectionContextMenu(
         items: [
           resourceActions.star(),
           resourceActions.edit(accessPoint),
-          // {
-          //   value: "share",
-          //   icon: "ph:share-light",
-          //   label: "Share",
-          //   callback: async () => {}
-          // },
+
           resourceActions.copyLink(),
           ...(!collection.resource || collection.resource === Resource.node
             ? [captureToggle]
@@ -575,7 +567,7 @@ export function resolveCollectionContextMenu(
             icon: "ph:cube-light",
             label: "Edit properties",
             callback: async () => {
-              appStore.runAction(
+              requireCommandHost().runAction(
                 resourceAction(Resource.property, ResourceActionType.EDIT),
                 {
                   componentParams: {

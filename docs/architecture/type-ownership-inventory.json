@@ -401,12 +401,12 @@
     },
     {
       "path": "client/actions/counter.action.ts",
-      "disposition": "retained",
+      "disposition": "moved",
       "destinations": [
-        "client/actions/counter.action.ts"
+        "client/features/memory/node/content/word-counter.action.ts"
       ],
-      "ownership": "implementation-private",
-      "rationale": "Implementation-local or cohesive frontend owner; no independent domain abstraction is needed.",
+      "ownership": "memory",
+      "rationale": "Capability-specific DOM behavior lives beside its consumer.",
       "declarations": [
         "WordCountParameters"
       ],
@@ -453,12 +453,12 @@
     },
     {
       "path": "client/actions/embed.actions.ts",
-      "disposition": "retained",
+      "disposition": "moved",
       "destinations": [
-        "client/actions/embed.actions.ts"
+        "client/features/memory/node/thumbnail/pdf-overlay.action.ts"
       ],
-      "ownership": "implementation-private",
-      "rationale": "Implementation-local or cohesive frontend owner; no independent domain abstraction is needed.",
+      "ownership": "memory",
+      "rationale": "Capability-specific DOM behavior lives beside its consumer.",
       "declarations": [
         "HideOnOverlayParams"
       ],
@@ -589,12 +589,10 @@
     },
     {
       "path": "client/actions/md.action.ts",
-      "disposition": "retained",
-      "destinations": [
-        "client/actions/md.action.ts"
-      ],
+      "disposition": "removed",
+      "destinations": [],
       "ownership": "implementation-private",
-      "rationale": "Implementation-local or cohesive frontend owner; no independent domain abstraction is needed.",
+      "rationale": "Deprecated action has no consumers.",
       "declarations": [
         "LinkClickHandler"
       ],
@@ -5611,12 +5609,12 @@
     },
     {
       "path": "client/stores/appMenu/appMenu.type.ts",
-      "disposition": "retained",
+      "disposition": "moved",
       "destinations": [
-        "client/stores/appMenu/appMenu.type.ts"
+        "client/layout/navigation/app-menu.type.ts"
       ],
-      "ownership": "frontend-wide",
-      "rationale": "Implementation-local or cohesive frontend owner; no independent domain abstraction is needed.",
+      "ownership": "layout-navigation",
+      "rationale": "Product menu persistence contracts live beside their navigation implementation.",
       "declarations": [
         "IAppMenuStore",
         "Menu"
@@ -7815,9 +7813,10 @@
       "path": "client/types/notification.type.ts",
       "disposition": "colocated",
       "destinations": [
-        "client/stores/notifications/notification.type.ts"
+        "client/stores/notifications/notification.type.ts",
+        "client/features/focus/notifications/scheduled-notifications.store.ts"
       ],
-      "ownership": "frontend-wide",
+      "ownership": "shared notification data and focus scheduling",
       "rationale": "Direct owner imports replace broad type-package coupling; runtime members and serialized shapes preserved.",
       "declarations": [
         "ScheduledNotification",
@@ -14323,8 +14322,8 @@
       "path": "client/stores/notification.store.ts",
       "name": "scheduledNotifications",
       "initializer": "initScheduledNotificationStore()",
-      "disposition": "retained with owning implementation; no runtime initializer changes",
-      "ownership": "implementation-private"
+      "disposition": "moved to client/features/focus/notifications/scheduled-notifications.store.ts",
+      "ownership": "focus notification scheduling"
     },
     {
       "path": "client/stores/notification.store.ts",

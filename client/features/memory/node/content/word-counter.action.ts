@@ -2,6 +2,7 @@ interface WordCountParameters {
   onUpdate?: (counts: { words: number; characters: number }) => void;
 }
 
+/** Reports visible editor word and character counts as its content changes. */
 export function wordCounter(
   node: HTMLElement,
   parameters: WordCountParameters = {}

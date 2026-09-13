@@ -20,11 +20,25 @@ import {
   resourceInList
 } from "@nucleum/datafn/resource.utils";
 import { ClipperExtensionEvent } from "@nucleum/client/config/events/clipper-event.type";
+import { LinkType, type ILinkTag } from "@nucleum/datafn/link.type";
 import {
-  LinkType,
-  type ILinkTag
-} from "@nucleum/datafn/link.type";
-import { type IClip, type IClipCapture, type IKindleBook, type IKindleHighlight, type INode, type INodePropertyValue, type ITextClip, type ITweet, type ITwitterProfile, type IVideoBookmarkCapture, type IVideoTimestampClip, type IWebPage, type IWebScreenshotClip, NodeIdPrefix, socialPostNodeTypeList, socialProfileNodeTypeList } from "@nucleum/features/memory/node/node.type";
+  type IClip,
+  type IClipCapture,
+  type IKindleBook,
+  type IKindleHighlight,
+  type INode,
+  type INodePropertyValue,
+  type ITextClip,
+  type ITweet,
+  type ITwitterProfile,
+  type IVideoBookmarkCapture,
+  type IVideoTimestampClip,
+  type IWebPage,
+  type IWebScreenshotClip,
+  NodeIdPrefix,
+  socialPostNodeTypeList,
+  socialProfileNodeTypeList
+} from "@nucleum/features/memory/node/node.type";
 import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
 import { generateNodeIdPrefixed } from "@nucleum/features/memory/node/node.utils";
 import {
@@ -32,7 +46,7 @@ import {
   resolveUrlData
 } from "@nucleum/features/memory/node/url.utils";
 import { ObservableStore } from "@nucleum/stores/client.store";
-import { appEvents } from "@nucleum/stores/notification.store";
+import { appEvents } from "@nucleum/stores/events/app-events.store";
 import type { IRecordId } from "@nucleum/schema/legacy/data.type";
 import { Placement } from "@21n/elements/direction.enum";
 import { ExtensionEvent } from "@nucleum/extensions/extension.type";
@@ -526,9 +540,7 @@ class WebpageStore extends ObservableStore<IWebpageStore> {
       ) {
         return extractYoutubeVideoData();
       } else if (params?.contentType === NodeType.YOUTUBE_CHANNEL) {
-        const urlData = await retrieveUrlData(
-          window.location.href
-        );
+        const urlData = await retrieveUrlData(window.location.href);
         if (urlData?.parsedData) {
           return urlData.parsedData;
         } else {

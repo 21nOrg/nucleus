@@ -1,6 +1,7 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { PointronAction } from "@nucleum/client/config/focus-action.enum";
-  import { appStore } from "@nucleum/stores/app.store";
 
   let {
     label = undefined,
@@ -14,9 +15,9 @@
 
   function onClick() {
     if (isAddNew) {
-      appStore.runAction(PointronAction.ADD_TAG);
+      requireCommandHost().runAction(PointronAction.ADD_TAG);
     } else {
-      appStore.runAction(PointronAction.EDIT_TAG, {
+      requireCommandHost().runAction(PointronAction.EDIT_TAG, {
         componentParams: { id }
       });
     }

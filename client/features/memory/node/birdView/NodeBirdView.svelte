@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import {
     isSameResource,
     removeDuplicatesFilter,
@@ -7,7 +9,7 @@
   import ComingSoonView from "@21n/elements/ComingSoonView.svelte";
   import DropDown from "@21n/elements/dropdown/DropDown.svelte";
   import PanelSwitcher from "@21n/elements/switcher/PanelSwitcher.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Size } from "@21n/elements/size.enum";
   import {
     PanelSwitcherActiveItemStrength,
@@ -25,10 +27,7 @@
   } from "@nucleum/features/memory/node/node.type";
   import { ResourcePanelType } from "@nucleum/stores/resources/resource-panel.type";
   import type { DropdownItem } from "@21n/elements/dropdown/dropdownItem.type";
-  import {
-    LinkType,
-    type ILinkTag
-  } from "@nucleum/datafn/link.type";
+  import { LinkType, type ILinkTag } from "@nucleum/datafn/link.type";
   import { enumToString } from "@21n/shared-utils/text.utils";
   import type { IRecordId } from "@nucleum/schema/legacy/data.type";
   import view from "@nucleum/stores/view.store";
@@ -278,7 +277,9 @@
     }
   }
 
-  function flattenRelationRows(records: Array<{ links?: Record<string, any>[] }>) {
+  function flattenRelationRows(
+    records: Array<{ links?: Record<string, any>[] }>
+  ) {
     return records.flatMap((record) => record.links ?? []);
   }
 
@@ -316,7 +317,9 @@
         return {
           ...x,
           linkType:
-            x.linkType === LinkType.DIRECT ? undefined : enumToString(x.linkType)
+            x.linkType === LinkType.DIRECT
+              ? undefined
+              : enumToString(x.linkType)
         };
       })
       .filter(removeDuplicatesFilter)
@@ -347,7 +350,9 @@
     }
     let linkTagsInUse = new Set<string>();
     let nodes: GraphNode[] = directLinkedNodes.map((linkedNode: INode) => {
-      const link = activeLinks.find((l) => isSameResource(l.linkedTo, linkedNode));
+      const link = activeLinks.find((l) =>
+        isSameResource(l.linkedTo, linkedNode)
+      );
       let combo = null;
       if (link?.tags?.length) {
         const linkTags = activeTags.filter((x) =>
@@ -434,10 +439,10 @@
       !event.ctrlKey &&
       !event.metaKey
     ) {
-      appStore.resourceClickHandler(undefined, newResource, {
+      navigation.resourceClickHandler(undefined, newResource, {
         replaceId: $node.id.toString(),
         searchParams: {
-          [appStore.resolveRecordSpecificSearchParam(
+          [navigation.resolveRecordSpecificSearchParam(
             newResource,
             AppSearchParam.NODE_VIEW
           )]: NodeView.BIRD,
@@ -459,14 +464,14 @@
       return;
     }
     splitResource = newResource;
-    appStore.resourceClickHandlerForGraph(newResource, event, {
+    navigation.resourceClickHandlerForGraph(newResource, event, {
       replaceId: $node.id
     });
   }
 
   function closeSplitResource() {
     if (!splitResource) return;
-    appStore.closeResource({ id: splitResource });
+    navigation.closeResource({ id: splitResource });
     splitResource = undefined;
   }
 </script>
@@ -578,7 +583,7 @@
             size={Size.sm}
             onSelect={(e) => {
               depth = e.detail;
-              appStore.toggleSearchParam({
+              navigation.toggleSearchParam({
                 [AppSearchParam.DEPTH]: depth
               });
               setTimeout(() => {
@@ -599,7 +604,7 @@
             on={isTraverseMode}
             onChange={(e) => {
               isTraverseMode = e.detail;
-              appStore.toggleSearchParam({
+              navigation.toggleSearchParam({
                 [AppSearchParam.TRAVERSE]: isTraverseMode
               });
               setTimeout(() => {

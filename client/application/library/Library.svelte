@@ -1,8 +1,11 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Records from "@nucleum/application/record/Records.svelte";
   import { onMount } from "svelte";
   import { Size } from "@21n/elements/size.enum";
-  import { ButtonStyle, ButtonVariant } from "@21n/elements/button/button.type";
+  import { ButtonStyle } from "@21n/elements/button/button.type";
   import { Resource } from "@nucleum/datafn/resource.enum";
   import ResourceSwitcher from "@nucleum/application/library/resourceSwitcher/ResourceSwitcher.svelte";
   import { appStore } from "@nucleum/stores/app.store";
@@ -59,7 +62,7 @@
           {
             label: "Search",
             callback: async () => {
-              appStore.runAction(Action.SEARCH);
+              requireCommandHost().runAction(Action.SEARCH);
             },
             icon: "search"
           },
@@ -121,7 +124,7 @@
   });
 
   function onCreateResource(resource?: Resource) {
-    appStore.runAction(
+    requireCommandHost().runAction(
       resourceAction(resource ?? selectedResource, ResourceActionType.CREATE)
     );
   }
@@ -194,7 +197,7 @@
       isShowCount={true}
       onSelect={(selectedValue) => {
         selectedResource = selectedValue;
-        appStore.toggleSearchParam({
+        navigation.toggleSearchParam({
           [AppSearchParam.RESOURCE]: selectedValue,
           [AppSearchParam.TYPE]: "all",
           [AppSearchParam.STARRED]: null,
@@ -243,7 +246,7 @@
           isPreventCwPadding={true}
           onBack={() => {
             selectedResource = Resource.unknown;
-            appStore.toggleSearchParam([AppSearchParam.RESOURCE]);
+            navigation.toggleSearchParam([AppSearchParam.RESOURCE]);
           }}
         />
       </div>

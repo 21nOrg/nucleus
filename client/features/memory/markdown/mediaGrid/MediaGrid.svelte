@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { fileUpload } from "@nucleum/stores/files/file-upload";
+
   import { onDestroy, onMount } from "svelte";
 
   import MediaGridOptions from "@nucleum/features/memory/markdown/mediaGrid/MediaGridOptions.svelte";
@@ -7,7 +9,7 @@
   import { DragStatus } from "@nucleum/actions/dragstatus.enum";
   import DraggableMediaGridElement from "@nucleum/features/memory/markdown/mediaGrid/DraggableMediaGridElement.svelte";
   import type { DragAndDrop } from "@nucleum/actions/draganddrop.type";
-  import account from "@nucleum/stores/account.store";
+
   import {
     isReplaceableMd,
     type MdStoreType
@@ -39,8 +41,7 @@
       | ((event: CustomEvent<{ insertedAt: string; id: string }>) => void)
       | undefined;
     onUpdate?:
-      | ((event: CustomEvent<IMediaGridNode["body"]>) => void)
-      | undefined;
+      ((event: CustomEvent<IMediaGridNode["body"]>) => void) | undefined;
   } = $props();
   let files = $state<IFile[]>(initialFiles);
   let isUploadInProgress = $state(false);
@@ -274,7 +275,7 @@
   async function uploadToS3(input: any) {
     let itemLocalURL = new Blob([input], { type: input.type });
     let customName = input.name.split(".")[0].trim();
-    let response = await account.uploadFileV2(
+    let response = await fileUpload.uploadFileV2(
       input.type,
       customName,
       itemLocalURL,

@@ -8,7 +8,7 @@
   import { checkIfVideoPaused } from "@nucleum/extensions/clipper/parsers/shared/video.utils";
   import { pauseVideo } from "@nucleum/extensions/clipper/parsers/shared/video.utils";
   import { onMount } from "svelte";
-  import { appEvents } from "@nucleum/stores/notification.store";
+  import { appEvents } from "@nucleum/stores/events/app-events.store";
   import { ClipperExtensionEvent } from "@nucleum/client/config/events/clipper-event.type";
   import Icon from "@21n/elements/Icon.svelte";
   import { Size } from "@21n/elements/size.enum";

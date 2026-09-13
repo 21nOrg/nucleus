@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Header from "@nucleum/products/pointron/onboarding/OnboardingHeader.svelte";
   import Footer from "@nucleum/products/pointron/onboarding/OnboardingFooter.svelte";
   import { appStore } from "@nucleum/stores/app.store";
@@ -11,10 +14,7 @@
   import { postMessageToParent } from "@nucleum/client/runtime/embed/embed.utils";
   import { EmbedMessage } from "@nucleum/client/runtime/embed/embedMessage.enum";
   import { uiState } from "@nucleum/stores/uiState/uiState.store";
-  import {
-    UIState,
-    UIStateScope
-  } from "@nucleum/stores/uiState/uiState.type";
+  import { UIState, UIStateScope } from "@nucleum/stores/uiState/uiState.type";
   import { PointronAction } from "@nucleum/client/config/focus-action.enum";
   import context from "@nucleum/stores/context.store";
 
@@ -71,8 +71,9 @@
     uiState.setState(UIState.isOnboardingComplete, true, {
       scope: UIStateScope.PRODUCT
     });
-    appStore.gotoPath("/");
-    if (!$context.isEmbed) appStore.runAction(PointronAction.IMPORT_ONBOARDING);
+    navigation.gotoPath("/");
+    if (!$context.isEmbed)
+      requireCommandHost().runAction(PointronAction.IMPORT_ONBOARDING);
   }
 
   function handleStepButtonClick(action: "+" | "-") {
@@ -119,8 +120,8 @@
               : steps.landscape.length}
             {currentStep}
             onBack={handleStepButtonClick("-")}
-            onSkip={onSkip}
-            onFinish={onFinish}
+            {onSkip}
+            {onFinish}
           />
         {/if}
       {:else}
@@ -130,8 +131,8 @@
             : steps.landscape.length}
           {currentStep}
           onBack={handleStepButtonClick("-")}
-          onSkip={onSkip}
-          onFinish={onFinish}
+          {onSkip}
+          {onFinish}
         />
       {/if}
       <div class="w-full h-full">
@@ -213,7 +214,10 @@
                     </Button>
                   {:else if currentStep !== steps.landscape.length - 1}
                     <div class="flex flex-col w-fit items-center gap-4">
-                      <Button onclick={handleStepButtonClick("+")} type="primary">
+                      <Button
+                        onclick={handleStepButtonClick("+")}
+                        type="primary"
+                      >
                         Next
                       </Button>
                       <Button onclick={onSkip} style={ButtonStyle.PLAIN}>

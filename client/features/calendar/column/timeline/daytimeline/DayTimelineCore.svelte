@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { onMount, onDestroy } from "svelte";
   import dayjs from "dayjs";
   import DayTimelineEntry from "@nucleum/features/calendar/column/timeline/daytimeline/DayTimelineEntry.svelte";
@@ -12,11 +14,11 @@
   import { Size } from "@21n/elements/size.enum";
   import { ButtonStyle } from "@21n/elements/button/button.type";
   import { cn } from "@21n/utils/ui.utils";
-  import { player } from "@nucleum/stores/overlays/modal.store";
+
   import RefreshingOverlayFeedback from "@21n/elements/feedback/RefreshingOverlayFeedback.svelte";
   import { uiState } from "@nucleum/stores/uiState/uiState.store";
   import { UIState, UIStateScope } from "@nucleum/stores/uiState/uiState.type";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { PointronAction } from "@nucleum/client/config/focus-action.enum";
 
   let {
@@ -36,8 +38,9 @@
   const isFocusing = $derived(
     isToday &&
       typeof document !== "undefined" &&
-      document.getElementById("focusData")?.getAttribute("data-focus-active") ===
-        "true"
+      document
+        .getElementById("focusData")
+        ?.getAttribute("data-focus-active") === "true"
   );
   const BASE_HOUR_HEIGHT = 80;
   let scale = $state(resolveInitialScale());
@@ -366,7 +369,7 @@
             style="top: {nowPosition - 10}px;"
             onclick={() => {
               const action = PointronAction.FOCUS;
-              appStore.runAction(action);
+              requireCommandHost().runAction(action);
             }}
           >
             Focusing now...
@@ -398,11 +401,7 @@
       </div>
     {/if}
     <Button icon="magnifying-glass-plus" parentBgIndex={2} onclick={zoomIn} />
-    <Button
-      icon="magnifying-glass-minus"
-      parentBgIndex={2}
-      onclick={zoomOut}
-    />
+    <Button icon="magnifying-glass-minus" parentBgIndex={2} onclick={zoomOut} />
   </div>
 </div>
 

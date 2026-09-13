@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { Size } from "@21n/elements/size.enum";
   import CaptureDraftsAction from "@nucleum/features/memory/capture/draftSelector/CaptureDraftsAction.svelte";
   import { CaptureMethod } from "@nucleum/features/memory/capture/capture.type";
@@ -7,7 +9,7 @@
   import TypeSelectorItem from "@nucleum/features/memory/capture/typeSelector/TypeSelectorItem.svelte";
   import InlineErrorMessage from "@21n/elements/text/InlineErrorMessage.svelte";
   import Icon from "@21n/elements/Icon.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Resource } from "@nucleum/datafn/resource.enum";
   import { MemotronAction } from "@nucleum/features/memory/memory-action.enum";
   import {
@@ -172,7 +174,7 @@
           }
         )}
         onclick={() => {
-          appStore.runAction(MemotronAction.CAPTURE_SETTINGS);
+          requireCommandHost().runAction(MemotronAction.CAPTURE_SETTINGS);
         }}
       >
         <Icon icon="more-outline-horizontal" />

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { pointronPreferences } from "@nucleum/features/focus/preferences.store";
   import { activeSession } from "@nucleum/features/focus/session.store";
   import Button from "@21n/elements/button/Button.svelte";
@@ -6,7 +8,7 @@
   import Presets from "@nucleum/features/focus/advanced/presets/Presets.svelte";
   import { ButtonStyle, ButtonVariant } from "@21n/elements/button/button.type";
   import { cn } from "@21n/utils/ui.utils";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { PointronAction } from "@nucleum/client/config/focus-action.enum";
   let {
     isExpandedVariant = true,
@@ -16,9 +18,11 @@
     parentBackgroundIndex?: number;
   } = $props();
   let isInEditMode = $state(false);
-  let selectedPresetIndex = $state($activeSession.composition
-    ? $pointronPreferences.presets.indexOf($activeSession.composition)
-    : 0);
+  let selectedPresetIndex = $state(
+    $activeSession.composition
+      ? $pointronPreferences.presets.indexOf($activeSession.composition)
+      : 0
+  );
 
   async function onPresetSelection(event: any) {
     const preset = event.detail.preset;
@@ -32,7 +36,7 @@
     showEditor();
   }
   function showEditor(id: string = "") {
-    appStore.runAction(PointronAction.EDIT_PRESET, {
+    requireCommandHost().runAction(PointronAction.EDIT_PRESET, {
       componentParams: { id }
     });
   }
@@ -54,13 +58,13 @@
       {parentBackgroundIndex}
       {isExpandedVariant}
       {isInEditMode}
-      onEdit={onEdit}
+      {onEdit}
       onPresetSelect={onPresetSelection}
     />
     {#if isInEditMode}
-        <Button
-          parentBgIndex={parentBackgroundIndex}
-          onclick={onAddNewClicked}
+      <Button
+        parentBgIndex={parentBackgroundIndex}
+        onclick={onAddNewClicked}
         type={ButtonVariant.PRIMARY}
         style={ButtonStyle.OUTLINED}
         size={Size.sm}

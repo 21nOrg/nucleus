@@ -1,10 +1,10 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import type { Snippet } from "svelte";
   import modalEvent from "@nucleum/stores/overlays/modal.store";
-  import {
-    appEvents,
-    confirmationNotification
-  } from "@nucleum/stores/notification.store";
+  import { confirmationNotification } from "@nucleum/stores/notification.store";
+  import { appEvents } from "@nucleum/stores/events/app-events.store";
   import { Size } from "@21n/elements/size.enum";
   import ModalFooter from "@21n/elements/modal/ModalFooter.svelte";
   import ModalHeader from "@21n/elements/modal/ModalHeader.svelte";
@@ -20,7 +20,7 @@
   import { resolveModalOnFront } from "@21n/utils/browser.utils";
   import { logger } from "@nucleum/client/runtime/logging/logger";
   import Icon from "@21n/elements/Icon.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { popover, tooltip } from "@nucleum/actions/popover.action";
   import { Placement } from "@21n/elements/direction.enum";
   import { AccessMode } from "@nucleum/datafn/resource.type";
@@ -78,7 +78,7 @@
     if (params.isDismissable === false) return;
     if (path === Action.CONFIRMATION) confirmationNotification.reset();
     else if (resource)
-      appStore.closeResource({
+      navigation.closeResource({
         id: resource,
         accessMode: accessMode
       });
@@ -213,7 +213,7 @@
     {#if params.layout?.isShowBackButton}
       <button
         class="absolute top-16 -right-10 bg-bgs4 w-10 h-12 rounded-r-md flex justify-center items-center hover:brightness-110"
-        onclick={() => appStore.goBack(resource)}
+        onclick={() => navigation.goBack(resource)}
         use:tooltip={{ text: "Go back", direction: Placement.Left }}
       >
         <Icon icon="back" size={Size.lg} class="stroke-fgs1" />

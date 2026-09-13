@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { Resource } from "@nucleum/datafn/resource.enum";
   import { AccessMode } from "@nucleum/datafn/resource.type";
   import {
@@ -7,7 +9,7 @@
   } from "@nucleum/datafn/resource.utils";
   import Button from "@21n/elements/button/Button.svelte";
   import Icon from "@21n/elements/Icon.svelte";
-  import { appStore, isInEditMode } from "@nucleum/stores/app.store";
+  import { isInEditMode } from "@nucleum/stores/app.store";
   import context from "@nucleum/stores/context.store";
   import { ButtonStyle, ButtonVariant } from "@21n/elements/button/button.type";
   import { Size } from "@21n/elements/size.enum";
@@ -64,7 +66,7 @@
           style={ButtonStyle.OUTLINED}
           parentBgIndex={2}
           onclick={() => {
-            appStore.openResource(item.id, AccessMode.POP);
+            navigation.openResource(item.id, AccessMode.POP);
           }}
         />
       {/if}
@@ -113,7 +115,7 @@
     style={ButtonStyle.OUTLINED}
     parentBgIndex={2}
     onclick={() => {
-      appStore.openResource(item.id, AccessMode.POP);
+      navigation.openResource(item.id, AccessMode.POP);
     }}
   />
 {/if}

@@ -12,7 +12,7 @@
   import { InputStyle } from "@21n/elements/input/input.type";
   import { userPreferences } from "@nucleum/stores/preferences/user-preferences.store";
   import type { IEvent } from "@21n/elements/input/event.type";
-  import { appEvents } from "@nucleum/stores/notification.store";
+  import { appEvents } from "@nucleum/stores/events/app-events.store";
   import { GlobalEvent } from "@nucleum/stores/notifications/event.enum";
   import ShortcutText from "@21n/elements/text/ShortcutText.svelte";
   let {

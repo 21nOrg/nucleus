@@ -1,15 +1,18 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { LayoutContext } from "@21n/layout/layout-mode.type";
   import { onMount } from "svelte";
   import AppMenuSwitcherItem from "@21n/layout/leftPanel/appMenuSwitcher/AppMenuSwitcherItem.svelte";
   import { ActionType, type IAction } from "@nucleum/client/config/action.type";
   import CaptureComponent from "@nucleum/application/CaptureComponent.svelte";
   import { appStore, isInEditMode } from "@nucleum/stores/app.store";
-  import { appMenuStore } from "@nucleum/stores/appMenu/appMenu.store";
-  import type { IAppMenuStore } from "@nucleum/stores/appMenu/appMenu.type";
-  import { appEvents, toasts } from "@nucleum/stores/notification.store";
+  import { appMenuStore } from "@21n/layout/navigation/app-menu.store";
+  import type { IAppMenuStore } from "@21n/layout/navigation/app-menu.type";
+  import { toasts } from "@nucleum/stores/notification.store";
+  import { appEvents } from "@nucleum/stores/events/app-events.store";
   import Divider from "@21n/elements/Divider.svelte";
   import { ColorStrength } from "@21n/theme/appearance.type";
   import { GlobalEvent } from "@nucleum/stores/notifications/event.enum";
@@ -73,7 +76,7 @@
       items = contextualMenu.filter((item) => item !== "cp");
     }
     items.forEach((action: string) => {
-      const currentPage = appStore.resolveAction(action);
+      const currentPage = requireCommandHost().resolveAction(action);
       if (currentPage) {
         allPages.push(currentPage);
       }
@@ -113,7 +116,7 @@
       item.type !== ActionType.PAGE ||
       isActivePageWithRightPanel
     ) {
-      appStore.runAction(item.action);
+      requireCommandHost().runAction(item.action);
     }
     current = item.action;
     appEvents.publish(GlobalEvent.APP_MENU_SWITCHED, item.action);

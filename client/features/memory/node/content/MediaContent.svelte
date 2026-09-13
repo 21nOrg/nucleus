@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { webNodeTypeList } from "@nucleum/features/memory/node/node.type";
-import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
+  import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import { ResourcePanelType } from "@nucleum/stores/resources/resource-panel.type";
   import { type IActiveNodeStore } from "@nucleum/features/memory/node/node.store";
   import { AccessMode } from "@nucleum/datafn/resource.type";
@@ -9,7 +11,7 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import { setContext } from "svelte";
   import view from "@nucleum/stores/view.store";
   import MediaContentResolver from "@nucleum/features/memory/node/content/MediaContentResolver.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { isRecordId } from "@nucleum/datafn/resource.utils";
   import context from "@nucleum/stores/context.store";
   import { OperatingSystem } from "@nucleum/client/runtime/context.type";
@@ -27,7 +29,7 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   function contextEventListener(event: string, data: any) {
     if (event === "pdf-trace-click" || event === "yt-trace-click") {
       if ($view.isPortrait && isRecordId(data.id)) {
-        appStore.openResource(data.id, AccessMode.POP);
+        navigation.openResource(data.id, AccessMode.POP);
       } else {
         contentRef?.onTraceClick(data);
       }

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { resolveTaskContextMenu } from "./task.store";
   import type { ITaskThumb } from "@nucleum/features/focus/tasks/task.type";
   import { Arrangement } from "@21n/elements/direction.enum";
@@ -18,7 +20,7 @@
   import { cn } from "@21n/utils/ui.utils";
   import type { IRecordId } from "@nucleum/schema/legacy/data.type";
   import TaskThumbnailObjectiveLabel from "@nucleum/features/focus/tasks/TaskThumbnailGoalLabel.svelte";
-  import Icon from "@21n/elements/Icon.svelte";
+
   import ResourceThumbnailContextMenu from "@nucleum/components/records/ResourceThumbnailContextMenu.svelte";
   import view from "@nucleum/stores/view.store";
   import { popover, tooltip } from "@nucleum/actions/popover.action";
@@ -32,7 +34,7 @@
     currentFocusItem
   } from "@nucleum/features/focus/session.store";
   import { movingBorder } from "@nucleum/actions/movingBorder.action";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { ButtonStyle, ButtonVariant } from "@21n/elements/button/button.type";
   import { Resource } from "@nucleum/datafn/resource.enum";
   import { bulkEditStore } from "@nucleum/stores/resources/bulkedit.store";
@@ -164,7 +166,7 @@
       accessPointId
     ) {
       const selectedTask = new URL(window.location.href).searchParams.get(
-        appStore.resolveRecordSpecificSearchParam(accessPointId, "task")
+        navigation.resolveRecordSpecificSearchParam(accessPointId, "task")
       );
       return selectedTask === item.id.toString();
     }
@@ -180,12 +182,12 @@
         accessPoint === ResourceAccessPoint.OBJECTIVE);
     if (isInlineContext && accessPoint === ResourceAccessPoint.OBJECTIVE) {
       if (accessPointId)
-        appStore.toggleSearchParamRecordSpecific(accessPointId, {
+        navigation.toggleSearchParamRecordSpecific(accessPointId, {
           task: item.id.toString()
         });
       return;
     }
-    appStore.openResource(
+    navigation.openResource(
       item.id,
       isInlineContext ? AccessMode.INLINE : AccessMode.POP,
       {

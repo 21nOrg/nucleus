@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { onMount } from "svelte";
   import { ActionType, type IAction } from "@nucleum/client/config/action.type";
   import SearchActionResults from "@nucleum/application/commandBar/SearchActionResults.svelte";
@@ -8,8 +10,7 @@
   import modalEvent from "@nucleum/stores/overlays/modal.store";
   import { Action } from "@nucleum/client/config/action.enum";
   import { cn } from "@21n/utils/ui.utils";
-  import Icon from "@21n/elements/Icon.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import view from "@nucleum/stores/view.store";
   import { Display } from "@21n/elements/display.enum";
   import Button from "@21n/elements/button/Button.svelte";
@@ -20,7 +21,7 @@
   import { keyboardShortcuts } from "@nucleum/stores/keyboard/shortcuts.store";
   import { renderMdAsHtml } from "@21n/elements/markdown/markdown.utils";
   import { resolveShortcutText } from "@21n/elements/keyboard/shortcut.utils";
-  import { KeyboardKey, ModifierKey } from "@21n/elements/keyboard/keyboard.type";
+  import { KeyboardKey } from "@21n/elements/keyboard/keyboard.type";
   import KeyboardToolbar from "@21n/elements/keyboardToolbar/KeyboardToolbar.svelte";
   import { fly } from "svelte/transition";
   import { quadInOut } from "svelte/easing";
@@ -64,7 +65,7 @@
     ) {
       return;
     }
-    const action = appStore.resolveAction(command);
+    const action = requireCommandHost().resolveAction(command);
     if (!action) return;
     onSearchAction({ detail: action });
   });

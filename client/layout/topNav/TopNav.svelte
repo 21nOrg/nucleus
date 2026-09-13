@@ -1,11 +1,13 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import type { Snippet } from "svelte";
   import { uiState } from "@nucleum/stores/uiState/uiState.store";
   import { onMount } from "svelte";
   import type { IRecordId } from "@nucleum/schema/legacy/data.type";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Action } from "@nucleum/client/config/action.enum";
   import Tabs from "@21n/layout/topNav/tabs/Tabs.svelte";
   import { tabs, vTrail } from "@21n/layout/topNav/tabs/tabs.store";
@@ -30,7 +32,7 @@
   import { bulkEditStore } from "@nucleum/stores/resources/bulkedit.store";
   import BulkEditBar from "@nucleum/application/record/BulkEditBar.svelte";
   import { InputStyle } from "@21n/elements/input/input.type";
-  import { AppSearchParam } from "@nucleum/stores/appStore.type";
+
   import SearchInput from "@nucleum/application/search/SearchInput.svelte";
   import { searchStore } from "@nucleum/application/search/search.store";
   let { topnav }: { topnav?: Snippet } = $props();
@@ -136,13 +138,13 @@
         isPreventDefault={true}
         onClick={() => {
           if (new URLSearchParams(window.location.search).get(AccessMode.POP)) {
-            appStore.toggleSearchParam({
+            navigation.toggleSearchParam({
               [AccessMode.POP]: null,
               [AccessMode.MAIN]: Action.SEARCH
             });
             return;
           }
-          appStore.toggleSearchParam({
+          navigation.toggleSearchParam({
             [AccessMode.MAIN]: Action.SEARCH
           });
         }}
@@ -236,7 +238,7 @@
             onClick={() => {}}
             isInterimTab
             onClose={() => {
-              appStore.goBack();
+              navigation.goBack();
             }}
           />
         {/key}

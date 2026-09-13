@@ -1,3 +1,4 @@
+import { requireCommandHost } from "@nucleum/stores/commands/command-host";
 import { Resource } from "@nucleum/datafn/resource.enum";
 import { ActiveResourceStore } from "@nucleum/stores/resources/active-resource.store";
 import { PanelSwitcherMixin } from "@nucleum/stores/resources/panelSwitcher.mixin";
@@ -9,12 +10,20 @@ import type {
   IObjective,
   IObjectiveThumb
 } from "@nucleum/features/focus/goals/goal.type";
-import { ObjectiveStatus, ObjectiveType } from "@nucleum/features/focus/goals/goal.type";
+import { ObjectiveType } from "@nucleum/features/focus/goals/goal.type";
 import { updateObjectiveParent } from "@nucleum/features/focus/goals/goal.utils";
-import { AccessMode, ResourceAccessPoint, type IResourceMutationParams } from "@nucleum/datafn/resource.type";
+import {
+  AccessMode,
+  ResourceAccessPoint,
+  type IResourceMutationParams
+} from "@nucleum/datafn/resource.type";
 import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
 import { ResourceActions } from "@nucleum/stores/resources/resource.actions";
-import { ContextMenuType, type IContextMenu, type IContextMenuItem } from "@21n/elements/contextMenu/context-menu.type";
+import {
+  ContextMenuType,
+  type IContextMenu,
+  type IContextMenuItem
+} from "@21n/elements/contextMenu/context-menu.type";
 import { CollectibleStore } from "@nucleum/features/collections/collectible.store";
 import { activeSession } from "@nucleum/features/focus/session.store";
 import { get } from "svelte/store";
@@ -158,7 +167,8 @@ export class ActiveObjectiveStore extends CollectibleStore<
     id: IRecordId
   ): T {
     if (!ActiveObjectiveStore.prototype.switchPanel) {
-      ActiveObjectiveStore.prototype.switchPanel = PanelSwitcherMixin.switchPanel;
+      ActiveObjectiveStore.prototype.switchPanel =
+        PanelSwitcherMixin.switchPanel;
     }
 
     const instance = super.resolve.call(this, id) as T & {
@@ -246,7 +256,7 @@ class ObjectiveActions {
     label: "Convert to sub objective",
     icon: "to-sub",
     callback: async () => {
-      appStore.runAction(PointronAction.SELECT_PARENT_OBJECTIVE, {
+      requireCommandHost().runAction(PointronAction.SELECT_PARENT_OBJECTIVE, {
         componentParams: {
           src: this.objective,
           action: PointronAction.CONVERT_TO_SUBOBJECTIVE
@@ -260,7 +270,7 @@ class ObjectiveActions {
     label: "Move",
     icon: "move",
     callback: async () => {
-      appStore.runAction(PointronAction.SELECT_PARENT_OBJECTIVE, {
+      requireCommandHost().runAction(PointronAction.SELECT_PARENT_OBJECTIVE, {
         componentParams: {
           src: this.objective,
           action: ResourceActionType.MOVE
@@ -331,9 +341,6 @@ export function resolvePanelOptions(
     items.unshift(overview);
   }
 
-  // if (objective?.types && objective?.types?.length > 0) {
-  //   items.push(objectiveStaticPanelActions.propertiesPane);
-  // }
   return items;
 }
 
@@ -344,9 +351,12 @@ export function resolveObjectiveContextMenu(
     accessPointId?: IRecordId;
   }
 ): IContextMenu {
-  const resourceActions = new ResourceActions(objective as unknown as IObjective, {
-    accessPoint
-  });
+  const resourceActions = new ResourceActions(
+    objective as unknown as IObjective,
+    {
+      accessPoint
+    }
+  );
   const objectiveActions = new ObjectiveActions(objective, accessPoint);
 
   let primaryItems: IContextMenuItem[] = [];

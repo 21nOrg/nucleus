@@ -56,3 +56,9 @@ This project is licensed under the AGPL-3.0 license. See the [LICENSE](LICENSE) 
 For any questions, security reporting or feedback, please contact us at [hello@21n.co](mailto:hello@21n.co).
 
 ❤️ We extend our deepest gratitude to all the [OSS libraries and tools](https://github.com/21nOrg/nucleus/network/dependencies) that made this project possible.
+
+## Code organization
+
+Product bundles in `apps/` compose capabilities from `client/features/`. `schema/` owns cross-layer contracts, `client/datafn/` owns storage and sync, and `services/account/` owns the backend. Application workflows live in `client/application/`, navigation in `client/layout/`, and UI-independent infrastructure in `client/runtime/`.
+
+See [client boundaries](docs/architecture/client-boundaries.md) for the current ownership model, [type ownership](docs/architecture/type-ownership.md) for contracts, and [CONTRIBUTING.md](CONTRIBUTING.md) for maintainer orientation.

@@ -1,6 +1,8 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { hoverable } from "@nucleum/actions/hover.action";
   import { popover } from "@nucleum/actions/popover.action";
   import ButtonTooltip from "@21n/elements/button/ButtonTooltip.svelte";
@@ -13,7 +15,7 @@
   import { page } from "$app/stores";
   import { onMount } from "svelte";
   import type { IAction } from "@nucleum/client/config/action.type";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { AccessMode } from "@nucleum/datafn/resource.type";
   import { keyboardShortcuts } from "@nucleum/stores/keyboard/shortcuts.store";
   import context from "@nucleum/stores/context.store";
@@ -49,7 +51,7 @@
   );
 
   onMount(() => {
-    data = appStore.resolveAction(action);
+    data = requireCommandHost().resolveAction(action);
     const unsubscribe = page.subscribe((p) => {
       currentSearchParams = p?.url?.searchParams ?? new URLSearchParams();
     });
@@ -62,7 +64,7 @@
       onClick?.(event);
       return;
     }
-    appStore.runAction(action);
+    requireCommandHost().runAction(action);
   }
 </script>
 

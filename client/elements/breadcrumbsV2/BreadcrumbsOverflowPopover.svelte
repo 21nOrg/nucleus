@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { AccessMode } from "@nucleum/datafn/resource.type";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import type { IRecordId } from "@nucleum/schema/legacy/data.type";
   import BreadcrumbItem from "@21n/elements/breadcrumbsV2/BreadcrumbItem.svelte";
   import type { IBreadcrumbItem } from "@21n/elements/breadcrumbsV2/breadcrumbItem.type";
@@ -21,7 +23,7 @@
         isOverflowItem={true}
         onClick={() => {
           if (item.resourceId) {
-            appStore.openResource(item.resourceId, AccessMode.POP, {
+            navigation.openResource(item.resourceId, AccessMode.POP, {
               replaceId
             });
           }

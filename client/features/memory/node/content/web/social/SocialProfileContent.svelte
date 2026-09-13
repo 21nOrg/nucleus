@@ -1,9 +1,15 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import Icon from "@21n/elements/Icon.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Size } from "@21n/elements/size.enum";
-  import { socialProfileNodeTypeList, socialProfileWithImageUnavailable, type ILinkedInProfileMetadata } from "@nucleum/features/memory/node/node.type";
-import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
+  import {
+    socialProfileNodeTypeList,
+    socialProfileWithImageUnavailable,
+    type ILinkedInProfileMetadata
+  } from "@nucleum/features/memory/node/node.type";
+  import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import type { INode } from "@nucleum/features/memory/node/node.type";
   import { resolveNodeIcon } from "@nucleum/features/memory/node/node.utils";
 
@@ -49,7 +55,9 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
 
   function resolveUsername() {
     if (!node.url) {
-      return hasStringProperty(node.body, "username") ? node.body.username : "unknown";
+      return hasStringProperty(node.body, "username")
+        ? node.body.username
+        : "unknown";
     }
 
     try {
@@ -58,67 +66,70 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
       const pathname = url.pathname;
 
       // Remove query parameters and hash fragments
-      const cleanPath = pathname.split('?')[0].split('#')[0];
-      
+      const cleanPath = pathname.split("?")[0].split("#")[0];
+
       // Handle different social platforms
-      if (hostname.includes('twitter.com') || hostname.includes('x.com')) {
+      if (hostname.includes("twitter.com") || hostname.includes("x.com")) {
         const match = cleanPath.match(/^\/([^/]+)/);
         return match ? match[1] : "unknown";
       }
-      
-      if (hostname.includes('bsky.app')) {
+
+      if (hostname.includes("bsky.app")) {
         const match = cleanPath.match(/^\/profile\/([^/]+)/);
         return match ? match[1] : "unknown";
       }
-      
-      if (hostname.includes('threads.')) {
+
+      if (hostname.includes("threads.")) {
         const match = cleanPath.match(/^\/@([^/]+)/);
         return match ? match[1] : "unknown";
       }
-      
-      if (hostname.includes('linkedin.com')) {
+
+      if (hostname.includes("linkedin.com")) {
         const match = cleanPath.match(/^\/in\/([^/]+)/);
         return match ? match[1] : "unknown";
       }
-      
-      if (hostname.includes('instagram.com')) {
+
+      if (hostname.includes("instagram.com")) {
         const match = cleanPath.match(/^\/([^/]+)/);
         return match ? match[1] : "unknown";
       }
-      
-      if (hostname.includes('facebook.com')) {
+
+      if (hostname.includes("facebook.com")) {
         const match = cleanPath.match(/^\/([^/]+)/);
         return match ? match[1] : "unknown";
       }
-      
-      if (hostname.includes('reddit.com')) {
+
+      if (hostname.includes("reddit.com")) {
         const match = cleanPath.match(/^\/u(?:ser)?\/([^/]+)/);
         return match ? match[1] : "unknown";
       }
-      
+
       // Handle Mastodon instances (various domains)
       if (node.contentType === NodeType.MASTODON_PROFILE) {
         const match = cleanPath.match(/^\/@([^/]+)/);
         return match ? match[1] : "unknown";
       }
-      
+
       // Fallback: try to extract username from path
-      const pathSegments = cleanPath.split('/').filter(segment => segment.length > 0);
+      const pathSegments = cleanPath
+        .split("/")
+        .filter((segment) => segment.length > 0);
       if (pathSegments.length > 0) {
         // Remove common prefixes and get the first meaningful segment
-        const username = pathSegments[pathSegments[0] === 'profile' ? 1 : 0];
-        if (username && username.startsWith('@')) {
+        const username = pathSegments[pathSegments[0] === "profile" ? 1 : 0];
+        if (username && username.startsWith("@")) {
           return username.substring(1);
         }
         return username || "unknown";
       }
-      
     } catch (error) {
-      console.warn('Failed to parse profile URL:', node.url, error);
+      console.warn("Failed to parse profile URL:", node.url, error);
     }
 
     // Final fallback to body username
-    return hasStringProperty(node.body, "username") ? node.body.username : "unknown";
+    return hasStringProperty(node.body, "username")
+      ? node.body.username
+      : "unknown";
   }
 
   function getDisplayName() {
@@ -210,12 +221,12 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
     role="button"
     tabindex="0"
     onclick={() => {
-      if (node.url) appStore.openLink(node.url);
+      if (node.url) navigation.openLink(node.url);
     }}
     onkeydown={(event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        if (node.url) appStore.openLink(node.url);
+        if (node.url) navigation.openLink(node.url);
       }
     }}
   >
@@ -268,7 +279,7 @@ import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
         onclick={(event) => {
           event.stopPropagation();
           const websiteUrl = getWebsiteUrl();
-          if (websiteUrl) appStore.openLink(websiteUrl);
+          if (websiteUrl) navigation.openLink(websiteUrl);
         }}
       >
         {getWebsiteUrl()}

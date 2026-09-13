@@ -1,6 +1,10 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+  import { tabState } from "@21n/layout/topNav/tabs/tab-state";
+
   import { page } from "$app/stores";
   import { hoverable } from "@nucleum/actions/hover.action";
   import { popover, tooltip } from "@nucleum/actions/popover.action";
@@ -15,8 +19,7 @@
   } from "@nucleum/datafn/resource.utils";
   import ContextMenu from "@21n/elements/contextMenu/ContextMenu.svelte";
   import { resolveResource } from "@nucleum/datafn/resource-query.utils";
-  import { appStore } from "@nucleum/stores/app.store";
-  import { uiState } from "@nucleum/stores/uiState/uiState.store";
+
   import type { IRecordId } from "@nucleum/schema/legacy/data.type";
   import { Placement } from "@21n/elements/direction.enum";
   import { PopoverTriggerMethod } from "@nucleum/actions/popover.type";
@@ -64,7 +67,7 @@
           value: "remove",
           label: "Remove from tabs",
           icon: "cross",
-          callback: async () => uiState.removeResourceFromTabs(item)
+          callback: async () => tabState.removeResourceFromTabs(item)
         }
       ]
     }
@@ -102,10 +105,10 @@
     async function initialize() {
       if (isRecordId(item)) {
         resourceType = determineResourceType(item);
-        action = appStore.resolveAction(resourceType);
+        action = requireCommandHost().resolveAction(resourceType);
         resource = await resolveResource(item);
       } else {
-        action = appStore.resolveAction(item);
+        action = requireCommandHost().resolveAction(item);
         if (action) {
           resource = {
             label: action.label,
@@ -134,15 +137,17 @@
                 ? "Close split screen"
                 : "Open in split screen",
             icon:
-              currentMode === AccessMode.SPLIT ? "minus-circle" : "split-screen",
+              currentMode === AccessMode.SPLIT
+                ? "minus-circle"
+                : "split-screen",
             callback: async () => {
               if (currentMode === AccessMode.SPLIT) {
-                appStore.closeResource({
+                navigation.closeResource({
                   id: resource.id,
                   accessMode: AccessMode.SPLIT
                 });
               } else {
-                appStore.openResource(resource.id, AccessMode.SPLIT);
+                navigation.openResource(resource.id, AccessMode.SPLIT);
               }
             }
           },
@@ -151,7 +156,7 @@
             label: maxSearchParam ? "Minimize" : "Maximize",
             icon: maxSearchParam ? "exitfullscreen" : "fullscreen",
             callback: async () => {
-              appStore.toggleFullScreen(currentMode, resource.id);
+              navigation.toggleFullScreen(currentMode, resource.id);
             }
           }
         ]
@@ -291,7 +296,7 @@
             event.stopPropagation();
             tabs.remove(item);
             if (isActive) {
-              appStore.goBack();
+              navigation.goBack();
             }
           }}
           use:tooltip={{

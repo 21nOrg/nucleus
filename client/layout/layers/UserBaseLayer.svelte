@@ -1,6 +1,10 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+  import { subscription } from "@nucleum/application/subscription/subscription";
+
   import "@nucleum/application/composition/resource-hosts";
   import type { Snippet } from "svelte";
   import { onDestroy, onMount } from "svelte";
@@ -468,17 +472,17 @@
                 $context.os === OperatingSystem.IOS ||
                 $context.os === OperatingSystem.MACOS
               ) {
-                return appStore.openLink(
+                return navigation.openLink(
                   $appStore.appData?.urls?.appStore ??
                     $appStore.appData?.urls?.docs ??
                     ""
                 );
               } else if ($context.os === OperatingSystem.WINDOWS) {
-                return appStore.openLink(
+                return navigation.openLink(
                   $appStore.appData?.urls?.microsoftStore ?? ""
                 );
               } else if ($context.os === OperatingSystem.ANDROID) {
-                return appStore.openLink(
+                return navigation.openLink(
                   $appStore.appData?.urls?.playStore ?? ""
                 );
               }
@@ -604,11 +608,11 @@
       $account.plan?.cycle === BillingCycle.LIFETIME
     )
       return;
-    const response = await account.modifySubscription({
+    const response = await subscription.modifySubscription({
       type: "sync"
     });
     if (response.userPlan) {
-      account.handlePlanStatus(response.userPlan);
+      subscription.handlePlanStatus(response.userPlan);
     }
   }
 
@@ -660,14 +664,14 @@
         });
         if (parsed.type === "PURCHASE_SUCCESS") {
           loadingMessage.message = "Verifying payment...";
-          const response = await account.verifyPayment(
+          const response = await subscription.verifyPayment(
             parsed.nonce,
             parsed.embedTransaction
           );
           isAppLoading = false;
           modalEvent.hide(Action.USER_PLAN);
           if (response?.status === "success") {
-            appStore.runAction(Action.PLAN_ONBOARDING);
+            requireCommandHost().runAction(Action.PLAN_ONBOARDING);
           } else {
             toasts.error(ErrorMessage.DEFAULT);
           }
@@ -676,7 +680,7 @@
           modalEvent.hide(Action.USER_PLAN);
           toasts.error(ErrorMessage.DEFAULT);
         } else if (parsed.type === "RESTORE_PURCHASE_SUCCESS") {
-          const response = await account.modifySubscription({
+          const response = await subscription.modifySubscription({
             type: "sync",
             embedTransaction: parsed.embedTransaction
           });

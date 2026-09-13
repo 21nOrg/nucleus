@@ -1,11 +1,13 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { cn } from "@21n/utils/ui.utils";
   import { Size } from "@21n/elements/size.enum";
   import SubAtomLogo from "@21n/branding/SubAtomLogo.svelte";
   import ProfilePicture from "@nucleum/application/settings/account/ProfilePicture.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { tooltip } from "@nucleum/actions/popover.action";
   import { determineIfActiveSubscriber } from "@nucleum/client/runtime/account/plan.utils";
   import { UserDataMode } from "@nucleum/client/runtime/account/account.type";
@@ -70,7 +72,7 @@
     if (callback) {
       callback();
     } else {
-      appStore.runAction(action ?? Action.SETTINGS);
+      requireCommandHost().runAction(action ?? Action.SETTINGS);
     }
   }}
 >

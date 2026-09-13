@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { fileUpload } from "@nucleum/stores/files/file-upload";
+
   import { fileDrop } from "$lib/client/actions/fileDrop.action";
   import { logger } from "@nucleum/client/runtime/logging/logger";
   import Button from "$lib/client/elements/button/Button.svelte";
@@ -85,7 +87,7 @@
       isSaving = true;
       error = undefined;
 
-      const response = await account.uploadFileV2(
+      const response = await fileUpload.uploadFileV2(
         selectedFile.type,
         selectedFile.name,
         new Blob([selectedFile], { type: selectedFile.type }),

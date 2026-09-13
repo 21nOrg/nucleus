@@ -1,4 +1,6 @@
 <script>
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { page } from "$app/stores";
   import PageError from "@nucleum/application/error/PageError.svelte";
   import { appStore } from "@nucleum/stores/app.store";
@@ -17,7 +19,7 @@
         label: "Request Early Access",
         variant: ButtonVariant.PRIMARY,
         callback: async () => {
-          appStore.openLink(
+          navigation.openLink(
             $appStore?.appData?.urls?.earlyAccess ?? "https://21n.org"
           );
         }

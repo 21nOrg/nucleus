@@ -1,6 +1,7 @@
+import { navigation } from "@21n/layout/navigation/navigation";
 import { writable } from "svelte/store";
 import { Resource } from "@nucleum/datafn/resource.enum";
-import { appStore } from "@nucleum/stores/app.store";
+
 import { AccessMode } from "@nucleum/datafn/resource.type";
 
 export interface SearchState {
@@ -37,7 +38,7 @@ function createSearchStore() {
 
     reset: () => {
       set({ query: "", resourceType: Resource.everything });
-      appStore.toggleSearchParam([AccessMode.MAIN]);
+      navigation.toggleSearchParam([AccessMode.MAIN]);
     },
 
     clear: () => {

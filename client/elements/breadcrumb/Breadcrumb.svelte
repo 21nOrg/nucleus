@@ -1,11 +1,13 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import BreadcrumbItemView from "@21n/elements/breadcrumb/BreadcrumbItemView.svelte";
   import type { IBreadcrumbItem } from "@21n/elements/breadcrumbsV2/breadcrumbItem.type";
   import { textTruncateMapper } from "@21n/utils/utils";
   import view from "@nucleum/stores/view.store";
   import { Display } from "@21n/elements/display.enum";
   import { determineTruncateLength } from "@21n/elements/text/truncation.utils";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Resource } from "@nucleum/datafn/resource.enum";
   import { Size } from "@21n/elements/size.enum";
   let {
@@ -66,9 +68,9 @@
       onItemClick({ event: e, item });
       return;
     }
-    if (item.path) appStore.gotoPath(item.path);
+    if (item.path) navigation.gotoPath(item.path);
     else if (item.resourceId)
-      appStore.gotoResource(
+      navigation.gotoResource(
         item.resourceId.split(":")[0] as Resource,
         item.resourceId
       );

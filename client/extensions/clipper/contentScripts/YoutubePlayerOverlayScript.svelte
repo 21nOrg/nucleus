@@ -5,7 +5,7 @@
   import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import { ClipperExtensionEvent } from "@nucleum/client/config/events/clipper-event.type";
   import { webpage } from "@nucleum/extensions/clipper/contentScripts/store";
-  import { appEvents } from "@nucleum/stores/notification.store";
+  import { appEvents } from "@nucleum/stores/events/app-events.store";
   import { logger } from "@nucleum/client/runtime/logging/logger";
   import { relayToBackgroundScript } from "@21n/utils/extension.utils";
   import Icon from "@21n/elements/Icon.svelte";

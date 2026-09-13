@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Button from "@21n/elements/button/Button.svelte";
   import {
     SessionCompositionType,
@@ -13,7 +15,7 @@
   import { PointronAction } from "@nucleum/client/config/focus-action.enum";
   import { Size } from "@21n/elements/size.enum";
   import { ButtonStyle } from "@21n/elements/button/button.type";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import ScrollViewBottomSpacer from "@21n/layout/scrollView/ScrollViewBottomSpacer.svelte";
   import { generateSimpleRandomId } from "@21n/shared-utils/crypto.utils";
   import { deepCopy } from "@21n/shared-utils/obj.utils";
@@ -40,12 +42,10 @@
     parentBgIndex?: number;
     startInConfig?: boolean;
     compositionChangeHandler?:
-      | ((event: CustomEvent<SessionComposition>) => void)
-      | undefined;
+      ((event: CustomEvent<SessionComposition>) => void) | undefined;
     onChange?: ((event: CustomEvent<SessionComposition>) => void) | undefined;
     onCompositionChange?:
-      | ((event: CustomEvent<SessionComposition>) => void)
-      | undefined;
+      ((event: CustomEvent<SessionComposition>) => void) | undefined;
   } = $props();
   void parentBgIndex;
 
@@ -121,7 +121,10 @@
   }
 
   let totals = $derived(
-    getTotalsFromComposition({ composition: compositionDraft, endTime: $activeSession.end })
+    getTotalsFromComposition({
+      composition: compositionDraft,
+      endTime: $activeSession.end
+    })
   );
 
   function resolveUsableDuration(duration?: number) {
@@ -318,7 +321,7 @@
           icon="bookmark"
           testId="composition-save-as-preset"
           onclick={() => {
-            appStore.runAction(PointronAction.SAVE_PRESET_MODAL);
+            requireCommandHost().runAction(PointronAction.SAVE_PRESET_MODAL);
           }}
           tooltip="Save as preset"
         />

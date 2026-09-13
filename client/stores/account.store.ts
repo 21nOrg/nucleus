@@ -1,47 +1,31 @@
+import { navigation } from "@21n/layout/navigation/navigation";
 import { get, writable } from "svelte/store";
-import { PlanStatus, type IUserPlan } from "@nucleum/schema/account/subscription";
-import { UserDataMode, UserSessionType, type UserAccount, type UserInformation } from "@nucleum/client/runtime/account/account.type";
+import { type IUserPlan } from "@nucleum/schema/account/subscription";
+import {
+  UserDataMode,
+  UserSessionType,
+  type UserAccount,
+  type UserInformation
+} from "@nucleum/client/runtime/account/account.type";
 import { postDataToParent } from "@nucleum/client/runtime/embed/embed.utils";
 import { Persistence } from "@nucleum/persistence/persistence";
-import { performApiCall } from "@21n/utils/network.utils";
+
 import { determineIfOffline } from "@nucleum/client/runtime/connectivity";
-import {
-  confirmationNotification,
-  toasts
-} from "@nucleum/stores/notification.store";
-import { ButtonVariant } from "@21n/elements/button/button.type";
-import { appStore } from "@nucleum/stores/app.store";
-import {
-  getBucketNameandKey,
-  hasLegacyCloudSession,
-  signout
-} from "@21n/utils/account.utils";
-import { determineIfPlanIsActive, determineIfSubscriptionExpired } from "@nucleum/client/runtime/account/plan.utils";
+
+import { signout } from "@21n/utils/account.utils";
+
 import { PlanType } from "@nucleum/schema/account/subscription";
 import { ObservableStore } from "@nucleum/stores/client.store";
 import { StoreDataType } from "@nucleum/schema/legacy/store-data-type.enum";
-import { type IRecordId } from "@nucleum/schema/legacy/data.type";
-import {
-  clientStorage,
-  deleteIndexedDbDatabase
-} from "@nucleum/persistence/persistence.utils";
+
+import { clientStorage } from "@nucleum/persistence/persistence.utils";
 import { ClientStorageKey } from "@nucleum/persistence/persistence.type";
 import { logger } from "@nucleum/client/runtime/logging/logger";
 import { generateSimpleRandomId } from "@21n/shared-utils/crypto.utils";
-import {
-  clearDatafnLocalData,
-  datafn,
-  destroyNucleumDatafn
-} from "@nucleum/datafn/datafn.store";
-import { generateResourceId } from "@nucleum/datafn/id.utils";
-import { Resource } from "@nucleum/datafn/resource.enum";
-import { dispatchCustomEvent } from "@21n/utils/browser.utils";
-import { GlobalEvent } from "@nucleum/stores/notifications/event.enum";
+import { destroyNucleumDatafn } from "@nucleum/datafn/datafn.store";
+
 import context from "@nucleum/stores/context.store";
-import { compressImageToTargetSize } from "@21n/utils/ui.utils";
-import { convertHeicToPng } from "@21n/utils/ui.utils";
-import { generateImagePreviewFromPdf } from "@21n/utils/pdf.utils";
-import { Action } from "@nucleum/client/config/action.enum";
+
 import { EmbedDataMessage } from "@nucleum/client/runtime/embed/embedMessage.enum";
 import { parse } from "@21n/shared-utils/json.utils";
 import {
@@ -51,7 +35,6 @@ import {
 } from "@nucleum/client/runtime/account/auth";
 import { resolveAccountBaseUrl } from "@nucleum/client/runtime/account/network";
 import { clearCachedDatafnE2eeState } from "@nucleum/datafn/datafnE2ee.store";
-import { clearLegacySurrealLocalData } from "@nucleum/persistence/legacyLocalDataBackup";
 
 export const isRefreshingToken = writable(false);
 
@@ -214,9 +197,9 @@ class AccountStore extends ObservableStore<UserAccount> {
         typeof window !== "undefined" ? window.location.pathname : undefined
     });
     if (params?.isNewUser) {
-      appStore.gotoPath("/onboarding");
+      navigation.gotoPath("/onboarding");
     } else {
-      appStore.gotoPath("/");
+      navigation.gotoPath("/");
     }
   }
 
@@ -237,8 +220,7 @@ class AccountStore extends ObservableStore<UserAccount> {
       };
       return n;
     });
-    // TODO - this is causing issue in macOS app - signout is not working
-    // await flux?.terminate();
+
     await signout(params, "signOut account.store");
   }
   async embedOAuthSignin(token: string) {
@@ -280,7 +262,8 @@ class AccountStore extends ObservableStore<UserAccount> {
 
     let authSession = params?.session;
     if (!authSession) {
-      const { authClient } = await import("@nucleum/client/runtime/account/auth");
+      const { authClient } =
+        await import("@nucleum/client/runtime/account/auth");
       const response = await (
         await authClient({ isPreventCachedInstance: true })
       ).getSession();
@@ -387,202 +370,6 @@ class AccountStore extends ObservableStore<UserAccount> {
     };
   }
 
-  async delete() {
-    confirmationNotification.notify({
-      title: "Account deletion confirmation",
-      message: "Are you sure you want to delete your account?",
-      confirmAction: {
-        label: "Delete",
-        variant: ButtonVariant.DANGER,
-        callback: async () => {
-          return this.confirmDelete();
-        }
-      }
-    });
-  }
-
-  async confirmDelete() {
-    let isDeleted = false;
-    try {
-      dispatchCustomEvent(GlobalEvent.APP_LOADING_STATUS, {
-        message: `Deleting account...`
-      });
-      const authFnDeleteStatus = await this.tryConfirmAuthFnDelete();
-      if (authFnDeleteStatus === "failed") {
-        return false;
-      }
-      if (authFnDeleteStatus === "deleted") {
-        await this.completeConfirmedAccountDeletion();
-        isDeleted = true;
-        return true;
-      }
-
-      const result = await performApiCall(
-        "v2/account/deleteAccount",
-        "POST",
-        {}
-      );
-      if (!result?.ok) {
-        toasts.error("Failed to delete account. Please try again later.");
-        return false;
-      }
-      const data = await result.json();
-      if (data?.error) {
-        toasts.error(data.error);
-        return false;
-      }
-      await this.completeConfirmedAccountDeletion();
-      isDeleted = true;
-      return true;
-    } catch (e) {
-      logger.error({ at: "confirmDelete", error: e });
-      toasts.error("Failed to delete account. Please try again later.");
-      return false;
-    } finally {
-      dispatchCustomEvent(GlobalEvent.APP_LOADING_STATUS, {
-        message: isDeleted ? `Account deleted.` : "Account deletion failed.",
-        subMessage: "",
-        isFinished: true
-      });
-    }
-  }
-
-  private async completeConfirmedAccountDeletion() {
-    const cleanupOperations = [
-      ["datafn", () => clearDatafnLocalData()],
-      ["legacy", () => this.clearLegacyFluxLocalData()]
-    ] as const;
-    for (const [name, operation] of cleanupOperations) {
-      try {
-        await operation();
-      } catch (error) {
-        logger.error({ at: `account.delete.cleanup.${name}`, error });
-      }
-    }
-    await this.signOut({ isPreventRedirect: true });
-    appStore.gotoPath("/signup?msg=deleted");
-  }
-
-  private async clearLegacyFluxLocalData() {
-    const account = this.get();
-    const dapId = await clientStorage.get(ClientStorageKey.DAP_ID);
-    const cleanupErrors: unknown[] = [];
-    const identities = new Set(
-      [account.userId, account.userInfo?.id, dapId]
-        .filter((value): value is string => Boolean(value))
-        .map((value) => value.replace(/^user:/, ""))
-    );
-    const product = get(appStore).product;
-    const databaseNames = new Set<string>();
-    for (const identity of identities) {
-      const prefix = `${identity}-1`;
-      databaseNames.add(prefix);
-    }
-    const indexedDb = indexedDB as IDBFactory & {
-      databases?: () => Promise<Array<{ name?: string }>>;
-    };
-    const listedDatabases =
-      typeof indexedDb.databases === "function"
-        ? await indexedDb.databases().catch(() => [])
-        : [];
-    for (const database of listedDatabases ?? []) {
-      const databaseName = database.name;
-      if (
-        databaseName &&
-        Array.from(identities).some((identity) => {
-          const prefix = `${identity}-1-`;
-          return (
-            databaseName === `${identity}-1` ||
-            (databaseName.startsWith(prefix) &&
-              databaseName.endsWith("-search")) ||
-            (databaseName.startsWith(`searchfn-${prefix}`) &&
-              databaseName.endsWith("-search"))
-          );
-        })
-      ) {
-        databaseNames.add(databaseName);
-      }
-    }
-    const deletionResults = await Promise.allSettled(
-      Array.from(databaseNames, (name) => deleteIndexedDbDatabase(name))
-    );
-    cleanupErrors.push(
-      ...deletionResults
-        .filter(
-          (result): result is PromiseRejectedResult =>
-            result.status === "rejected"
-        )
-        .map((result) => result.reason)
-    );
-    try {
-      await clearLegacySurrealLocalData(product, Array.from(identities));
-    } catch (error) {
-      cleanupErrors.push(error);
-    }
-    if (cleanupErrors.length) {
-      throw new Error(
-        cleanupErrors
-          .map((error) =>
-            error instanceof Error ? error.message : String(error)
-          )
-          .join("; ")
-      );
-    }
-  }
-
-  private async tryConfirmAuthFnDelete(): Promise<
-    "deleted" | "not-authfn" | "failed"
-  > {
-    try {
-      const { authClient } = await import("@nucleum/client/runtime/account/auth");
-      const response = await (
-        await authClient({
-          isPreventCachedInstance: true
-        })
-      ).deleteAccount();
-      if (response.ok) {
-        return "deleted";
-      }
-      if (
-        response.error.code === "AUTHFN_UNAUTHENTICATED" &&
-        (await hasLegacyCloudSession())
-      ) {
-        return "not-authfn";
-      }
-      toasts.error(
-        response.error.message ??
-          "Failed to delete account. Please try again later."
-      );
-      return "failed";
-    } catch (error) {
-      logger.error({ at: "tryConfirmAuthFnDelete", error });
-      if (await hasLegacyCloudSession()) {
-        return "not-authfn";
-      }
-      toasts.error("Failed to delete account. Please try again later.");
-      return "failed";
-    }
-  }
-
-  async handlePlanStatus(plan: IUserPlan) {
-    const isActive = determineIfPlanIsActive(plan);
-    if (!isActive) {
-      appStore.runAction(Action.INACTIVE_PLAN);
-    }
-    let expiry = determineIfSubscriptionExpired(plan);
-    if (!expiry.isExpired) return;
-    await this.modifySubscription({
-      type: "sync"
-    });
-    plan = this.get()?.plan ?? plan;
-    expiry = determineIfSubscriptionExpired(plan);
-    if (!expiry.isExpired) return;
-    if (!expiry.isWithinBuffer) {
-      appStore.runAction(Action.INACTIVE_PLAN);
-      // appStore.runAction(Action.EXPIRED_PLAN);
-    }
-  }
-
   async refreshPlanData() {
     try {
       const isOffline = await determineIfOffline();
@@ -612,66 +399,6 @@ class AccountStore extends ObservableStore<UserAccount> {
       logger.error({ at: "refreshPlanData", error: e });
       return { status: "unavailable" as const, error: e };
     }
-  }
-
-  async initiateSubscription(params: any) {
-    try {
-      const isOffline = await determineIfOffline();
-      if (isOffline) return;
-      const response = await this.persistence.initiateSubscription(params);
-      return response;
-    } catch (e) {
-      logger.error({ at: "initiateSubscription", error: e });
-    }
-  }
-
-  async modifySubscription(params: any) {
-    try {
-      const isOffline = await determineIfOffline();
-      if (isOffline) return;
-      const response = await this.persistence.modifySubscription(params);
-      if (response && response.userPlan) {
-        this.update((n) => {
-          n.plan = response.userPlan;
-          return n;
-        });
-      }
-      return response;
-    } catch (e) {
-      logger.error({ at: "modifySubscription", error: e });
-    }
-  }
-
-  async restorePurchase() {
-    try {
-      const isOffline = await determineIfOffline();
-      if (isOffline) return;
-      const response = await this.persistence.restorePurchase();
-      if (response && response.userPlan) {
-        this.update((n) => {
-          n.plan = response.userPlan;
-          return n;
-        });
-      }
-      return response;
-    } catch (e) {
-      logger.error({ at: "restorePurchase", error: e });
-    }
-  }
-  async verifyPayment(nonce: string, embedTransaction?: any) {
-    const response = await this.persistence.verifyPayment(
-      nonce,
-      embedTransaction
-    );
-    if (response && response.id) {
-      const plan = response.userPlan ?? response;
-      this.update((n) => {
-        n.plan = plan;
-        return n;
-      });
-      return { status: "success" };
-    }
-    return response;
   }
 
   async logGuest(id: string) {
@@ -763,251 +490,6 @@ class AccountStore extends ObservableStore<UserAccount> {
       }
     );
     return true;
-  }
-
-  getSignedUrl(contentType: string, fileName: string, isTemp: boolean) {
-    const acc = get(account);
-    const userId = acc.userInfo?.id.split(":")[1] ?? "";
-    return this.persistence.getSignedUrl(userId, contentType, fileName, isTemp);
-  }
-
-  /**
-   * @deprecated - use uploadFileV2 instead
-   * @param contentType
-   * @param fileName
-   * @param blob
-   * @param isTemp
-   * @returns
-   */
-  async uploadFile(
-    contentType: string,
-    fileName: string,
-    blob: any,
-    isTemp: boolean = false
-  ) {
-    const signedUrlResponse = await this.getSignedUrl(
-      contentType,
-      fileName,
-      isTemp
-    );
-    if (signedUrlResponse?.uploadURL) {
-      await this.persistence.uploadFile(
-        signedUrlResponse.uploadURL,
-        contentType,
-        blob
-      );
-      return signedUrlResponse;
-    } else return null;
-  }
-
-  async uploadFileV2(
-    contentType: string,
-    fileName: string,
-    blob: Blob,
-    params: {
-      isTemp?: boolean;
-      isReturnUrl?: boolean;
-      isExtensionEnv?: boolean;
-      isPreventSync?: boolean;
-      isMeta?: boolean;
-      thumbnailBlob?: Blob;
-      isGenerateThumbnail?: boolean;
-    } = {}
-  ) {
-    try {
-      const account = this.get();
-      const id = generateResourceId(Resource.file, {
-        id: contentType.split("/")[0] + "_" + generateSimpleRandomId()
-      });
-      logger.log({ at: "uploadFileV2", id, contentType, fileName });
-      fileName = fileName
-        .replace(/\s+/g, "_")
-        .replace(/[()@#$%&*!?<>{}[\]\\\/\^~`+=;:,'"|]/g, "_");
-
-      // Convert HEIC files to PNG
-      const isHeicFile = fileName.toLowerCase().endsWith(".heic");
-      if (isHeicFile) {
-        try {
-          const { convertedBlob, convertedFileName } =
-            await convertHeicToPng(blob);
-          blob = convertedBlob;
-          contentType = "image/png";
-          fileName = fileName.replace(/\.heic$/i, ".png");
-          logger.log({
-            at: "uploadFileV2",
-            message: "Converted HEIC to PNG",
-            originalFileName: fileName,
-            newContentType: contentType
-          });
-        } catch (error) {
-          logger.error({
-            at: "uploadFileV2",
-            error,
-            message: "HEIC conversion failed"
-          });
-          throw new Error(
-            "Failed to convert HEIC file. Please try a different format."
-          );
-        }
-      }
-
-      let thumbnailBlob: Blob | undefined = params.thumbnailBlob;
-      if (params.isGenerateThumbnail && !thumbnailBlob) {
-        if (contentType.includes("image")) {
-          thumbnailBlob = await compressImageToTargetSize(blob);
-        } else if (contentType.includes("pdf")) {
-          const result = await generateImagePreviewFromPdf(blob);
-          if (result) thumbnailBlob = result as Blob;
-        }
-      }
-      if (account.dataMode === UserDataMode.LOCAL || params.isPreventSync) {
-        return await this.saveLocalFile({
-          id,
-          fileName,
-          contentType,
-          blob,
-          thumbnailBlob,
-          isMeta: params.isMeta,
-          isExtensionEnv: params.isExtensionEnv,
-          isReturnUrl: params.isReturnUrl
-        });
-      } else {
-        const signedUrlResponse = await this.getSignedUrl(
-          contentType,
-          fileName,
-          params.isTemp ?? false
-        );
-        if (!signedUrlResponse || !signedUrlResponse.uploadURL) {
-          return await this.saveLocalFile({
-            id,
-            fileName,
-            contentType,
-            blob,
-            thumbnailBlob,
-            isMeta: params.isMeta,
-            isExtensionEnv: params.isExtensionEnv,
-            isReturnUrl: params.isReturnUrl
-          });
-        }
-
-        await this.persistence.uploadFile(
-          signedUrlResponse.uploadURL,
-          contentType,
-          blob
-        );
-        // const url = signedUrlResponse.uploadURL.split("?")[0];
-        const key = getBucketNameandKey(signedUrlResponse.uploadURL);
-        const signedGetUrl = await this.persistence.fetchSignedUrlForGet(key);
-        const url = signedGetUrl?.getUrl;
-        let thumbnailUrl: string | undefined;
-        if (thumbnailBlob) {
-          const signedThumbnailUrlResponse = await this.getSignedUrl(
-            "image/jpeg",
-            "thumbnail_" + fileName,
-            params.isTemp ?? false
-          );
-          const thumbnailUploadUrl = signedThumbnailUrlResponse?.uploadURL;
-          if (thumbnailUploadUrl) {
-            await this.persistence.uploadFile(
-              thumbnailUploadUrl,
-              "image/jpeg",
-              thumbnailBlob
-            );
-            const thumbnailKey = getBucketNameandKey(thumbnailUploadUrl);
-            const signedThumbnailGetUrl =
-              await this.persistence.fetchSignedUrlForGet(thumbnailKey);
-            thumbnailUrl = signedThumbnailGetUrl?.getUrl;
-          }
-        }
-        const file = {
-          id,
-          label: fileName,
-          type: contentType,
-          url,
-          size: blob.size,
-          isMeta: params.isMeta,
-          thumbnailUrl
-        };
-        if (params.isReturnUrl) {
-          return url;
-        } else if (params.isExtensionEnv) {
-          return file;
-        }
-        const mutationResult = (await datafn.file.mutate({
-          operation: "insert",
-          id,
-          record: file
-        })) as { ok?: boolean; error?: unknown };
-        if (mutationResult.ok === false) {
-          throw mutationResult.error ?? new Error("File metadata save failed");
-        }
-        return [file];
-      }
-    } catch (e) {
-      logger.error({ at: "uploadFileV2", error: e });
-      throw e;
-    }
-  }
-
-  private async saveLocalFile(params: {
-    id: IRecordId;
-    fileName: string;
-    contentType: string;
-    blob: Blob;
-    thumbnailBlob?: Blob;
-    isMeta?: boolean;
-    isExtensionEnv?: boolean;
-    isReturnUrl?: boolean;
-  }) {
-    if (params.isReturnUrl) {
-      return URL.createObjectURL(params.blob);
-    }
-    const arrayBuffer = await params.blob.arrayBuffer();
-    const uint8Array = new Uint8Array(arrayBuffer);
-    let thumbnailUint8Array: Uint8Array | undefined;
-    if (params.thumbnailBlob) {
-      const thumbnailArrayBuffer = await params.thumbnailBlob.arrayBuffer();
-      thumbnailUint8Array = new Uint8Array(thumbnailArrayBuffer);
-    }
-    const file = {
-      id: params.id,
-      label: params.fileName,
-      name: params.fileName,
-      type: params.contentType,
-      data: uint8Array,
-      size: uint8Array.length,
-      isMeta: params.isMeta,
-      thumbnailData: thumbnailUint8Array
-    };
-    if (params.isExtensionEnv) {
-      return file;
-    }
-    const mutationResult = (await datafn.file.mutate({
-      operation: "insert",
-      id: params.id,
-      record: file
-    })) as { ok?: boolean; error?: unknown };
-    if (mutationResult.ok === false) {
-      throw mutationResult.error ?? new Error("File metadata save failed");
-    }
-    return [file];
-  }
-
-  /**
-   * Used to upload a file to s3 temp bucket
-   * @param input the file that needs to be uploaded to the S3 temp bucket
-   */
-  async tempUploadToS3(input: any) {
-    let itemLocalURL = new Blob([input], { type: input.type });
-    let customName = input.name.split(".")[0].replace(/\s+/g, "");
-    const result = await this.uploadFile(
-      input.type,
-      customName,
-      itemLocalURL,
-      true
-    );
-    let url = result.uploadURL.split("?")[0];
-    return [url, customName, itemLocalURL];
   }
 
   async checkIfSessionExpired() {

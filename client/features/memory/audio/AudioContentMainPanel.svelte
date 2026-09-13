@@ -21,7 +21,7 @@
   import { AudioView } from "@nucleum/features/memory/audio/audio.type";
   import EmptyStatusView from "@21n/elements/feedback/EmptyStatusView.svelte";
   import { Action } from "@nucleum/client/config/action.enum";
-  import { appStore } from "@nucleum/stores/app.store";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
   import { generateMarkdownText } from "@nucleum/features/memory/node/node.utils";
   import type { IAudioBody, IAudioMetadata } from "@nucleum/features/memory/node/node.type";
   import { datafn } from "@nucleum/datafn/datafn.store";
@@ -233,7 +233,7 @@
             icon="ph:sliders-light"
             tooltip="Transcription settings"
             onclick={() => {
-              appStore.runAction(Action.ARTIFICIAL_INTELLIGENCE);
+              requireCommandHost().runAction(Action.ARTIFICIAL_INTELLIGENCE);
             }}
           />
         {/if}

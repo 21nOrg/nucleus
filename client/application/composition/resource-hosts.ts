@@ -1,10 +1,14 @@
+import { navigation } from "@21n/layout/navigation/navigation";
+import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+import { actionRunner } from "../commands/action-runner";
+import { configureCommandHost } from "@nucleum/stores/commands/command-host";
 import { configureProductResourceTables } from "@nucleum/client/config/product-resources";
 import { configureActionRenderer } from "@nucleum/stores/resources/action-renderer";
 import ComponentResolver from "@21n/layout/paint/ComponentResolver.svelte";
 import { get } from "svelte/store";
 import { appStore } from "@nucleum/stores/app.store";
 import { AppSearchParam } from "@nucleum/stores/appStore.type";
-import { appEvents } from "@nucleum/stores/notification.store";
+import { appEvents } from "@nucleum/stores/events/app-events.store";
 import { tabs } from "@21n/layout/topNav/tabs/tabs.store";
 import { AccessMode } from "@nucleum/datafn/resource.type";
 import { resolveProductResources } from "@nucleum/datafn/resource.utils";
@@ -23,11 +27,11 @@ import Records from "../record/Records.svelte";
 configureOverlayHost({
   onDismiss: (action) => appEvents.nav(action),
   openFullscreen: (path) =>
-    appStore.toggleSearchParam({
+    navigation.toggleSearchParam({
       [AccessMode.FULL]: path,
       [AccessMode.POP]: null
     }),
-  closeFullscreen: () => appStore.toggleSearchParam([AccessMode.FULL]),
+  closeFullscreen: () => navigation.toggleSearchParam([AccessMode.FULL]),
   resolvePlayer: (path) =>
     appStore.resolveComponentFromPath(path)?.associatedPlayer
 });
@@ -46,27 +50,29 @@ configureRecentsHost({
 configureResourcePanelHost({
   readPanel: (id, url) => {
     return url.searchParams.get(
-      appStore.resolveRecordSpecificSearchParam(id, AppSearchParam.PANEL)
+      navigation.resolveRecordSpecificSearchParam(id, AppSearchParam.PANEL)
     );
   },
   writePanel: (id, panel) =>
-    appStore.toggleSearchParamRecordSpecific(id, {
+    navigation.toggleSearchParamRecordSpecific(id, {
       [AppSearchParam.PANEL]: panel
     }),
-  close: (id) => appStore.closeResource({ id }),
-  goBack: () => appStore.goBack(),
-  maximize: (mode, id) => appStore.toggleFullScreen(mode, id)
+  close: (id) => navigation.closeResource({ id }),
+  goBack: () => navigation.goBack(),
+  maximize: (mode, id) => navigation.toggleFullScreen(mode, id)
 });
 
 configureResourceActionHost({
   copyLink: copyResourceLinkToClipboard,
-  open: (id, mode, options) => appStore.openResource(id, mode, options),
-  close: (options) => appStore.closeResource(options),
-  maximize: (mode, id) => appStore.toggleFullScreen(mode, id),
+  open: (id, mode, options) => navigation.openResource(id, mode, options),
+  close: (options) => navigation.closeResource(options),
+  maximize: (mode, id) => navigation.toggleFullScreen(mode, id),
   openTab: (id) => tabs.open(id),
   removeTab: (id) => tabs.remove(id),
   requestLink: (options) =>
-    appStore.runAction(Action.BULK_LINK, { componentParams: options }),
+    requireCommandHost().runAction(Action.BULK_LINK, {
+      componentParams: options
+    }),
   afterNodeMutation: async (action, ids) => {
     const lifecycle = await import("@nucleum/features/memory/node/node.store");
     if (action === "archive") return lifecycle.onNodeArchive(ids);
@@ -75,6 +81,9 @@ configureResourceActionHost({
   }
 });
 
-
 configureActionRenderer(ComponentResolver);
-configureProductResourceTables((product) => resolveProductConfig(product).resources.table);
+configureProductResourceTables(
+  (product) => resolveProductConfig(product).resources.table
+);
+
+configureCommandHost(actionRunner);

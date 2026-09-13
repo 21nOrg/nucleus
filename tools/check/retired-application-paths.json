@@ -1,4 +1,7 @@
 [
+  "client/actions/counter.action.ts",
+  "client/actions/embed.actions.ts",
+  "client/actions/md.action.ts",
   "client/application/commandBar/action.enum.ts",
   "client/application/commandBar/action.type.ts",
   "client/application/embed/embed.store.ts",
@@ -51,6 +54,8 @@
   "client/features/memory/linking/link.type.ts",
   "client/products/memotron/import/data.type.ts",
   "client/stores/actionMap.ts",
+  "client/stores/appMenu/appMenu.store.ts",
+  "client/stores/appMenu/appMenu.type.ts",
   "client/utils/audio.utils.ts",
   "client/utils/embed.utils.ts"
 ]

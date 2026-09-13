@@ -1,8 +1,10 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { tooltip } from "@nucleum/actions/popover.action";
   import { AccessMode } from "@nucleum/datafn/resource.type";
   import modalEvent from "@nucleum/stores/overlays/modal.store";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import view from "@nucleum/stores/view.store";
   import { ButtonVariant } from "@21n/elements/button/button.type";
   import { Placement } from "@21n/elements/direction.enum";
@@ -38,8 +40,8 @@
   )}
   use:tooltip={{ text: "Close", direction: Placement.Left }}
   onclick={() => {
-    if ($view.isConstrainedWidth && !path) appStore.goBack();
-    appStore.closeResource({ accessMode });
+    if ($view.isConstrainedWidth && !path) navigation.goBack();
+    navigation.closeResource({ accessMode });
     if (path) modalEvent.hide(path, "ModalCloseButton.svelte");
   }}
 >

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import {
     focusItemsStore,
     activeSession,
@@ -25,12 +27,11 @@
   import type { IObjectiveThumb } from "@nucleum/features/focus/goals/goal.type";
   import {
     isSameResource,
-    resourceInList,
-    shiftResourceInArray
+    resourceInList
   } from "@nucleum/datafn/resource.utils";
   import FocusTask from "@nucleum/features/focus/elements/focusitem/FocusTask.svelte";
   import type { ITaskThumb } from "@nucleum/features/focus/tasks/task.type";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { AccessMode } from "@nucleum/datafn/resource.type";
   import { resolveObjectiveColor } from "@nucleum/features/focus/goals/goal.utils";
   import { toasts } from "@nucleum/stores/notification.store";
@@ -177,10 +178,7 @@
     "cursor-move": isInEditMode
   })}
 >
-  {#if (objective &&
-      (!$activeSession.isSessionRunning || isInEditMode) &&
-      contxt === "current") ||
-    (objective && tasksUnderObjective.length > 0)}
+  {#if (objective && (!$activeSession.isSessionRunning || isInEditMode) && contxt === "current") || (objective && tasksUnderObjective.length > 0)}
     <CustomColorPropagator
       {color}
       class="relative flex items-center gap-2 w-full"
@@ -211,7 +209,7 @@
             class="notouch:hover:underline active:underline"
             onclick={(e) => {
               e.stopPropagation();
-              appStore.openResource(objective.id, AccessMode.POP);
+              navigation.openResource(objective.id, AccessMode.POP);
             }}
           >
             {objective.label}
@@ -311,7 +309,7 @@
           class="notouch:hover:underline active:underline"
           onclick={(e) => {
             e.stopPropagation();
-            appStore.openResource(objective.id, AccessMode.POP);
+            navigation.openResource(objective.id, AccessMode.POP);
           }}
         >
           {objective.label}

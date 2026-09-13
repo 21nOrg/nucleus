@@ -1,6 +1,9 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { onMount } from "svelte";
   import { appStore } from "@nucleum/stores/app.store";
   import { MemotronAction } from "@nucleum/features/memory/memory-action.enum";
@@ -17,7 +20,7 @@
         !target?.classList?.contains("text-input") &&
         !target?.classList?.contains("inline-markdown")
       ) {
-        appStore.runAction(MemotronAction.PASTE_CONFIRMATION, {
+        requireCommandHost().runAction(MemotronAction.PASTE_CONFIRMATION, {
           componentParams: {
             event
           }
@@ -35,7 +38,7 @@
       !$appStore.isDnDPageActive &&
       event.dataTransfer?.effectAllowed !== "move"
     ) {
-      appStore.runAction(MemotronAction.CAPTURE_DND);
+      requireCommandHost().runAction(MemotronAction.CAPTURE_DND);
     }
   }
 
@@ -45,7 +48,7 @@
       !$appStore.isDnDPageActive &&
       !window.location.pathname.includes("/tab")
     ) {
-      appStore.closeResource({
+      navigation.closeResource({
         id: MemotronAction.CAPTURE_DND,
         accessMode: AccessMode.POP
       });

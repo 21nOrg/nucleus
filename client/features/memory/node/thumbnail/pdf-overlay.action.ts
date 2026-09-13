@@ -2,6 +2,7 @@ type HideOnOverlayParams = {
   enabled?: boolean;
 };
 
+/** Hides the PDF embed while an application overlay covers it. */
 export function hideOnOverlay(
   node: HTMLElement,
   params: HideOnOverlayParams = {}
@@ -27,7 +28,6 @@ export function hideOnOverlay(
     attributeFilter: ["class"]
   });
 
-  // Initial check
   updateVisibility();
 
   return {

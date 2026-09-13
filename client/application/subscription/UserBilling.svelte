@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import account from "@nucleum/stores/account.store";
   import Button from "@21n/elements/button/Button.svelte";
   import { ButtonStyle, ButtonVariant } from "@21n/elements/button/button.type";
@@ -7,13 +9,16 @@
     resolvePlanLabel,
     SUBSCRIPTION_PLANS
   } from "@nucleum/application/subscription/userPlan.utils";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { parseAndFormatDate } from "@21n/utils/time.utils";
   import PlanFeatureList from "@nucleum/application/subscription/elements/PlanFeatureList.svelte";
   import { Action } from "@nucleum/client/config/action.enum";
   import { BillingCycle, PlanType } from "@nucleum/schema/account/subscription";
-  import { PlanStatus, type IUserPlan } from "@nucleum/schema/account/subscription";
-import { UserDataMode } from "@nucleum/client/runtime/account/account.type";
+  import {
+    PlanStatus,
+    type IUserPlan
+  } from "@nucleum/schema/account/subscription";
+  import { UserDataMode } from "@nucleum/client/runtime/account/account.type";
   import { PaymentProvider } from "@nucleum/schema/account/payment-provider";
   import RestorePurchaseAction from "@nucleum/application/subscription/RestorePurchaseAction.svelte";
   import context from "@nucleum/stores/context.store";
@@ -41,8 +46,8 @@ import { UserDataMode } from "@nucleum/client/runtime/account/account.type";
   const canCancel = $derived(resolveCanCancel($account.plan));
   const isAppleContext = $derived(
     $context.isEmbed &&
-    ($context.os === OperatingSystem.IOS ||
-      $context.os === OperatingSystem.MACOS)
+      ($context.os === OperatingSystem.IOS ||
+        $context.os === OperatingSystem.MACOS)
   );
 
   function resolveCanCancel(plan: IUserPlan | undefined) {
@@ -125,7 +130,7 @@ import { UserDataMode } from "@nucleum/client/runtime/account/account.type";
               label="Upgrade"
               type={ButtonVariant.PRIMARY}
               onclick={() => {
-                appStore.runAction(Action.USER_PLAN);
+                requireCommandHost().runAction(Action.USER_PLAN);
               }}
             />
           </div>
@@ -144,7 +149,7 @@ import { UserDataMode } from "@nucleum/client/runtime/account/account.type";
               label="Reactivate"
               type={ButtonVariant.PRIMARY}
               onclick={() => {
-                appStore.runAction(Action.USER_PLAN);
+                requireCommandHost().runAction(Action.USER_PLAN);
               }}
             />
           {:else if canCancel}
@@ -154,7 +159,7 @@ import { UserDataMode } from "@nucleum/client/runtime/account/account.type";
               icon="cross"
               label="Cancel Subscription"
               onclick={() => {
-                appStore.runAction(Action.USER_PLAN_CANCELATION);
+                requireCommandHost().runAction(Action.USER_PLAN_CANCELATION);
               }}
             />
           {/if}

@@ -12,6 +12,7 @@ import WidgetKit
 
 struct BaseView: View {
   @Environment(\.scenePhase) var scenePhase
+  @Environment(\.openURL) private var openSystemURL
   @EnvironmentObject var appStore: AppStore
   @State var webView = WebViewModel()
   let monitor = NWPathMonitor()
@@ -167,9 +168,11 @@ struct BaseView: View {
     }
   }
   func openURLInSafari(_ urlString: String) {
-    if URL(string: urlString) != nil {
+    guard let url = URL(string: urlString) else { return }
+    if url.scheme?.lowercased() == "mailto" || url.scheme?.lowercased() == "tel" {
+      openSystemURL(url)
+    } else if isAllowedExternalUrl(url) {
       appStore.inAppSafariUrl = urlString
-      // UIApplication.shared.open(url)
       self.isShowInAppSafari = true
     }
   }

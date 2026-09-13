@@ -1,10 +1,12 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { onMount } from "svelte";
   import EmptyStatusView from "@21n/elements/feedback/EmptyStatusView.svelte";
   import { Size } from "@21n/elements/size.enum";
   import { Layout } from "@21n/layout/layout-mode.type";
   import { PointronAction } from "@nucleum/client/config/focus-action.enum";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import Button from "@21n/elements/button/Button.svelte";
   import { uiState } from "@nucleum/stores/uiState/uiState.store";
   import { UIState, UIStateScope } from "@nucleum/stores/uiState/uiState.type";
@@ -84,7 +86,10 @@
     layout = layoutState ?? Layout.LIST;
   }
 
-  function resolvePinnedItems(objectives: IObjectiveThumb[], logs: ISessionLog[]) {
+  function resolvePinnedItems(
+    objectives: IObjectiveThumb[],
+    logs: ISessionLog[]
+  ) {
     return objectives
       .map((objective: IObjectiveThumb) => ({
         ...objective,
@@ -118,7 +123,9 @@
     searchQuery = val;
     const result = await datafn.objective.query({
       select: ["*", "parent.*"],
-      search: searchQuery ? { query: searchQuery, fields: ["label"] } : undefined,
+      search: searchQuery
+        ? { query: searchQuery, fields: ["label"] }
+        : undefined,
       filters: {
         id: { $ne: "" }
       }
@@ -146,7 +153,7 @@
   }
 
   function createNewGoal(isPreventOpenAfterCreate: boolean = true) {
-    appStore.runAction(
+    requireCommandHost().runAction(
       resourceAction(Resource.objective, ResourceActionType.CREATE),
       {
         componentParams: {
@@ -217,7 +224,7 @@
           type={ButtonVariant.PRIMARY}
           style={ButtonStyle.OUTLINED}
           onclick={() => {
-            appStore.runAction(PointronAction.PIN_TO_QUICK_FOCUS);
+            requireCommandHost().runAction(PointronAction.PIN_TO_QUICK_FOCUS);
           }}
         />
       {/if}
@@ -248,7 +255,7 @@
       secondaryActionText="Pin existing"
       onclick={() => createNewGoal(false)}
       onSecondaryClick={() => {
-        appStore.runAction(PointronAction.PIN_TO_QUICK_FOCUS);
+        requireCommandHost().runAction(PointronAction.PIN_TO_QUICK_FOCUS);
       }}
     />
   {/if}

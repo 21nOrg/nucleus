@@ -1,10 +1,12 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Presets from "@nucleum/features/focus/advanced/presets/Presets.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { PointronAction } from "@nucleum/client/config/focus-action.enum";
   function handleEdit(event: any) {
     if (!event.detail?.id) return;
-    appStore.runAction(PointronAction.EDIT_PRESET, {
+    requireCommandHost().runAction(PointronAction.EDIT_PRESET, {
       componentParams: { id: event.detail.id }
     });
   }

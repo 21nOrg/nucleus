@@ -1,6 +1,8 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { page } from "$app/stores";
   import { LayoutContext } from "@21n/layout/layout-mode.type";
   import { onMount } from "svelte";
@@ -12,14 +14,15 @@
   import { Placement } from "@21n/elements/direction.enum";
   import { abg, cn } from "@21n/utils/ui.utils";
   import { EmbedMessage } from "@nucleum/client/runtime/embed/embedMessage.enum";
-  import { uiState, uiStateDerived } from "@nucleum/stores/uiState/uiState.store";
+  import { uiState } from "@nucleum/stores/uiState/uiState.store";
+  import { shortcutHints } from "@nucleum/stores/keyboard/shortcut-hints.store";
   import { UIState, UIStateScope } from "@nucleum/stores/uiState/uiState.type";
   import { keyboardShortcuts } from "@nucleum/stores/keyboard/shortcuts.store";
   import { popover } from "@nucleum/actions/popover.action";
   import { hoverable } from "@nucleum/actions/hover.action";
   import ContextMenu from "@21n/elements/contextMenu/ContextMenu.svelte";
   import { PopoverTriggerMethod } from "@nucleum/actions/popover.type";
-  import { appMenuStore } from "@nucleum/stores/appMenu/appMenu.store";
+  import { appMenuStore } from "@21n/layout/navigation/app-menu.store";
   import { resourceAction } from "@nucleum/datafn/resource.utils";
   import { appStore } from "@nucleum/stores/app.store";
   import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
@@ -40,7 +43,7 @@
   const dev_mixedPanel = false;
   let hideMenuLabels = $state(false);
   let isShowHotKeyHint = $derived(
-    $uiStateDerived?.isShowHotKeyHints &&
+    $shortcutHints?.isShowHotKeyHints &&
       (layoutContext === LayoutContext.DEFAULT || hideMenuLabels)
   );
   let itemPath = $derived(item?.path ?? item?.action);
@@ -49,13 +52,12 @@
   let isActive = $derived(
     Boolean(
       itemPath &&
-        (currentRouteParam?.includes(itemPath) ||
-          currentRouteId?.includes(itemPath))
+      (currentRouteParam?.includes(itemPath) ||
+        currentRouteId?.includes(itemPath))
     )
   );
 
   onMount(() => {
-    uiStateDerived.refreshShortcutHintsState();
     refreshHideMenuLabels();
     const unsubscribe = uiState.subscribe(() => {
       refreshHideMenuLabels();
@@ -141,7 +143,9 @@
       value: "create",
       icon: "plus",
       callback: async () => {
-        appStore.runAction(resourceAction(resource, ResourceActionType.CREATE));
+        requireCommandHost().runAction(
+          resourceAction(resource, ResourceActionType.CREATE)
+        );
         popRef.dispatchEvent(new CustomEvent("hide"));
       }
     };

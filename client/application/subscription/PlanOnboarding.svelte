@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import account from "@nucleum/stores/account.store";
-  import { PlanType, BillingCycle } from "@nucleum/schema/account/subscription";
+  import { BillingCycle } from "@nucleum/schema/account/subscription";
   import { Action } from "@nucleum/client/config/action.enum";
   import Button from "@21n/elements/button/Button.svelte";
   import Icon from "@21n/elements/Icon.svelte";
@@ -11,14 +13,16 @@
     resolvePlanLabel,
     SUBSCRIPTION_PLANS
   } from "@nucleum/application/subscription/userPlan.utils";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { parseAndFormatDate } from "@21n/utils/time.utils";
   import { renderMdAsHtml } from "@21n/elements/markdown/markdown.utils";
   import PlanIcon from "@nucleum/application/subscription/elements/PlanIcon.svelte";
   import modalEvent from "@nucleum/stores/overlays/modal.store";
 
   function resolveRenewalDate() {
-    return $account.plan?.plan ? resolveNextRenewalDate($account.plan) : undefined;
+    return $account.plan?.plan
+      ? resolveNextRenewalDate($account.plan)
+      : undefined;
   }
 
   function resolveCurrentPlanFeatures() {
@@ -76,7 +80,7 @@
         label="Get started"
         onclick={() => {
           modalEvent.hide(Action.PLAN_ONBOARDING);
-          appStore.gotoPath("/");
+          navigation.gotoPath("/");
         }}
       />
     </div>

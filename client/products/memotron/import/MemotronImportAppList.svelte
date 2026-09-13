@@ -1,11 +1,13 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Button from "@21n/elements/button/Button.svelte";
   import { Size } from "@21n/elements/size.enum";
   import { ButtonStyle, ButtonVariant } from "@21n/elements/button/button.type";
   import Text from "@21n/elements/text/Text.svelte";
   import { TextStyle } from "@21n/elements/text/text.enum";
   import view from "@nucleum/stores/view.store";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { ImportSource } from "@nucleum/stores/preferences/import.type";
   import { MemotronAction } from "@nucleum/features/memory/memory-action.enum";
   import ExternalLogo from "@21n/branding/external/ExternalLogo.svelte";
@@ -22,7 +24,7 @@
   ];
 
   function triggerImport(source: ImportSource) {
-    appStore.runAction(MemotronAction.IMPORT_APP_DATA, {
+    requireCommandHost().runAction(MemotronAction.IMPORT_APP_DATA, {
       componentParams: { importSource: source }
     });
   }

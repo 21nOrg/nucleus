@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { TimeScaleUnit } from "@21n/utils/time.type";
   import type { INodeThumb } from "@nucleum/features/memory/node/node.type";
   import Text from "@21n/elements/text/Text.svelte";
   import { TextStyle } from "@21n/elements/text/text.enum";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { AccessMode } from "@nucleum/datafn/resource.type";
   import EmptyStatusView from "@21n/elements/feedback/EmptyStatusView.svelte";
   import NodeThumbnail from "@nucleum/features/memory/node/thumbnail/NodeThumbnail.svelte";
@@ -86,7 +88,7 @@
   }
 
   function handleNodeClick(node: INodeThumb) {
-    appStore.openResource(node.id, AccessMode.POP);
+    navigation.openResource(node.id, AccessMode.POP);
   }
 </script>
 
@@ -107,7 +109,7 @@
           value={today.length}
           isAccent={true}
           callback={() => {
-            appStore.openResource(Action.HISTORY, AccessMode.POP, {
+            navigation.openResource(Action.HISTORY, AccessMode.POP, {
               searchParams: { [AppSearchParam.DATE]: date.toISOString() }
             });
           }}

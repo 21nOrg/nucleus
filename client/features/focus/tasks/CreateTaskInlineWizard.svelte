@@ -8,7 +8,7 @@
   import { onMount } from "svelte";
   import { Resource } from "@nucleum/datafn/resource.enum";
   import { ResourceAccessPoint } from "@nucleum/datafn/resource.type";
-import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
+  import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
   import { resourceAction } from "@nucleum/datafn/resource.utils";
   import {
     ObjectiveStatus,
@@ -20,7 +20,8 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
   import { Product } from "@nucleum/client/config/product.type";
   import { appStore } from "@nucleum/stores/app.store";
   import { resolveUnixTimestamp } from "@21n/shared-utils/time.utils";
-  import { appEvents, toasts } from "@nucleum/stores/notification.store";
+  import { toasts } from "@nucleum/stores/notification.store";
+  import { appEvents } from "@nucleum/stores/events/app-events.store";
   import ObjectiveSearchResultItem from "@nucleum/features/focus/goals/GoalSearchResultItem.svelte";
   import Button from "@21n/elements/button/Button.svelte";
   import { ButtonStyle } from "@21n/elements/button/button.type";
@@ -149,16 +150,18 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
   }
 
   function searchObjectiveCallback(query: string) {
-    return datafn.objective.query({
-      select: ["*", "parent.*"],
-      search: query ? { query, fields: ["label"] } : undefined,
-      limit: 30,
-      filters: {
-        status: {
-          $ne: ObjectiveStatus.COMPLETED
+    return datafn.objective
+      .query({
+        select: ["*", "parent.*"],
+        search: query ? { query, fields: ["label"] } : undefined,
+        limit: 30,
+        filters: {
+          status: {
+            $ne: ObjectiveStatus.COMPLETED
+          }
         }
-      }
-    }).then((result) => result.data);
+      })
+      .then((result) => result.data);
   }
 </script>
 

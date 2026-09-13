@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { page } from "$app/stores";
   import Button from "@21n/elements/button/Button.svelte";
   import TextInput from "@21n/elements/input/TextInput.svelte";
@@ -71,7 +74,9 @@
     if (!isValidFormData()) return;
     actionInProgress = true;
     const client = await authClient();
-    const sessionMode = isLoginFromExtension ? "hybrid" : resolveAuthFnSessionMode();
+    const sessionMode = isLoginFromExtension
+      ? "hybrid"
+      : resolveAuthFnSessionMode();
     const response = isSignup
       ? await client.signUpWithPassword({
           email: email.toLowerCase(),
@@ -86,7 +91,9 @@
         });
     if (!response.ok) {
       if (response.error.code === "AUTHFN_REGION_MISMATCH") {
-        showError("This account belongs to another region. Please sign in again.");
+        showError(
+          "This account belongs to another region. Please sign in again."
+        );
       } else if (response.error.code === "AUTHFN_INVALID_CREDENTIALS") {
         showError("Invalid email or password.");
       } else if (response.error.code === "AUTHFN_DUPLICATE_IDENTITY") {
@@ -110,7 +117,7 @@
     };
     if (isLoginFromExtension) {
       postTokenToExtension(json);
-      appStore.runAction(Action.EXTENSTION_LOGIN);
+      requireCommandHost().runAction(Action.EXTENSTION_LOGIN);
     } else {
       await account.signInFromAuthFnSession({
         session,
@@ -180,7 +187,7 @@
 
   async function onOfflineClick() {
     await account.startOfflineSession();
-    appStore.gotoPath("/");
+    navigation.gotoPath("/");
   }
 </script>
 

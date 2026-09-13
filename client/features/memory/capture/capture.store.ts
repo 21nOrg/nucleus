@@ -1,8 +1,24 @@
+import { navigation } from "@21n/layout/navigation/navigation";
+import { fileUpload } from "@nucleum/stores/files/file-upload";
 import { retrieveUrlData } from "@nucleum/features/memory/capture/url-data";
 import { get, writable } from "svelte/store";
 import { Resource } from "@nucleum/datafn/resource.enum";
 import { LinkType } from "@nucleum/datafn/link.type";
-import { type INodeCapture, type IMediaNode, type INodeThumb, type IMediaGridItem, type IWebPage, type IAudioMetadata, type IImageMetadata, type IImageNode, headingNodeTypes, NodeMetaType, type INodeStructure, type INode, type IWebNodeType, type IClip } from "@nucleum/features/memory/node/node.type";
+import {
+  type INodeCapture,
+  type IMediaNode,
+  type INodeThumb,
+  type IMediaGridItem,
+  type IWebPage,
+  type IAudioMetadata,
+  type IImageMetadata,
+  type IImageNode,
+  headingNodeTypes,
+  NodeMetaType,
+  type INodeStructure,
+  type INode,
+  type IClip
+} from "@nucleum/features/memory/node/node.type";
 import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
 import {
   CaptureMethod,
@@ -145,7 +161,10 @@ async function persistContentLinks(links: any[] = []) {
           }
         } as any);
       }
-      if (!isRecordLinkResource(fromResource) || !isRecordLinkResource(toResource)) {
+      if (
+        !isRecordLinkResource(fromResource) ||
+        !isRecordLinkResource(toResource)
+      ) {
         logger.warn({
           at: "CaptureStore.persistContentLinks.unsupportedRelation",
           from: link.in,
@@ -245,8 +264,8 @@ async function insertCapturedNodes(
         context: params?.context
       };
     })
-    .filter(
-      (mutation): mutation is CaptureRelationMutation => Boolean(mutation)
+    .filter((mutation): mutation is CaptureRelationMutation =>
+      Boolean(mutation)
     );
   if (relationMutations.length > 0) {
     await datafn.node.mutate(relationMutations as any);
@@ -346,9 +365,6 @@ export class ActiveCaptureStore extends ActiveResourceStore<
   ICapture,
   IActiveCapture
 > {
-  // constructor() {
-  //   super(Resource.capture, { ...generateSeedStore() });
-  // }
   constructor(capture: IRecordId) {
     super(capture);
     this.set({ ...generateSeedStore(), id: capture });
@@ -388,22 +404,6 @@ export class ActiveCaptureStore extends ActiveResourceStore<
       id: this.id.toString()
     });
   }
-
-  //TODO - persistance which is relying on this set fn
-  // set(val: IActiveCapture) {
-  //   this.update((store) => {
-  //     store.isRefreshing = true;
-  //     return store;
-  //   });
-  //   this.modify(val, { isDebouncedPersist: true });
-  //   if (this.saveFeedbackTimeout) clearTimeout(this.saveFeedbackTimeout);
-  //   this.saveFeedbackTimeout = setTimeout(() => {
-  //     this.update((store) => {
-  //       store.isRefreshing = false;
-  //       return store;
-  //     });
-  //   }, 1500);
-  // }
 
   async init(params?: {
     isWindowDnD?: boolean;
@@ -578,7 +578,7 @@ export class ActiveCaptureStore extends ActiveResourceStore<
     if (!val) return;
     if (val === CaptureMethod.PASTE) {
       await openPasteConfirmationModalFromClipboard();
-      appStore.closeResource({ accessMode: AccessMode.MAIN });
+      navigation.closeResource({ accessMode: AccessMode.MAIN });
       return;
     }
     const isCollection = isRecordId(val, Resource.collection);
@@ -609,7 +609,7 @@ export class ActiveCaptureStore extends ActiveResourceStore<
       toType: Resource.collection,
       toSubType: CollectionType.TYPED
     };
-    //TODO - use captureMethod from type settings if available
+
     this.update((store) => {
       return {
         ...store,
@@ -755,24 +755,10 @@ export class ActiveCaptureStore extends ActiveResourceStore<
           this.setIsSaving(false);
           return;
         }
-        // const reader = new FileReader();
-        // reader.onload = (e) => {
-        //   const result = e.target?.result;
-        //   if (typeof result === "string") {
-        //     fetch(result)
-        //       .then((res) => res.blob())
-        //       .then(async (blob) => {
-        //         await captureStore.saveCameraCapture(blob);
-        //         isSaving = false;
-        //       });
-        //   }
-        // };
-        // reader.readAsDataURL(file);
       } else {
         logger.log({
           at: "Capture.svelte - handleCapture - no file present"
         });
-        // reset();
       }
     } catch (e) {
       logger.error({ at: "Capture.svelte - handleCapture", error: e });
@@ -813,7 +799,11 @@ export class ActiveCaptureStore extends ActiveResourceStore<
     if (typeof item === "string" || "tb" in item) {
       const resource = await resolveResource(item as IRecordId);
       if (!resource) return;
-      return this._addLink("root", resource as INodeThumb | ICollectionThumb, LinkType.DIRECT);
+      return this._addLink(
+        "root",
+        resource as INodeThumb | ICollectionThumb,
+        LinkType.DIRECT
+      );
     } else if (typeof item !== "string") {
       return this._addLink("root", item, LinkType.DIRECT);
     }
@@ -837,8 +827,7 @@ export class ActiveCaptureStore extends ActiveResourceStore<
       linkType,
       toType: toType as typeof Resource.node | typeof Resource.collection,
       toSubType: ("contentType" in to ? to.contentType : to.type) as
-        | NodeType
-        | CollectionType,
+        NodeType | CollectionType,
       location: params?.location,
       tags: params?.linkTags
     };
@@ -895,7 +884,7 @@ export class ActiveCaptureStore extends ActiveResourceStore<
       }
       if (file.type.startsWith("audio/")) {
         let metadata: IAudioMetadata = {};
-        // let parsedMetadata = await parseBlob(file);
+
         let parsedMetadata = await parseBuffer(
           new Uint8Array(await file.arrayBuffer())
         );
@@ -911,7 +900,7 @@ export class ActiveCaptureStore extends ActiveResourceStore<
                   type: "image/jpeg"
                 }
               );
-              const imageUploadResponse = await account.uploadFileV2(
+              const imageUploadResponse = await fileUpload.uploadFileV2(
                 "image/jpeg",
                 file.name,
                 imageFile,
@@ -923,7 +912,10 @@ export class ActiveCaptureStore extends ActiveResourceStore<
                 imageId = imageUploadResponse[0].id;
               }
             } catch (e) {
-              logger.error({ at: "CaptureStore.parseMetadata.picture", error: e });
+              logger.error({
+                at: "CaptureStore.parseMetadata.picture",
+                error: e
+              });
             }
           }
           metadata = {
@@ -995,7 +987,7 @@ export class ActiveCaptureStore extends ActiveResourceStore<
         });
         return result?.[0];
       }
-      const response = await account.uploadFileV2(
+      const response = await fileUpload.uploadFileV2(
         file.type,
         file.name,
         new Blob([file], { type: file.type }),
@@ -1114,9 +1106,12 @@ export class ActiveCaptureStore extends ActiveResourceStore<
         mdParent: parent
       } as INodeCapture<INode>);
     }
-    const result: any = await insertCapturedNodes([root, ...remainingResources], {
-      context: captureAction
-    });
+    const result: any = await insertCapturedNodes(
+      [root, ...remainingResources],
+      {
+        context: captureAction
+      }
+    );
     return result;
   }
 
@@ -1174,7 +1169,7 @@ export class ActiveCaptureStore extends ActiveResourceStore<
           mdNodesResult.push(result?.[0]);
           continue;
         }
-        const response = await account.uploadFileV2(
+        const response = await fileUpload.uploadFileV2(
           item.file.type,
           item.file.name,
           new Blob([item.file], { type: item.file.type }),
@@ -1248,7 +1243,7 @@ export class ActiveCaptureStore extends ActiveResourceStore<
         ? []
         : this.resolveCollections();
       const fileName = generateSimpleRandomId();
-      const result = await account.uploadFileV2(
+      const result = await fileUpload.uploadFileV2(
         contentType,
         `${fileName}.wav`,
         wavData,
@@ -1323,7 +1318,7 @@ export class ActiveCaptureStore extends ActiveResourceStore<
     const contentType = "image/jpeg";
     const id = generateResourceId(Resource.node);
     const fileName = generateSimpleRandomId();
-    const result = await account.uploadFileV2(
+    const result = await fileUpload.uploadFileV2(
       contentType,
       `${fileName}.jpeg`,
       data,
@@ -1554,7 +1549,7 @@ export class ActiveCaptureStore extends ActiveResourceStore<
     }
 
     if (params.shouldReturnToLinkedCollection && params.linkedCollectionId) {
-      appStore.openResource(params.linkedCollectionId, AccessMode.POP, {
+      navigation.openResource(params.linkedCollectionId, AccessMode.POP, {
         searchParams: {
           [AccessMode.MAIN]: null
         }
@@ -1563,7 +1558,7 @@ export class ActiveCaptureStore extends ActiveResourceStore<
     }
 
     if (params.shouldOpenUponSave) {
-      appStore.openResource(params.node.id, AccessMode.POP, {
+      navigation.openResource(params.node.id, AccessMode.POP, {
         searchParams: {
           [AccessMode.MAIN]: null
         }
@@ -1575,15 +1570,15 @@ export class ActiveCaptureStore extends ActiveResourceStore<
     if (shouldOpenUponSave) {
       return;
     }
-    appStore.closeResource({
+    navigation.closeResource({
       id: captureAction,
       accessMode: AccessMode.MAIN
     });
-    appStore.closeResource({
+    navigation.closeResource({
       id: MemotronAction.CAPTURE_DND,
       accessMode: AccessMode.MAIN
     });
-    appStore.closeResource({
+    navigation.closeResource({
       id: MemotronAction.CAPTURE_SECONDARY,
       accessMode: AccessMode.MAIN
     });
@@ -1734,7 +1729,11 @@ export class ActiveCaptureStore extends ActiveResourceStore<
             data = await fetch(file.url).then((r) => r.blob());
             contentType = file.type;
             name = file.name ?? file.label ?? file.id;
-            const result = await account.uploadFileV2(contentType, name, data);
+            const result = await fileUpload.uploadFileV2(
+              contentType,
+              name,
+              data
+            );
             if (result) {
               item.file = result[0].id;
             }
@@ -1909,9 +1908,12 @@ export class ActiveCaptureStore extends ActiveResourceStore<
         }
       }
 
-      let result: any = await insertCapturedNodes([root, ...remainingResources], {
-        context: captureAction
-      });
+      let result: any = await insertCapturedNodes(
+        [root, ...remainingResources],
+        {
+          context: captureAction
+        }
+      );
       return result;
 
       function formatDate(date: Date, scale: TimeScaleUnit) {

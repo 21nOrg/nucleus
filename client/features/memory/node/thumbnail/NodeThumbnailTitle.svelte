@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import Icon from "@21n/elements/Icon.svelte";
   import { Size } from "@21n/elements/size.enum";
   import type {
@@ -8,7 +10,7 @@
   import NodeTitleLabelPart from "@nucleum/features/memory/node/title/NodeTitleLabelPart.svelte";
   import { hoverable } from "@nucleum/actions/hover.action";
   import { cn } from "@21n/utils/ui.utils";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { tooltip } from "@nucleum/actions/popover.action";
   import { ResourceAccessPoint } from "@nucleum/datafn/resource.type";
   import view from "@nucleum/stores/view.store";
@@ -43,7 +45,7 @@
       onclick={(e) => {
         e.stopPropagation();
         if (!node.url) return;
-        appStore.openLink(node.url);
+        navigation.openLink(node.url);
       }}
       use:hoverable={{
         onHover: (e) => (isHoveringUrl = e)
@@ -80,7 +82,7 @@
           <button
             onclick={() => {
               if (!node.url) return;
-              appStore.openLink(node.url);
+              navigation.openLink(node.url);
             }}
             use:tooltip={{
               text: node.url

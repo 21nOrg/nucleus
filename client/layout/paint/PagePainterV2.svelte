@@ -1,6 +1,8 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { afterNavigate } from "$app/navigation";
   import { page } from "$app/stores";
   import type { Page } from "@sveltejs/kit";
@@ -70,7 +72,10 @@
     return () => {
       pageSub?.();
       window.removeEventListener("popstate", refreshFromWindow);
-      window.removeEventListener(GlobalEvent.CUSTOM_NAVIGATION, refreshFromWindow);
+      window.removeEventListener(
+        GlobalEvent.CUSTOM_NAVIGATION,
+        refreshFromWindow
+      );
       pendingRefreshes.forEach((id) => window.clearTimeout(id));
       pendingRefreshes = [];
     };
@@ -89,18 +94,18 @@
       const homePath = $view.isPortrait
         ? productConfig.homePathPt
         : productConfig.homePath;
-      appStore.gotoPath(homePath);
+      navigation.gotoPath(homePath);
       return;
     } else if (!path) {
-      appStore.gotoPath("/404");
+      navigation.gotoPath("/404");
       return;
     }
 
     action = appStore.resolveComponentFromPath(path);
 
     if (!action) {
-      if (path === "index.html") appStore.gotoPath("/");
-      else appStore.gotoPath("/404", { queryParams: { path } });
+      if (path === "index.html") navigation.gotoPath("/");
+      else navigation.gotoPath("/404", { queryParams: { path } });
       return;
     }
     $appStore.currentComponent = action;

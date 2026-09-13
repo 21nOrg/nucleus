@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import {
     ActiveCollectionStore,
     type IActiveCollectionStore
@@ -12,23 +14,28 @@
   import { bg, cn } from "@21n/utils/ui.utils";
   import ViewTabSwitcher from "@nucleum/features/collections/tabSwitcher/ViewTabSwitcher.svelte";
   import PanelSwitcher from "@21n/elements/switcher/PanelSwitcher.svelte";
-  import { BarStyle, PanelSwitcherStyle } from "@21n/elements/switcher/switcher.enum";
-  import { Size } from "@21n/elements/size.enum";
-  import { ButtonStyle, ButtonVariant } from "@21n/elements/button/button.type";
   import {
-    PropertyType,
-    type IProperty
-  } from "@nucleum/features/collections/properties/property.type";
+    BarStyle,
+    PanelSwitcherStyle
+  } from "@21n/elements/switcher/switcher.enum";
+  import { Size } from "@21n/elements/size.enum";
+  import { ButtonStyle } from "@21n/elements/button/button.type";
+  import { type IProperty } from "@nucleum/features/collections/properties/property.type";
   import { activeResourceFilter } from "@21n/utils/utils";
   import { onDestroy, onMount, untrack } from "svelte";
   import type { DropdownItem } from "@21n/elements/dropdown/dropdownItem.type";
-  import type { ISelectItem, ISelectValue } from "@21n/elements/select/select.type";
-  import { AccessMode, ResourceAccessPoint } from "@nucleum/datafn/resource.type";
-import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
+  import type {
+    ISelectItem,
+    ISelectValue
+  } from "@21n/elements/select/select.type";
+  import {
+    AccessMode,
+    ResourceAccessPoint
+  } from "@nucleum/datafn/resource.type";
+  import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
   import { isValidString } from "@21n/shared-utils/text.utils";
   import {
     CollectionLayout,
-    CollectionType,
     type ICollectionItem,
     type ICollectionViewWithData
   } from "@nucleum/features/collections/collection.type";
@@ -43,24 +50,21 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
   import OptionSelector from "@21n/elements/select/OptionSelector.svelte";
   import { isValidArrayWithData } from "@21n/shared-utils/obj.utils";
   import ArrangementSelector from "@nucleum/features/collections/arrangementSelector/ArrangementSelector.svelte";
-  import ToggleGroup from "@21n/elements/toggle/ToggleGroup.svelte";
+
   import AddResourceAction from "@nucleum/features/collections/AddResourceAction.svelte";
-  import Text from "@21n/elements/text/Text.svelte";
-  import { TextStyle } from "@21n/elements/text/text.enum";
-  import ScrollViewBottomSpacer from "@21n/layout/scrollView/ScrollViewBottomSpacer.svelte";
+
   import {
     isNoneResource,
-    resourceAction,
     resourceInList
   } from "@nucleum/datafn/resource.utils";
   import { Resource } from "@nucleum/datafn/resource.enum";
   import view from "@nucleum/stores/view.store";
-  import Button from "@21n/elements/button/Button.svelte";
+
   import {
     resolvePropertyIcon,
     tabAndGroupableProperties
   } from "@nucleum/features/collections/properties/property.utils";
-  import TextInput from "@21n/elements/input/TextInput.svelte";
+
   import { InputStyle } from "@21n/elements/input/input.type";
   import { resizeListener } from "@nucleum/actions/resize.action";
   import { Action } from "@nucleum/client/config/action.enum";
@@ -579,7 +583,7 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
 
   function onAddResource(e: CustomEvent) {
     if (e.detail === "addExisting") {
-      appStore.runAction(Action.ADD_ITEM_TO_COLLECTION, {
+      requireCommandHost().runAction(Action.ADD_ITEM_TO_COLLECTION, {
         componentParams: {
           label: `Add to &nbsp; **${$collection.label}**`,
           id: $collection.id,
@@ -604,14 +608,18 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
           resource === Resource.node &&
           [Product.MEMOTRON, Product.NUCLEUM].includes($appStore.product);
         if (isSecondaryNodeCaptureContext) {
-          appStore.runAction(MemotronAction.CAPTURE_SECONDARY, {
+          requireCommandHost().runAction(MemotronAction.CAPTURE_SECONDARY, {
             searchParams: params
           });
           return;
         }
-        appStore.runResourceAction(resource, ResourceActionType.CREATE, {
-          searchParams: params
-        });
+        requireCommandHost().runResourceAction(
+          resource,
+          ResourceActionType.CREATE,
+          {
+            searchParams: params
+          }
+        );
       }, 10);
     }
   }

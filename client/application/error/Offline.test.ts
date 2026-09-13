@@ -12,9 +12,12 @@ const mockAppStore = vi.hoisted(() => {
 
 vi.mock("@nucleum/stores/app.store", () => ({
   appStore: {
-    subscribe: mockAppStore.subscribe,
-    gotoPath: mockGotoPath
+    subscribe: mockAppStore.subscribe
   }
+}));
+
+vi.mock("@21n/layout/navigation/navigation", () => ({
+  navigation: { gotoPath: mockGotoPath }
 }));
 
 describe("Offline component", () => {

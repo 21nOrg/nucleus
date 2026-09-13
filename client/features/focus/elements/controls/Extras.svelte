@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { activeSession } from "@nucleum/features/focus/session.store";
   import { PointronAction } from "@nucleum/client/config/focus-action.enum";
   import { SessionType } from "@nucleum/features/focus/logs/log.type";
   import Button from "@21n/elements/button/Button.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { Placement } from "@21n/elements/direction.enum";
   import context from "@nucleum/stores/context.store";
   import type { IPopoverRenderBaseParams } from "@nucleum/actions/popover.type";
@@ -53,7 +55,7 @@
     tooltip="Think mode"
     {...buttonProps}
     onclick={() => {
-      appStore.runAction(PointronAction.THINK_MODE);
+      requireCommandHost().runAction(PointronAction.THINK_MODE);
     }}
   />
   {#if $activeSession.type !== SessionType.PREDEFINED_INTERVALS}
@@ -62,7 +64,7 @@
       tooltip="Abandon focus session"
       {...buttonProps}
       onclick={() => {
-        appStore.runAction(PointronAction.ABANDON_SESSION);
+        requireCommandHost().runAction(PointronAction.ABANDON_SESSION);
       }}
     />
   {/if}

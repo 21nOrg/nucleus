@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Text from "@21n/elements/text/Text.svelte";
   import { Orientation } from "@21n/elements/direction.enum";
   import { TextStyle } from "@21n/elements/text/text.enum";
@@ -11,7 +13,7 @@
   import { appStore } from "@nucleum/stores/app.store";
   import { parseAndFormatDate } from "@21n/utils/time.utils";
   import { Size } from "@21n/elements/size.enum";
-  import { Action } from "@nucleum/client/config/action.enum";
+
   import account from "@nucleum/stores/account.store";
   import { PlanType } from "@nucleum/schema/account/subscription";
   let pageAction: IAction | null = null;
@@ -19,12 +21,12 @@
   let config = $derived($appStore?.appData?.help);
   async function runAction(slug: string) {
     if (!slug) return;
-    const result = await appStore.runAction(slug, {
+    const result = await requireCommandHost().runAction(slug, {
       isReturnIfComponent: true
     });
     if (!result) return;
     if (result.modalParams?.layout?.size === Size.xxl) {
-      appStore.runAction(slug);
+      requireCommandHost().runAction(slug);
       return;
     }
     pageAction = result;

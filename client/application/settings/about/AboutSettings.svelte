@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import Button from "@21n/elements/button/Button.svelte";
   import { appStore } from "@nucleum/stores/app.store";
   import { Size } from "@21n/elements/size.enum";
@@ -41,7 +43,7 @@
         type={ButtonVariant.PRIMARY}
         icon="discord"
         onclick={() => {
-          appStore.openLink($appStore.appData?.urls?.discord);
+          navigation.openLink($appStore.appData?.urls?.discord);
         }}
       />
       <Button
@@ -49,7 +51,7 @@
         {size}
         icon="weblink"
         onclick={() => {
-          appStore.openLink($appStore.appData?.urls?.soft);
+          navigation.openLink($appStore.appData?.urls?.soft);
         }}
       />
     </div>

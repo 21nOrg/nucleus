@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { appStore } from "@nucleum/stores/app.store";
   import { Action } from "@nucleum/client/config/action.enum";
   import { Size } from "@21n/elements/size.enum";
@@ -6,7 +9,7 @@
   import { Resource } from "@nucleum/datafn/resource.enum";
   import { resolveResourceIcon } from "@nucleum/datafn/resource.utils";
   import { AccessMode } from "@nucleum/datafn/resource.type";
-import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
+  import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
   import Icon from "@21n/elements/Icon.svelte";
   import Writer from "@nucleum/features/memory/capture/Writer.svelte";
   import { CaptureMethod } from "@nucleum/features/memory/capture/capture.type";
@@ -27,9 +30,12 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
   import { OperatingSystem } from "@nucleum/client/runtime/context.type";
   import { logger } from "@nucleum/client/runtime/logging/logger";
   import EmptyStatusView from "@21n/elements/feedback/EmptyStatusView.svelte";
-  import { AlertType, type InlineToast } from "@nucleum/stores/notifications/notification.type";
+  import {
+    AlertType,
+    type InlineToast
+  } from "@nucleum/stores/notifications/notification.type";
   import Button from "@21n/elements/button/Button.svelte";
-  import { ButtonStyle, ButtonVariant } from "@21n/elements/button/button.type";
+  import { ButtonVariant } from "@21n/elements/button/button.type";
   import { inlineToasts } from "@nucleum/stores/notification.store";
   import NotificationListener from "@21n/elements/listeners/NotificationListener.svelte";
   import InlineSyncingFeedback from "@21n/elements/feedback/InlineSyncingFeedback.svelte";
@@ -131,16 +137,16 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
 
   function handleSettingsClick() {
     haptic();
-    appStore.runAction(Action.SETTINGS, commonActionParams);
+    requireCommandHost().runAction(Action.SETTINGS, commonActionParams);
     mode = undefined;
   }
 
   function handleQuickAccessClick(item: IQuickAccessItem) {
     haptic();
     if (item.id === "calendar") {
-      appStore.runAction(Action.CALENDAR, commonActionParams);
+      requireCommandHost().runAction(Action.CALENDAR, commonActionParams);
     } else {
-      appStore.runAction(ResourceActionType.BROWSE, {
+      requireCommandHost().runAction(ResourceActionType.BROWSE, {
         componentParams: {
           resource: item.id === "nodes" ? Resource.node : Resource.collection,
           [AppSearchParam.RETURN_TO]: homePathPt
@@ -215,7 +221,7 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
 
   function onInlineToastAction() {
     if (inlineToast?.data) {
-      appStore.openResource(inlineToast.data.id, AccessMode.POP);
+      navigation.openResource(inlineToast.data.id, AccessMode.POP);
     }
     onInlineToastClose();
   }

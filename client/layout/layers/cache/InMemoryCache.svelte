@@ -1,7 +1,8 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-  import { appStore } from "@nucleum/stores/app.store";
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { onMount } from "svelte";
   import { CacheKey } from "@21n/layout/layers/cache/cache.type";
   let components = $state<any[]>([]);
@@ -9,7 +10,7 @@
 
   onMount(() => {
     globalCacheKeys.forEach((key) => {
-      const action = appStore.resolveAction(key);
+      const action = requireCommandHost().resolveAction(key);
       if (action) components = [...components, action];
     });
   });

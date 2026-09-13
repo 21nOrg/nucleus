@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import { Resource } from "@nucleum/datafn/resource.enum";
   import type { ICollectionThumb } from "@nucleum/features/collections/collection.type";
   import EmptyStatusView from "@21n/elements/feedback/EmptyStatusView.svelte";
   import Switch from "@21n/elements/toggle/Switch.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import { resourceAction } from "@nucleum/datafn/resource.utils";
   import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
   import ScrollViewBottomSpacer from "@21n/layout/scrollView/ScrollViewBottomSpacer.svelte";
@@ -72,7 +74,7 @@
           mainText="No collections found. Please create a new collection."
           actionText="Create new collection"
           onclick={() => {
-            appStore.runAction(
+            requireCommandHost().runAction(
               resourceAction(Resource.collection, ResourceActionType.CREATE)
             );
           }}

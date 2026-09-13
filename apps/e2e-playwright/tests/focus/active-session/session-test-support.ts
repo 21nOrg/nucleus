@@ -16,6 +16,9 @@ const appStorePath = resolveRepoFsImportPath("client/stores/app.store.ts");
 const pointronStorePath = resolveRepoFsImportPath(
   "client/features/focus/preferences.store.ts"
 );
+const backgroundSoundStorePath = resolveRepoFsImportPath(
+  "client/features/focus/backgroundMusic/background-sound.store.ts"
+);
 const focusSessionItemTestId = /^focus-session-item:/;
 
 export type SessionCompositionInput = {
@@ -223,10 +226,10 @@ export async function setAutoPipPreference(page: Page, enabled: boolean) {
 export async function setBackgroundSound(page: Page, systemSound?: string) {
   await page.evaluate(
     async ({ modulePath, systemSound }) => {
-      const pointronMod = await import(modulePath);
-      pointronMod.backgroundSoundStore.set({ systemSound });
+      const { backgroundSoundStore } = await import(modulePath);
+      backgroundSoundStore.set({ systemSound });
     },
-    { modulePath: pointronStorePath, systemSound }
+    { modulePath: backgroundSoundStorePath, systemSound }
   );
 }
 

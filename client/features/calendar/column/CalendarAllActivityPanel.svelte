@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { combineSignals, time } from "@datafn/client";
   import { Resource } from "@nucleum/datafn/resource.enum";
   import { type IRecordId } from "@nucleum/schema/legacy/data.type";
@@ -308,7 +310,7 @@
         onclick={() => {
           let id = log.resourceId;
           if (!id) return;
-          appStore.openResource(id, AccessMode.POP);
+          navigation.openResource(id, AccessMode.POP);
         }}
       >
         <span class="text-b3 text-fgs3 whitespace-nowrap"

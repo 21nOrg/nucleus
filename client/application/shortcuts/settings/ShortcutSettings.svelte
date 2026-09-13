@@ -1,8 +1,10 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import Button from "@21n/elements/button/Button.svelte";
   import InlineErrorMessage from "@21n/elements/text/InlineErrorMessage.svelte";
   import InlineInfoBanner from "@21n/elements/text/InlineInfoBanner.svelte";
-  import { appStore } from "@nucleum/stores/app.store";
+
   import context from "@nucleum/stores/context.store";
   import { Action } from "@nucleum/client/config/action.enum";
   import { Embed } from "@nucleum/client/runtime/context.type";
@@ -37,14 +39,14 @@
       icon="keyboard"
       label="See hot keys"
       onclick={() => {
-        appStore.runAction(Action.HOT_KEYS);
+        requireCommandHost().runAction(Action.HOT_KEYS);
       }}
     />
     <Button
       icon="markdown"
       label="See markdown shortcuts"
       onclick={() => {
-        appStore.runAction(Action.MARKDOWN_SHORTCUTS);
+        requireCommandHost().runAction(Action.MARKDOWN_SHORTCUTS);
       }}
     />
   </div>

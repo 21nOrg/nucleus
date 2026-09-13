@@ -11,16 +11,19 @@
   } from "@nucleum/extensions/clipper/contentScripts/getQuery";
   import { onMount } from "svelte";
   import { ClipperExtensionEvent } from "@nucleum/client/config/events/clipper-event.type";
-  import { type IClipCapture, type ITextClip } from "@nucleum/features/memory/node/node.type";
-import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
+  import {
+    type IClipCapture,
+    type ITextClip
+  } from "@nucleum/features/memory/node/node.type";
+  import { NodeType } from "@nucleum/schema/legacy/node-type.enum";
   import { ExtensionEvent } from "@nucleum/extensions/extension.type";
   import { webpage } from "@nucleum/extensions/clipper/contentScripts/store";
-  import { appEvents } from "@nucleum/stores/notification.store";
+  import { appEvents } from "@nucleum/stores/events/app-events.store";
   import { AlertType } from "@nucleum/stores/notifications/notification.type";
   import type { IHighlighter } from "@nucleum/features/memory/common/highlighters/highlight.type";
   import { logger } from "@nucleum/client/runtime/logging/logger";
   import { highlightStore } from "@nucleum/features/memory/common/highlighters/highlight.store";
-  import { relayToSidePanel } from "@21n/utils/extension.utils";
+
   import { activeResourceFilter } from "@21n/utils/utils";
   import { isRecordId } from "@nucleum/datafn/resource.utils";
   import InlineFeedbackText from "@nucleum/extensions/clipper/InlineFeedbackText.svelte";

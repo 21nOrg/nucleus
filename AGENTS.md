@@ -26,12 +26,27 @@ Agents MUST prevent exposure of credentials or sensitive data. Environment confi
   - `client/`: SvelteKit frontends, shared UI primitives, features, and product composition.
   - `client/features/`: Multi-product capabilities (`@nucleum/features`).
   - `client/datafn/`: Client DataFn runtime (`@nucleum/datafn`).
+  - `client/application/`: Product command execution, account/subscription workflows, settings, and composed resource presentation.
+  - `client/layout/`: Navigation, tabs, sidebar behavior, and application shells.
+  - `client/runtime/`: UI-independent browser transport, account authority, native messaging, inference, and logging.
+  - `client/config/`: Client product identity, declarative navigation metadata, and command identifiers.
+  - `client/stores/`: Shared reactive state and permanent shell contracts; domain workflows belong with their owner.
   - `services/account/`: account-service AuthFn, DataFn, SearchFn, debug-sink, local Node, and Cloudflare Worker integrations.
   - `schema/`: Product and DataFn schema (`@nucleum/schema`).
   - `shared/`: Cross-layer types and utilities.
   - `apps/`: Deployable product bundles and e2e Playwright harnesses (Memotron, Pointron, Nucleus, Timear, and `apps/e2e-playwright`).
   - `deployment/`: Infrastructure scripts and CDK stacks.
 - Confirm product context through `client/products/*` configurations and `$appStore.product` usage before editing UI flows.
+
+### Ownership and composition
+- Read `docs/architecture/client-boundaries.md` and `docs/architecture/type-ownership.md` before changing package ownership or imports. Their current-contract sections are authoritative; historical validation records describe earlier snapshots.
+- Keep generic DOM actions in `client/actions`; place capability-specific actions beside their consumer. Do not retain empty workspaces or aliases without implemented exports.
+- Keep app state in `client/stores/app.store.ts`. Navigation belongs in `client/layout/navigation`; command execution belongs in `client/application/commands`. Shared consumers use the permanent command-host contract configured by the application shell.
+- Account state must not own file processing, deletion confirmation, or subscription workflows. Shared uploads belong in `client/stores/files`, and user workflows belong in `client/application/account` or `client/application/subscription`.
+- Keep generic UI-state persistence shared; tabs, sidebar behavior, and product menu customization belong with their layout. Focus owns its scheduled notifications; runtime owns native message delivery.
+- Update all callers directly when moving a module. Do not add compatibility re-exports or duplicate entry points. Update feature exports, dependency declarations, retirement rules, and type-inventory destinations with the move.
+- Run `npm run check:architecture` and `node tools/check/type-ownership.mjs` for ownership changes. Passing import checks does not replace reviewing semantic ownership or testing workflows.
+- Regenerated DataFn mappings must ship with a forward migration when physical database definitions change. Verify both a fresh database and upgrading the checked-in migration history.
 
 ### Tooling & Commands
 - Use npm workspaces and Turbo tasks; run `npm run dev`, `npm run build`, or filtered commands such as `npm run dev:nucleus` and `npm run build:pointron` when verifying changes.
@@ -78,7 +93,7 @@ Agents MUST prevent exposure of credentials or sensitive data. Environment confi
 - When editing preferences, use `preferences.save` with the correct `Preference` enum and scoped variables to avoid clobbering user settings.
 - Memoize IDs with helpers such as `generateResourceId` and `generateSimpleRandomId` instead of introducing new randomization logic.
 - Handle markdown or node manipulation through utilities like `generateMarkdownText` and `NodularMarkdown` instead of new pipelines.
-- Respect feature gating via product checks, including comparisons against `Product.NUCLEUS` and `Product.MEMOTRON`.
+- Respect feature gating via product checks, including comparisons against `Product.NUCLEUM` and `Product.MEMOTRON`.
 
 ### Backend & Shared Code
 - Backend modules under `services/account/` own AuthFn, account routing, DataFn sync/search, delivery, rate limits, observability, and local/Worker runtime wiring; reuse helpers in `services/account/src`, `schema`, `shared/utils`, and Superfunctions packages instead of duplicating logic.
@@ -147,8 +162,8 @@ The Tidigit constitution supersedes conflicting process documents for automated 
 
 ### Sync Impact Report
 
-- Version change: 1.1.2 to 1.2.0.
-- Added Playwright locator-target and value-poll rules under End-to-End Test Organization.
-- Updated the shared E2E locator helper and affected tests; no dependent instruction templates required changes.
+- Version change: 1.2.0 to 1.2.1.
+- Clarified current application, layout, runtime, config, store, and capability ownership after the client migration.
+- Synchronized WARP.md, README.md, CONTRIBUTING.md, and the architecture references; retained existing test and UI authorization rules.
 
-**Version**: 1.2.0 | **Ratified**: 2025-09-27 | **Last Amended**: 2026-07-24
+**Version**: 1.2.1 | **Ratified**: 2025-09-27 | **Last Amended**: 2026-09-12

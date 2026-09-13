@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigation } from "@21n/layout/navigation/navigation";
+
   import { Resource } from "@nucleum/datafn/resource.enum";
   import { Size } from "@21n/elements/size.enum";
   import {
@@ -24,8 +26,11 @@
     type IActiveCollectionStore
   } from "../collection.store";
   import ModalFooter from "@21n/elements/modal/ModalFooter.svelte";
-  import { AccessMode, type OmitForCaptureWithId } from "@nucleum/datafn/resource.type";
-import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
+  import {
+    AccessMode,
+    type OmitForCaptureWithId
+  } from "@nucleum/datafn/resource.type";
+  import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum";
   import type { IRecordId } from "@nucleum/schema/legacy/data.type";
   import { onDestroy, onMount } from "svelte";
   import Text from "@21n/elements/text/Text.svelte";
@@ -279,7 +284,7 @@ import { ResourceActionType } from "@nucleum/schema/legacy/resource-action.enum"
         callback: async () => {
           await onSave();
           modalEvent.hide(propertiesEditAction);
-          appStore.openResource(id, AccessMode.POP);
+          navigation.openResource(id, AccessMode.POP);
           return true;
         }
       }

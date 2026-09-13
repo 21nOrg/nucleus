@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { requireCommandHost } from "@nucleum/stores/commands/command-host";
+
   import view from "@nucleum/stores/view.store";
   import Button from "@21n/elements/button/Button.svelte";
   import Icon from "@21n/elements/Icon.svelte";
@@ -82,8 +84,7 @@
           {:else}
             Your free trial will expire on {parseAndFormatDate(
               resolveTrialExpiry()
-            )}.
-            Upgrade now to ensure uninterrupted access.
+            )}. Upgrade now to ensure uninterrupted access.
           {/if}
         {:else if resolveIsBillingIssue()}
           Please update your billing information to continue using sync
@@ -120,7 +121,7 @@
         size={Size.sm}
         style={ButtonStyle.PLAIN}
         onclick={async () => {
-          appStore.runAction("chat");
+          requireCommandHost().runAction("chat");
         }}
       />
       <Button
