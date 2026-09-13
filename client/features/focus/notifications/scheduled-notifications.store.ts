@@ -12,7 +12,7 @@ export type ScheduledNotification = {
   id: string;
 };
 
-/** Pending notifications delivered by the application shell. */
+/** Focus reminders delivered through the native runtime transport. */
 export const scheduledNotifications = initScheduledNotificationStore();
 
 function initScheduledNotificationStore() {

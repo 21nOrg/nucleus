@@ -32,7 +32,7 @@ import {
   fullPageLoadingScreen
 } from "@nucleum/stores/notification.store";
 import { appEvents } from "@nucleum/stores/events/app-events.store";
-import { scheduledNotifications } from "@21n/layout/notifications/scheduled-notifications.store";
+import { scheduledNotifications } from "./notifications/scheduled-notifications.store";
 import { deepCopy, isValidArrayWithData } from "@21n/shared-utils/obj.utils";
 import { AlertType } from "@nucleum/stores/notifications/notification.type";
 import { generateResourceId } from "@nucleum/datafn/id.utils";

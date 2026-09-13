@@ -9,6 +9,7 @@ export function resolveNavigationLinkTarget(
   origin: string
 ): NavigationLinkTarget | undefined {
   input = input.trim();
+  if (!input) return;
   const isRelative =
     !input.startsWith("//") && !/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(input);
   try {

@@ -207,7 +207,6 @@
       value: BlockAction.OPEN_IN_FULL_SCREEN,
       icon: "fullscreen",
       callback: async () => {
-        // navigation.closeResource({ isRestrictToModals: true });
         navigation.openResource(block.id, AccessMode.FULL);
       }
     },

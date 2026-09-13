@@ -8,8 +8,6 @@
   import { onMount } from "svelte";
   import { appLoadingState, appStore } from "@nucleum/stores/app.store";
   import { appEvents } from "@nucleum/stores/events/app-events.store";
-  import { scheduledNotifications } from "@21n/layout/notifications/scheduled-notifications.store";
-  import { postDataToParent } from "@nucleum/client/runtime/embed/embed.utils";
   import context from "@nucleum/stores/context.store";
   import view from "@nucleum/stores/view.store";
   import { InteractionMode } from "@21n/elements/keyboard/interaction-mode.type";
@@ -20,7 +18,6 @@
   import LeftNav from "@21n/layout/leftPanel/LeftNav.svelte";
   import AppSplitView from "@21n/layout/AppSplitView.svelte";
   import TopNav from "@21n/layout/topNav/TopNav.svelte";
-  import { EmbedDataMessage } from "@nucleum/client/runtime/embed/embedMessage.enum";
   import RightPanel from "../rightPanel/RightPanel.svelte";
   import { AppSearchParam } from "@nucleum/stores/appStore.type";
   import { page } from "$app/stores";
@@ -117,27 +114,6 @@
 
   function isHomeRoute(url: URL) {
     return url.pathname.split("/").filter(Boolean).at(-1) === "home";
-  }
-
-  async function handleVisibilityChange() {
-    if (document?.hidden) {
-      const registration = await navigator?.serviceWorker?.ready;
-      if ($scheduledNotifications.length > 0) {
-        registration?.active?.postMessage({
-          type: "SCHEDULE_NOTIFICATIONS",
-          notifications: $scheduledNotifications
-        });
-        postDataToParent(
-          EmbedDataMessage.NOTIFICATIONS,
-          $scheduledNotifications
-        );
-      }
-    } else {
-      scheduledNotifications.reset();
-      navigator?.serviceWorker?.controller?.postMessage({
-        type: "CLEAR_NOTIFICATIONS"
-      });
-    }
   }
 </script>
 

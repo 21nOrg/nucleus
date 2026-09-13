@@ -7814,9 +7814,9 @@
       "disposition": "colocated",
       "destinations": [
         "client/stores/notifications/notification.type.ts",
-        "client/layout/notifications/scheduled-notifications.store.ts"
+        "client/features/focus/notifications/scheduled-notifications.store.ts"
       ],
-      "ownership": "shared notification data and shell scheduling",
+      "ownership": "shared notification data and focus scheduling",
       "rationale": "Direct owner imports replace broad type-package coupling; runtime members and serialized shapes preserved.",
       "declarations": [
         "ScheduledNotification",
@@ -14322,8 +14322,8 @@
       "path": "client/stores/notification.store.ts",
       "name": "scheduledNotifications",
       "initializer": "initScheduledNotificationStore()",
-      "disposition": "moved to client/layout/notifications/scheduled-notifications.store.ts",
-      "ownership": "application-shell notification scheduling"
+      "disposition": "moved to client/features/focus/notifications/scheduled-notifications.store.ts",
+      "ownership": "focus notification scheduling"
     },
     {
       "path": "client/stores/notification.store.ts",

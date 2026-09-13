@@ -11,7 +11,9 @@ vi.mock("@nucleum/persistence/persistence", () => ({
     verifyPayment: async () => undefined
   }
 }));
-vi.mock("@nucleum/stores/account.store", () => ({ default: {} }));
+vi.mock("@nucleum/stores/account.store", () => ({
+  default: { get: vi.fn(() => ({})), update: vi.fn() }
+}));
 
 import { subscription } from "./subscription";
 

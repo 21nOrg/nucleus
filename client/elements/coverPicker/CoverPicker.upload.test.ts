@@ -39,14 +39,19 @@ describe("cover upload feedback", () => {
   afterEach(() => vi.unstubAllGlobals());
 
   it.each(["photo.jpeg", "photo.heic"])("accepts %s", async (name) => {
-    mocks.upload.mockResolvedValue(undefined);
-    const { container } = render(CoverPicker);
+    mocks.upload.mockResolvedValue([{ id: "file:cover" }]);
+    const onSelect = vi.fn();
+    const { container, getByText } = render(CoverPicker, { onSelect });
     const file = new File(["image"], name, { type: "image/jpeg" });
     await fireEvent.change(container.querySelector('input[type="file"]')!, {
       target: { files: [file] }
     });
     await waitFor(() => expect(mocks.upload).toHaveBeenCalled());
     expect(mocks.upload.mock.calls[0][1]).toBe(name);
+    await waitFor(() => expect(getByText("Click to replace")).toBeVisible());
+    expect(onSelect).toHaveBeenCalledOnce();
+    expect(onSelect.mock.calls[0][0].detail).toBe("file:cover");
+    expect(mocks.error).not.toHaveBeenCalled();
   });
 
   it("reports rejected formats without uploading", async () => {

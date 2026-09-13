@@ -75,9 +75,11 @@
       billing: billingAddress,
       product: $appStore.product
     });
-    console.log({ at: "onSwitchProceed", response });
-    if (response && response.nonce) {
+    if (response?.nonce && response.paymentLink) {
       window.location.href = response.paymentLink;
+    } else {
+      isRedirecting = false;
+      showPurchaseError(response);
     }
   }
 
@@ -104,7 +106,7 @@
       provider: PaymentProvider.APPLE
     });
     if (!response || !response.nonce) {
-      toasts.error("Something went wrong. Please try again");
+      showPurchaseError(response);
       return;
     }
     postDataToParent(EmbedDataMessage.PURCHASE, {
@@ -135,9 +137,20 @@
       billing: billingAddress,
       product: $appStore.product
     });
-    if (response && response.nonce) {
+    if (response?.nonce && response.paymentLink) {
       window.location.href = response.paymentLink;
+    } else {
+      isRedirecting = false;
+      showPurchaseError(response);
     }
+  }
+
+  function showPurchaseError(response: { reason?: string } | undefined) {
+    toasts.error(
+      response?.reason === "offline"
+        ? "Connect to the internet and try again"
+        : "Unable to start payment. Please try again."
+    );
   }
 </script>
 
